@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 100" width="100%" height="100%">
+  <!-- Isotipo: Hoja con estructura GitFlow Recta / Circuito IoT -->
+  <g transform="translate(10, 10)">
+    <!-- Base de la hoja en verde fresco -->
+    <path d="M 40 10 C 70 10, 80 40, 80 70 C 50 70, 10 70, 10 40 C 10 20, 25 10, 40 10 Z" 
+          fill="url(#leafGradient)" />
+    
+    <!-- Rama Principal (Main Branch): De extremo a extremo (base a punta) -->
+    <line x1="72" y1="68" x2="22" y2="12" stroke="#1b5e20" stroke-width="3" stroke-linecap="round" />
+    
+    <!-- Rama Feature 1 (Izquierda): Nace en Main, avanza en recto y hace Merge a Main -->
+    <polyline points="52 48, 35 48, 35 25, 32 22" stroke="#1b5e20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    
+    <!-- Rama Feature 2 (Derecha): Rama secundaria recta -->
+    <polyline points="57 53, 65 53, 65 38, 47 20" stroke="#1b5e20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+    <!-- Nodos Git (Commits / Merges) sobre las intersecciones -->
+    <!-- Root Commit (Base) -->
+    <circle cx="72" cy="68" r="3.5" fill="#1b5e20" />
+    
+    <!-- Branch Checkout Nodes en Main -->
+    <circle cx="57" cy="53" r="3" fill="#2e7d32" />
+    <circle cx="52" cy="48" r="3" fill="#2e7d32" />
+    
+    <!-- Commits en Ramas Secundarias -->
+    <circle cx="35" cy="35" r="3" fill="#2e7d32" />
+    <circle cx="65" cy="45" r="3" fill="#2e7d32" />
+    
+    <!-- Merge Commits de vuelta a Main -->
+    <circle cx="47" cy="20" r="3.5" fill="#1b5e20" />
+    <circle cx="32" cy="22" r="3.5" fill="#1b5e20" />
+    
+    <!-- Commit Final / Release (Punta de la hoja) -->
+    <circle cx="22" cy="12" r="4" fill="#2e7d32" stroke="#ffffff" stroke-width="1" />
+  </g>
+
+  <!-- Tipografía: Montserrat Style -->
+  <text x="105" y="58" font-family="'Montserrat', sans-serif" font-size="34" font-weight="700" letter-spacing="-0.5">
+    <tspan fill="#1b4d3e">Cultiva</tspan><tspan fill="#2e7d32">Tech</tspan>
+  </text>
+  
+  <!-- Subtítulo / Marca secundaria -->
+  <text x="107" y="78" font-family="'Roboto', sans-serif" font-size="11" font-weight="600" fill="#81c784" letter-spacing="2.5">
+    BY GREENDREAM
+  </text>
+
+  <!-- Gradiantes de Color -->
+  <defs>
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a5d6a7" />
+      <stop offset="100%" stop-color="#4caf50" />
+    </linearGradient>
+  </defs>
+</svg>
