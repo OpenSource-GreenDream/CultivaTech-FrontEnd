@@ -1,0 +1,19 @@
+<div class="page-layout">
+  <header class="navbar">
+    <div class="navbar-brand">
+      <img src="/assets/logo.svg" alt="CultivaTech Logo" class="brand-logo" />
+    </div>
+
+    <nav class="navbar-nav">
+      <button class="btn-outline">Solicitar Demo</button>
+      <button class="btn-solid" (click)="onNavigateToSignIn()">Iniciar Sesión</button>
+    </nav>
+  </header>
+
+  <main class="content-wrapper">
+    <app-sign-up-form
+      (submitForm)="onSignUp($event)"
+      (navigateToSignIn)="onNavigateToSignIn()">
+    </app-sign-up-form>
+  </main>
+</div>
