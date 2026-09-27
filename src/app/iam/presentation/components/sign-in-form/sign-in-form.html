@@ -1,0 +1,48 @@
+<div class="card-container">
+  <div class="card-header">
+    <h2>{{"sign-in.container.title" | translate}}</h2>
+    <p>{{"sign-in.container.description" | translate}}</p>
+  </div>
+
+  <form [formGroup]="signInForm" (ngSubmit)="onSubmit()" class="form-content">
+    <div class="form-group">
+      <label for="emailAddress">{{"sign-in.content.title-1" | translate}}</label>
+      <input
+        id="emailAddress"
+        type="email"
+        formControlName="emailAddress"
+        placeholder="correo@ejemplo.com"
+        [class.is-invalid]="signInForm.get('emailAddress')?.invalid && signInForm.get('emailAddress')?.touched"
+      />
+      @if (signInForm.get('emailAddress')?.touched && signInForm.get('emailAddress')?.hasError('required')) {
+        <span class="error-text">{{"sign-in.form.error-1" | translate}}</span>
+      }
+      @if (signInForm.get('emailAddress')?.touched && signInForm.get('emailAddress')?.hasError('email')) {
+        <span class="error-text">{{"sign-in.form.error-2" | translate}}</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="password">{{"sign-in.content.title-2" | translate}}</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password_hash"
+        placeholder="••••••••"
+        [class.is-invalid]="signInForm.get('password_hash')?.invalid && signInForm.get('password_hash')?.touched"
+      />
+      @if (signInForm.get('password_hash')?.touched && signInForm.get('password_hash')?.hasError('required')) {
+        <span class="error-text">{{"sign-in.form.error-3" | translate}}</span>
+      }
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="signInForm.invalid">
+      {{"sign-in.submit.click-1" | translate}}
+    </button>
+
+    <div class="card-footer">
+      <span>{{"sign-in.submit.text" | translate}}</span>
+      <a (click)="onSignUpClick()" class="link-action">{{"sign-in.submit.click-2" | translate}}</a>
+    </div>
+  </form>
+</div>

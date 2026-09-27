@@ -1,10 +1,12 @@
 import {Component, output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {SignUpRequest} from '../../../domain/model/sign-up.request';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslatePipe
   ],
   selector: 'app-sign-up-form',
   styleUrl: './sign-up-form.css',
@@ -33,7 +35,7 @@ export class SignUpForm {
   onSubmit() {
     if (this.signUpForm.valid) {
       const { emailAddress, password_hash } = this.signUpForm.value;
-      this.submitForm.emit({ emailAddress, password_hash });
+      this.submitForm.emit({ email_address: emailAddress, password_hash });
     } else {
       this.signUpForm.markAllAsTouched();
     }
