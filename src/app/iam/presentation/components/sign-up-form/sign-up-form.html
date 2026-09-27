@@ -5,13 +5,13 @@
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
     </button>
-    <h2>Crear cuenta</h2>
-    <p>Regístrate para acceder a la plataforma CultivaTech</p>
+    <h2>{{"sign-up.container.title" | translate}}</h2>
+    <p>{{"sign-up.container.description" | translate}}</p>
   </div>
 
   <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="form-content">
     <div class="form-group">
-      <label for="emailAddress">Correo electrónico *</label>
+      <label for="emailAddress">{{"sign-up.content.title-1" | translate}}</label>
       <input
         id="emailAddress"
         type="email"
@@ -20,16 +20,16 @@
         [class.is-invalid]="signUpForm.get('emailAddress')?.invalid && signUpForm.get('emailAddress')?.touched"
       />
       @if (signUpForm.get('emailAddress')?.touched && signUpForm.get('emailAddress')?.hasError('required')) {
-        <span class="error-text">El correo es obligatorio.</span>
+        <span class="error-text">{{"sign-up.form.error-1" | translate}}</span>
       }
       @if (signUpForm.get('emailAddress')?.touched && signUpForm.get('emailAddress')?.hasError('email')) {
-        <span class="error-text">Ingrese un correo electrónico válido.</span>
+        <span class="error-text">{{"sign-up.form.error-2" | translate}}</span>
       }
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="password">Contraseña *</label>
+        <label for="password">{{"sign-up.content.title-2" | translate}}</label>
         <input
           id="password"
           type="password"
@@ -38,12 +38,12 @@
           [class.is-invalid]="signUpForm.get('password_hash')?.invalid && signUpForm.get('password_hash')?.touched"
         />
         @if (signUpForm.get('password_hash')?.touched && signUpForm.get('password_hash')?.hasError('required')) {
-          <span class="error-text">La contraseña es obligatoria.</span>
+          <span class="error-text"></span>
         }
       </div>
 
       <div class="form-group">
-        <label for="confirmPassword">Confirmar contraseña *</label>
+        <label for="confirmPassword">{{"sign-up.content.title-3" | translate}}</label>
         <input
           id="confirmPassword"
           type="password"
@@ -52,18 +52,18 @@
           [class.is-invalid]="signUpForm.get('confirmPassword')?.touched && (signUpForm.get('confirmPassword')?.invalid || signUpForm.hasError('mismatch'))"
         />
         @if (signUpForm.hasError('mismatch') && signUpForm.get('confirmPassword')?.touched) {
-          <span class="error-text">Las contraseñas no coinciden.</span>
+          <span class="error-text">{{"sign-up.form.error-4" | translate}}</span>
         }
       </div>
     </div>
 
     <button type="submit" class="btn-primary" [disabled]="signUpForm.invalid">
-      Crear cuenta
+      {{"sign-up.submit.click-1" | translate}}
     </button>
 
     <div class="card-footer">
-      <span>¿Ya tienes una cuenta?</span>
-      <a (click)="onSignInClick()" class="link-action">Iniciar sesión</a>
+      <span>{{"sign-up.submit.text" | translate}}</span>
+      <a (click)="onSignInClick()" class="link-action">{{"sign-up.submit.click-2" | translate}}</a>
     </div>
   </form>
 </div>

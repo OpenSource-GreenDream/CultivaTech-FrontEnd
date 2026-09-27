@@ -5,14 +5,14 @@
     </div>
 
     <nav class="navbar-nav">
-      <button class="btn-solid" (click)="onNavigateToSignIn()">{{"sign-up.submit.click-3" | translate}}</button>
+      <button class="btn-solid" (click)="onNavigateToSignUp()">{{"sign-in.submit.click-3" | translate}}</button>
     </nav>
   </header>
 
   <main class="content-wrapper">
-    <app-sign-up-form
-      (submitForm)="onSignUp($event)"
-      (navigateToSignIn)="onNavigateToSignIn()">
-    </app-sign-up-form>
+    <app-sign-in-form
+      (submitForm)="onSignIn($event)"
+      (navigateToSignUp)="onNavigateToSignUp()">
+    </app-sign-in-form>
   </main>
 </div>
