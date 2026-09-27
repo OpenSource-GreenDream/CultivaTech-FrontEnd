@@ -11,7 +11,7 @@ export class UserAssembler {
   static toEntityFromResource(resource: UserResource): User{
     return new User(
       resource.id,
-      resource.emailAddress,
+      resource.email_address,
       resource.password_hash
     );
   }
@@ -20,7 +20,7 @@ export class UserAssembler {
     const nowISO = new Date().toISOString();
     return {
       id: entity.id,
-      emailAddress: entity.emailAddress,
+      email_address: entity.email_address,
       password_hash: entity.passwordHash,
       created_at: nowISO,
       updated_at: nowISO,

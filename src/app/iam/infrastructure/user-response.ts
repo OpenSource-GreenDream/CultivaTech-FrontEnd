@@ -5,7 +5,7 @@ export interface UserResponse{
 
 export interface UserResource{
   id: number,
-  emailAddress: string,
+  email_address: string,
   password_hash: string,
   created_at: string,
   updated_at: string

@@ -1,0 +1,46 @@
+{
+  "sign-up": {
+    "container": {
+      "title": "Crear cuenta",
+      "description": "Regístrate para acceder a la plataforma CultivaTech"
+    },
+    "content": {
+      "title-1": "Correo electrónico",
+      "title-2": "Contraseña",
+      "title-3": "Confirmar contraseña"
+    },
+    "form": {
+      "error-1": "Se requiere una dirección de correo electrónico",
+      "error-2": "Ingrese una dirección de correo electrónico válida",
+      "error-3": "La contraseña es obligatoria",
+      "error-4": "Las contraseñas no coinciden"
+    },
+    "submit": {
+      "click-1": "Crear cuenta",
+      "text": "¿Ya tienes una cuenta?",
+      "click-2": "Iniciar sesión",
+      "click-3": "Iniciar sesión"
+    }
+  },
+  "sign-in": {
+    "container": {
+      "title": "Iniciar sesión",
+      "description": "Ingresa tus credenciales para acceder a CultivaTech"
+    },
+    "content": {
+      "title-1": "Correo electrónico",
+      "title-2": "Contraseña"
+    },
+    "form": {
+      "error-1": "El correo es obligatorio",
+      "error-2": "Ingrese un correo electrónico válido",
+      "error-3": "La contraseña es obligatoria"
+    },
+    "submit": {
+      "click-1": "Iniciar sesión",
+      "text": "¿Aún no tienes una cuenta?",
+      "click-2": "Regístrate aquí",
+      "click-3": "Regístrate aquí"
+    }
+  }
+}

@@ -7,7 +7,7 @@ import {BaseEntity} from '../../../shared/domain/model/base.entity';
 export class User implements BaseEntity{
   constructor(
     public id: number,
-    public emailAddress: string,
+    public email_address: string,
     public passwordHash: string
   ) {
   }

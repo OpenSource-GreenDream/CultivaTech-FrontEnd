@@ -1,0 +1,46 @@
+{
+  "sign-up": {
+    "container": {
+      "title": "Create account",
+      "description": "Sign up to access the CultivaTech platform"
+    },
+    "content": {
+      "title-1": "Email",
+      "title-2": "Password",
+      "title-3": "Confirm password"
+    },
+    "form": {
+      "error-1": "Email address is required",
+      "error-2": "Enter a valid email address",
+      "error-3": "Password is required",
+      "error-4": "Passwords do not match"
+    },
+    "submit": {
+      "click-1": "Create account",
+      "text": "Already have an account?",
+      "click-2": "Log in",
+      "click-3": "Sign In"
+    }
+  },
+  "sign-in": {
+    "container": {
+      "title": "Log in",
+      "description": "Enter your credentials to access CultivaTech"
+    },
+    "content": {
+      "title-1": "Email",
+      "title-2": "Password"
+    },
+    "form": {
+      "error-1": "Email is required",
+      "error-2": "Enter a valid email address",
+      "error-3": "Password is required"
+    },
+    "submit": {
+      "click-1": "Log in",
+      "text": "Don't have an account yet?",
+      "click-2": "Sign up here",
+      "click-3": "Sign up here"
+    }
+  }
+}
