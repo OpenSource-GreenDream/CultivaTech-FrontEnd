@@ -1,8 +1,8 @@
 /**
- * This is a request to register a new User.
+ * Request Payload to authenticate user
  * @author Jorge Manuel Retuerto Rodriguez - U202318612
  */
-export interface SignUpRequest{
+export interface SignInRequest{
   email_address: string;
   password_hash: string;
 }
