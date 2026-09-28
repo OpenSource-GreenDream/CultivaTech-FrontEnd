@@ -42,5 +42,18 @@
       "click-2": "Regístrate aquí",
       "click-3": "Regístrate aquí"
     }
+  },
+  "notification": {
+    "list": {
+      "title": "Notificaciones",
+      "filters-label": "Filtros de notificaciones",
+      "filter-all": "Todas las notificaciones",
+      "filter-alerts": "Alertas de sensores",
+      "loading": "Cargando notificaciones",
+      "load-error": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
+      "empty": "No hay notificaciones para mostrar.",
+      "mark-as-read": "Marcar como leída",
+      "mark-as-read-for": "Marcar {{title}} como leída"
+    }
   }
 }

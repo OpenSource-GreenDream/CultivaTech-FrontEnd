@@ -42,5 +42,18 @@
       "click-2": "Sign up here",
       "click-3": "Sign up here"
     }
+  },
+  "notification": {
+    "list": {
+      "title": "Notifications",
+      "filters-label": "Notification filters",
+      "filter-all": "All notifications",
+      "filter-alerts": "Sensor alerts",
+      "loading": "Loading notifications",
+      "load-error": "Notifications could not be loaded. Please try again.",
+      "empty": "There are no notifications to show.",
+      "mark-as-read": "Mark as read",
+      "mark-as-read-for": "Mark {{title}} as read"
+    }
   }
 }
