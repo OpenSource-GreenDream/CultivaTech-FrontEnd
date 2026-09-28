@@ -1,0 +1,77 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Service } from '@angular/core';
+import { map, Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { NotificationCreateRequest } from '../domain/model/notification-create.request';
+import { Notification } from '../domain/model/notification.entity';
+import { NotificationType } from '../domain/model/notification-type.enum';
+import { NotificationAssembler } from './notification.assembler';
+import { NotificationResource } from './notification-resource';
+
+const NOTIFICATIONS_ENDPOINT = environment.notificationsEndpoint;
+const PROFILES_ENDPOINT = environment.profilesEndpoint;
+const SORT_FIELD = 'created_at';
+const SORT_DIRECTION = 'desc';
+const UNREAD_DEFAULT = false;
+
+interface ProfileResource {
+  id: number;
+  user_id: number;
+}
+
+@Service()
+export class NotificationApiService {
+  private readonly http = inject(HttpClient);
+  private readonly resourceUrl = `${environment.cultivatechBaseApi}${NOTIFICATIONS_ENDPOINT}`;
+  private readonly profilesUrl = `${environment.cultivatechBaseApi}${PROFILES_ENDPOINT}`;
+
+  getProfileIdByUser(userId: number): Observable<number | null> {
+    const params = new HttpParams().set('user_id', userId);
+
+    return this.http.get<ProfileResource[]>(this.profilesUrl, { params }).pipe(
+      map((profiles) => profiles[0]?.id ?? null),
+    );
+  }
+
+  getByProfile(profileId: number): Observable<Notification[]> {
+    const params = new HttpParams()
+      .set('profile_id', profileId)
+      .set('_sort', SORT_FIELD)
+      .set('_order', SORT_DIRECTION);
+
+    return this.http.get<NotificationResource[]>(this.resourceUrl, { params }).pipe(
+      map((resources) => resources.map(NotificationAssembler.toEntityFromResource)),
+    );
+  }
+
+  create(request: NotificationCreateRequest): Observable<Notification> {
+    const now = new Date().toISOString();
+    const payload = {
+      profile_id: request.profileId,
+      title: request.title,
+      message: request.message,
+      is_read: UNREAD_DEFAULT,
+      is_alert: request.type === NotificationType.SENSOR_ALERT,
+      type: request.type,
+      field_id: request.fieldId,
+      created_at: now,
+      updated_at: now,
+    };
+
+    return this.http.post<NotificationResource>(this.resourceUrl, payload).pipe(
+      map(NotificationAssembler.toEntityFromResource),
+    );
+  }
+
+  markAsRead(notification: Notification): Observable<Notification> {
+    const resourceUrl = `${this.resourceUrl}/${notification.id}`;
+    const payload = {
+      is_read: true,
+      updated_at: new Date().toISOString(),
+    };
+
+    return this.http.patch<NotificationResource>(resourceUrl, payload).pipe(
+      map(NotificationAssembler.toEntityFromResource),
+    );
+  }
+}

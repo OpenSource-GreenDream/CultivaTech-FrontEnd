@@ -42,5 +42,36 @@
       "click-2": "Regístrate aquí",
       "click-3": "Regístrate aquí"
     }
+  },
+  "notification": {
+    "types": {
+      "SENSOR_ALERT": "Alertas de sensores",
+      "SYSTEM_INFO": "Información del sistema",
+      "PRODUCT_DEMAND": "Demanda de productos",
+      "NEW_REVIEW": "Nuevas reseñas",
+      "PRODUCT_OF_INTEREST": "Productos de interés",
+      "OFFER_OR_STOCK_CHANGE": "Ofertas y cambios de stock"
+    },
+    "list": {
+      "title": "Notificaciones",
+      "filters-label": "Filtros de notificaciones",
+      "filter-all": "Todas las notificaciones",
+      "filter-alerts": "Alertas de sensores",
+      "loading": "Cargando notificaciones",
+      "load-error": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
+      "empty": "No hay notificaciones para mostrar.",
+      "mark-as-read": "Marcar como leída",
+      "mark-as-read-for": "Marcar {{title}} como leída"
+    },
+    "preferences": {
+      "title": "Preferencias de notificación",
+      "open": "Preferencias de notificación",
+      "back": "Volver a notificaciones",
+      "loading": "Cargando preferencias de notificación",
+      "load-error": "No se pudieron cargar o guardar las preferencias de notificación.",
+      "field-label": "Zona de cultivo",
+      "all-fields": "Todas las zonas",
+      "toggle-label": "Activar o desactivar las notificaciones de {{type}}"
+    }
   }
 }

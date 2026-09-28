@@ -1,0 +1,11 @@
+.notification-page {
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin-inline: auto;
+  max-inline-size: 64rem;
+}
+
+.notification-filters {
+  display: flex;
+  flex-wrap: wrap;
+}

@@ -1,0 +1,37 @@
+<main class="notification-preferences" aria-labelledby="notification-preferences-heading">
+  <h1 id="notification-preferences-heading">{{ 'notification.preferences.title' | translate }}</h1>
+  <a mat-button routerLink="/notifications">{{ 'notification.preferences.back' | translate }}</a>
+
+  @if (isLoading()) {
+    <p role="status" aria-live="polite">{{ 'notification.preferences.loading' | translate }}</p>
+  } @else if (hasError()) {
+    <p role="alert">{{ 'notification.preferences.load-error' | translate }}</p>
+  } @else {
+    <mat-form-field>
+      <mat-label>{{ 'notification.preferences.field-label' | translate }}</mat-label>
+      <mat-select
+        [value]="selectedFieldId()"
+        [attr.aria-label]="'notification.preferences.field-label' | translate"
+        (selectionChange)="selectField($event.value)">
+        <mat-option [value]="null">{{ 'notification.preferences.all-fields' | translate }}</mat-option>
+        @for (field of fields(); track field.id) {
+          <mat-option [value]="field.id">{{ field.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <ul class="preference-list" [attr.aria-label]="'notification.preferences.title' | translate">
+      @for (type of notificationTypes; track type) {
+        <li>
+          <mat-slide-toggle
+            [checked]="isEnabled(type)"
+            [disabled]="isSaving(type)"
+            [attr.aria-label]="'notification.preferences.toggle-label' | translate: { type: ('notification.types.' + type | translate) }"
+            (change)="onToggle(type, $event)">
+            {{ ('notification.types.' + type) | translate }}
+          </mat-slide-toggle>
+        </li>
+      }
+    </ul>
+  }
+</main>
