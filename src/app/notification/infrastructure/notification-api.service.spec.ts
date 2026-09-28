@@ -193,4 +193,34 @@ describe('NotificationApiService', () => {
     expect(request.request.body.type).toBe(NotificationType.PRODUCT_OF_INTEREST);
     request.flush(resource);
   });
+
+  it('creates an offer or stock change notification', () => {
+    const resource: NotificationResource = {
+      id: 13,
+      profile_id: 5,
+      title: 'Offer and stock update',
+      message: 'An offer is available and stock was updated.',
+      is_read: false,
+      is_alert: false,
+      type: NotificationType.OFFER_OR_STOCK_CHANGE,
+      field_id: null,
+      created_at: '2026-09-22T15:00:00Z',
+      updated_at: '2026-09-22T15:00:00Z',
+    };
+
+    service.create({
+      profileId: resource.profile_id,
+      title: resource.title,
+      message: resource.message,
+      type: NotificationType.OFFER_OR_STOCK_CHANGE,
+      fieldId: null,
+    }).subscribe((notification) => expect(notification.type).toBe(NotificationType.OFFER_OR_STOCK_CHANGE));
+
+    const request = httpTestingController.expectOne(
+      `${environment.cultivatechBaseApi}${environment.notificationsEndpoint}`,
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body.type).toBe(NotificationType.OFFER_OR_STOCK_CHANGE);
+    request.flush(resource);
+  });
 });
