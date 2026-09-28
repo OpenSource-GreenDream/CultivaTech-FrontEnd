@@ -20,6 +20,22 @@ describe('NotificationApiService', () => {
 
   afterEach(() => httpTestingController.verify());
 
+  it('resolves a profile from the authenticated user id', () => {
+    let resultProfileId: number | null | undefined;
+
+    service.getProfileIdByUser(5).subscribe((profileId) => {
+      resultProfileId = profileId;
+    });
+
+    const request = httpTestingController.expectOne(
+      (candidate) => candidate.url === `${environment.cultivatechBaseApi}${environment.profilesEndpoint}`,
+    );
+    expect(request.request.params.get('user_id')).toBe('5');
+    request.flush([{ id: 9, user_id: 5 }]);
+
+    expect(resultProfileId).toBe(9);
+  });
+
   it('gets notifications by profile in descending creation order', () => {
     const resource: NotificationResource = {
       id: 2,
