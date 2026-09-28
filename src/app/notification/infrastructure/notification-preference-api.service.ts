@@ -7,11 +7,24 @@ import { NotificationPreferenceAssembler } from './notification-preference.assem
 import { NotificationPreferenceResource } from './notification-preference-resource';
 
 const PREFERENCES_ENDPOINT = environment.notificationPreferencesEndpoint;
+const FIELDS_ENDPOINT = environment.fieldsEndpoint;
+
+export interface NotificationFieldOption {
+  id: number;
+  name: string;
+}
 
 @Service()
 export class NotificationPreferenceApiService {
   private readonly http = inject(HttpClient);
   private readonly resourceUrl = `${environment.cultivatechBaseApi}${PREFERENCES_ENDPOINT}`;
+  private readonly fieldsUrl = `${environment.cultivatechBaseApi}${FIELDS_ENDPOINT}`;
+
+  getFieldsByProfile(profileId: number): Observable<NotificationFieldOption[]> {
+    const params = new HttpParams().set('profile_id', profileId);
+
+    return this.http.get<NotificationFieldOption[]>(this.fieldsUrl, { params });
+  }
 
   getByProfile(profileId: number): Observable<NotificationPreference[]> {
     const params = new HttpParams().set('profile_id', profileId);
@@ -30,6 +43,27 @@ export class NotificationPreferenceApiService {
     };
 
     return this.http.patch<NotificationPreferenceResource>(resourceUrl, payload).pipe(
+      map(NotificationPreferenceAssembler.toEntityFromResource),
+    );
+  }
+
+  create(
+    profileId: number,
+    type: NotificationPreference['type'],
+    fieldId: number | null,
+    enabled: boolean,
+  ): Observable<NotificationPreference> {
+    const now = new Date().toISOString();
+    const payload = {
+      profile_id: profileId,
+      type,
+      field_id: fieldId,
+      enabled,
+      created_at: now,
+      updated_at: now,
+    };
+
+    return this.http.post<NotificationPreferenceResource>(this.resourceUrl, payload).pipe(
       map(NotificationPreferenceAssembler.toEntityFromResource),
     );
   }

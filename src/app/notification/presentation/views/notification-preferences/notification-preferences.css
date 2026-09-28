@@ -1,0 +1,10 @@
+.notification-preferences {
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin-inline: auto;
+  max-inline-size: 64rem;
+}
+
+.preference-list {
+  list-style: none;
+}

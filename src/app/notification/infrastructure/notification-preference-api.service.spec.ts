@@ -46,6 +46,22 @@ describe('NotificationPreferenceApiService', () => {
     expect(resultType).toBe(NotificationType.SENSOR_ALERT);
   });
 
+  it('gets crop zones from the selected profile', () => {
+    let resultFieldName: string | undefined;
+
+    service.getFieldsByProfile(12).subscribe((fields) => {
+      resultFieldName = fields[0].name;
+    });
+
+    const request = httpTestingController.expectOne(
+      (candidate) => candidate.url === `${environment.cultivatechBaseApi}${environment.fieldsEndpoint}`,
+    );
+    expect(request.request.params.get('profile_id')).toBe('12');
+    request.flush([{ id: 7, profile_id: 12, name: 'Field from API' }]);
+
+    expect(resultFieldName).toBe('Field from API');
+  });
+
   it('updates enabled and field association for a preference', () => {
     const preference = new NotificationPreference(
       4,
@@ -75,6 +91,32 @@ describe('NotificationPreferenceApiService', () => {
     expect(request.request.body.enabled).toBe(false);
     expect(request.request.body.field_id).toBe(7);
     expect(request.request.body.updated_at).toBeTruthy();
+    request.flush(resource);
+  });
+
+  it('creates a preference for an individual crop zone', () => {
+    const resource: NotificationPreferenceResource = {
+      id: 15,
+      profile_id: 12,
+      type: NotificationType.SENSOR_ALERT,
+      field_id: 7,
+      enabled: false,
+      created_at: '2026-09-22T00:00:00Z',
+      updated_at: '2026-09-22T00:00:00Z',
+    };
+
+    service.create(12, NotificationType.SENSOR_ALERT, 7, false).subscribe((preference) => {
+      expect(preference.fieldId).toBe(7);
+    });
+
+    const request = httpTestingController.expectOne(
+      `${environment.cultivatechBaseApi}${environment.notificationPreferencesEndpoint}`,
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body.profile_id).toBe(12);
+    expect(request.request.body.type).toBe(NotificationType.SENSOR_ALERT);
+    expect(request.request.body.field_id).toBe(7);
+    expect(request.request.body.enabled).toBe(false);
     request.flush(resource);
   });
 });

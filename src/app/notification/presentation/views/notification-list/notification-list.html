@@ -1,5 +1,6 @@
 <main class="notification-page" aria-labelledby="notification-heading">
   <h1 id="notification-heading">{{ 'notification.list.title' | translate }}</h1>
+  <a mat-button routerLink="/notifications/preferences">{{ 'notification.preferences.open' | translate }}</a>
 
   <nav class="notification-filters" [attr.aria-label]="'notification.list.filters-label' | translate">
     <button mat-button type="button" [attr.aria-pressed]="!showAlertsOnly()" (click)="setAlertFilter(false)">
