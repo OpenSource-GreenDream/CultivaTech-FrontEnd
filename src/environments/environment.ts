@@ -16,6 +16,7 @@ export const environment = {
   ordersEndpoint: '/orders',
 
   notificationsEndpoint: '/notifications',
+  notificationPreferencesEndpoint: '/notification_preferences',
   communityProfilesEndpoint: '/community_profiles',
   commentsEndpoint: '/comments'
 };
