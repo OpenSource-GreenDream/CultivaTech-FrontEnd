@@ -163,4 +163,34 @@ describe('NotificationApiService', () => {
     expect(request.request.body.type).toBe(NotificationType.NEW_REVIEW);
     request.flush(resource);
   });
+
+  it('creates a product of interest notification', () => {
+    const resource: NotificationResource = {
+      id: 12,
+      profile_id: 5,
+      title: 'A product may interest you',
+      message: 'A related product is now available.',
+      is_read: false,
+      is_alert: false,
+      type: NotificationType.PRODUCT_OF_INTEREST,
+      field_id: null,
+      created_at: '2026-09-22T14:00:00Z',
+      updated_at: '2026-09-22T14:00:00Z',
+    };
+
+    service.create({
+      profileId: resource.profile_id,
+      title: resource.title,
+      message: resource.message,
+      type: NotificationType.PRODUCT_OF_INTEREST,
+      fieldId: null,
+    }).subscribe((notification) => expect(notification.type).toBe(NotificationType.PRODUCT_OF_INTEREST));
+
+    const request = httpTestingController.expectOne(
+      `${environment.cultivatechBaseApi}${environment.notificationsEndpoint}`,
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body.type).toBe(NotificationType.PRODUCT_OF_INTEREST);
+    request.flush(resource);
+  });
 });
