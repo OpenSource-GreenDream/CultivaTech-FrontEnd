@@ -44,6 +44,14 @@
     }
   },
   "notification": {
+    "types": {
+      "SENSOR_ALERT": "Sensor alerts",
+      "SYSTEM_INFO": "System information",
+      "PRODUCT_DEMAND": "Product demand",
+      "NEW_REVIEW": "New reviews",
+      "PRODUCT_OF_INTEREST": "Products of interest",
+      "OFFER_OR_STOCK_CHANGE": "Offers and stock changes"
+    },
     "list": {
       "title": "Notifications",
       "filters-label": "Notification filters",
@@ -54,6 +62,16 @@
       "empty": "There are no notifications to show.",
       "mark-as-read": "Mark as read",
       "mark-as-read-for": "Mark {{title}} as read"
+    },
+    "preferences": {
+      "title": "Notification preferences",
+      "open": "Notification preferences",
+      "back": "Back to notifications",
+      "loading": "Loading notification preferences",
+      "load-error": "Notification preferences could not be loaded or saved.",
+      "field-label": "Crop zone",
+      "all-fields": "All zones",
+      "toggle-label": "Enable or disable {{type}} notifications"
     }
   }
 }
