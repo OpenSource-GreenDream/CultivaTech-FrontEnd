@@ -133,4 +133,34 @@ describe('NotificationApiService', () => {
     expect(request.request.body.is_read).toBe(false);
     request.flush(resource);
   });
+
+  it('creates a new review notification', () => {
+    const resource: NotificationResource = {
+      id: 11,
+      profile_id: 5,
+      title: 'New review received',
+      message: 'A review was posted for your product.',
+      is_read: false,
+      is_alert: false,
+      type: NotificationType.NEW_REVIEW,
+      field_id: null,
+      created_at: '2026-09-22T13:00:00Z',
+      updated_at: '2026-09-22T13:00:00Z',
+    };
+
+    service.create({
+      profileId: resource.profile_id,
+      title: resource.title,
+      message: resource.message,
+      type: NotificationType.NEW_REVIEW,
+      fieldId: null,
+    }).subscribe((notification) => expect(notification.type).toBe(NotificationType.NEW_REVIEW));
+
+    const request = httpTestingController.expectOne(
+      `${environment.cultivatechBaseApi}${environment.notificationsEndpoint}`,
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body.type).toBe(NotificationType.NEW_REVIEW);
+    request.flush(resource);
+  });
 });
