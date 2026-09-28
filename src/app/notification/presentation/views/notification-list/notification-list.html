@@ -1,0 +1,39 @@
+<main class="notification-page" aria-labelledby="notification-heading">
+  <h1 id="notification-heading">{{ 'notification.list.title' | translate }}</h1>
+
+  <nav class="notification-filters" [attr.aria-label]="'notification.list.filters-label' | translate">
+    <button mat-button type="button" [attr.aria-pressed]="!showAlertsOnly()" (click)="setAlertFilter(false)">
+      {{ 'notification.list.filter-all' | translate }}
+    </button>
+    <button mat-button type="button" [attr.aria-pressed]="showAlertsOnly()" (click)="setAlertFilter(true)">
+      {{ 'notification.list.filter-alerts' | translate }}
+    </button>
+  </nav>
+
+  @if (isLoading()) {
+    <p role="status" aria-live="polite">{{ 'notification.list.loading' | translate }}</p>
+  } @else if (hasError()) {
+    <p role="alert">{{ 'notification.list.load-error' | translate }}</p>
+  } @else if (visibleNotifications().length === 0) {
+    <p role="status">{{ 'notification.list.empty' | translate }}</p>
+  } @else {
+    <mat-list [attr.aria-label]="'notification.list.title' | translate">
+      @for (notification of visibleNotifications(); track notification.id) {
+        <mat-list-item>
+          <span matListItemTitle>{{ notification.title }}</span>
+          <span matListItemLine>{{ notification.message }}</span>
+          @if (!notification.isRead) {
+            <button
+              mat-button
+              matListItemMeta
+              type="button"
+              [attr.aria-label]="'notification.list.mark-as-read-for' | translate: { title: notification.title }"
+              (click)="markAsRead(notification)">
+              {{ 'notification.list.mark-as-read' | translate }}
+            </button>
+          }
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+</main>

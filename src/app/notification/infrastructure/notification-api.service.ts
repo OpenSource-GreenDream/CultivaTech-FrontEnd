@@ -7,13 +7,28 @@ import { NotificationAssembler } from './notification.assembler';
 import { NotificationResource } from './notification-resource';
 
 const NOTIFICATIONS_ENDPOINT = environment.notificationsEndpoint;
+const PROFILES_ENDPOINT = environment.profilesEndpoint;
 const SORT_FIELD = 'created_at';
 const SORT_DIRECTION = 'desc';
+
+interface ProfileResource {
+  id: number;
+  user_id: number;
+}
 
 @Service()
 export class NotificationApiService {
   private readonly http = inject(HttpClient);
   private readonly resourceUrl = `${environment.cultivatechBaseApi}${NOTIFICATIONS_ENDPOINT}`;
+  private readonly profilesUrl = `${environment.cultivatechBaseApi}${PROFILES_ENDPOINT}`;
+
+  getProfileIdByUser(userId: number): Observable<number | null> {
+    const params = new HttpParams().set('user_id', userId);
+
+    return this.http.get<ProfileResource[]>(this.profilesUrl, { params }).pipe(
+      map((profiles) => profiles[0]?.id ?? null),
+    );
+  }
 
   getByProfile(profileId: number): Observable<Notification[]> {
     const params = new HttpParams()
