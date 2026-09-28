@@ -6,4 +6,9 @@ export const NOTIFICATION_ROUTES: Routes = [
     loadComponent: () => import('./presentation/views/notification-list/notification-list')
       .then((view) => view.NotificationList),
   },
+  {
+    path: 'preferences',
+    loadComponent: () => import('./presentation/views/notification-preferences/notification-preferences')
+      .then((view) => view.NotificationPreferences),
+  },
 ];
