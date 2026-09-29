@@ -1,0 +1,34 @@
+<div class="analytics-container">
+  <h2>Dashboard de Analítica e Indicadores Clave</h2>
+
+  <div *ngIf="loading" class="loading">
+    Cargando indicadores clave...
+  </div>
+
+  <div *ngIf="!loading && indicators" class="cards-grid">
+    <div class="card">
+      <span class="card-title">Promedio de Media</span>
+      <span class="card-value">{{ indicators.averageMean }}</span>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Promedio de Varianza</span>
+      <span class="card-value">{{ indicators.averageVariance }}</span>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Promedio Desviación Estándar</span>
+      <span class="card-value">{{ indicators.averageDeviation }}</span>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Total de Reportes</span>
+      <span class="card-value">{{ indicators.totalReports }}</span>
+    </div>
+
+    <div class="card status-card">
+      <span class="card-title">Estado del Sistema</span>
+      <span class="card-value status-badge">{{ indicators.status }}</span>
+    </div>
+  </div>
+</div>
