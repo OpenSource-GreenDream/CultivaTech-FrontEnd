@@ -9,13 +9,13 @@ export const routes: Routes = [
   },
   {
     path: 'sign-in',
-    loadComponent: () => import('./iam/presentation/views/sign-in/sign-in')
-      .then((view) => view.SignIn),
+    loadComponent: () =>
+      import('./iam/presentation/views/sign-in/sign-in').then((view) => view.SignIn),
   },
   {
     path: 'sign-up',
-    loadComponent: () => import('./iam/presentation/views/sign-up/sign-up')
-      .then((view) => view.SignUp),
+    loadComponent: () =>
+      import('./iam/presentation/views/sign-up/sign-up').then((view) => view.SignUp),
   },
   {
     path: 'dashboard',
@@ -25,8 +25,15 @@ export const routes: Routes = [
   {
     path: 'notifications',
     canActivate: [notificationAuthenticationGuard],
-    loadChildren: () => import('./notification/notification.routes')
-      .then((routes) => routes.NOTIFICATION_ROUTES),
+    loadChildren: () =>
+      import('./notification/notification.routes').then((routes) => routes.NOTIFICATION_ROUTES),
+  },
+  {
+    path: 'analytics/dashboard',
+    loadComponent: () =>
+      import('./analytics/components/analytics-dashboard/analytics-dashboard').then(
+        (m) => m.AnalyticsDashboardComponent,
+      ),
   },
   {
     path: '**',
