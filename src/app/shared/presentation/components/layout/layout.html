@@ -1,1 +1,49 @@
-<p>layout works!</p>
+<div class="layout-container">
+  <aside class="sidebar">
+    <div class="brand-section">
+      <img src="/assets/logo.svg" alt="CultivaTech Logo" class="brand-logo" />
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/home" routerLinkActive="active" class="nav-item">
+        {{ 'layout.nav.home' | translate }}
+      </a>
+      <a routerLink="/monitoring" routerLinkActive="active" class="nav-item">
+        {{ 'layout.nav.monitoring' | translate }}
+      </a>
+      <a routerLink="/sensors" routerLinkActive="active" class="nav-item">
+        {{ 'layout.nav.sensors' | translate }}
+      </a>
+      <a routerLink="/alerts" routerLinkActive="active" class="nav-item">
+        {{ 'layout.nav.alerts' | translate }}
+      </a>
+      <a routerLink="/products" routerLinkActive="active" class="nav-item">
+        {{ 'layout.nav.products' | translate }}
+      </a>
+      <a routerLink="/notifications" routerLinkActive="active" class="nav-item">
+        {{ 'layout.nav.notifications' | translate }}
+      </a>
+      <a routerLink="/profile" routerLinkActive="active" class="nav-item">
+        {{ 'layout.nav.profile' | translate }}
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button type="button" (click)="onSignOut()" class="btn-logout">
+        {{ 'layout.logout' | translate }}
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="top-header">
+      <h1 class="header-title">{{ pageTitle }}</h1>
+
+      <app-language-switcher />
+    </header>
+
+    <main class="content-body">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

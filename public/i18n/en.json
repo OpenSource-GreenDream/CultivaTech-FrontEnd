@@ -43,6 +43,22 @@
       "click-3": "Sign up here"
     }
   },
+  "layout": {
+    "nav": {
+      "home": "Home",
+      "monitoring": "Monitoring",
+      "sensors": "Sensors",
+      "alerts": "Alerts",
+      "products": "Products",
+      "notifications": "Notifications",
+      "profile": "My Profile"
+    },
+    "logout": "Sign Out"
+  },
+  "home": {
+    "title": "Welcome to CultivaTech",
+    "description": "Select an option from the side menu to manage your crops, monitor sensors, and review alerts."
+  },
   "notification": {
     "types": {
       "SENSOR_ALERT": "Sensor alerts",

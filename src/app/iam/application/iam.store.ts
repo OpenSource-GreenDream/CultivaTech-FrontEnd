@@ -5,6 +5,7 @@ import {SignUpRequest} from '../domain/model/sign-up.request';
 import {map, Observable, tap} from 'rxjs';
 import {UserAssembler} from '../infrastructure/user.assembler';
 import {SignInRequest} from '../domain/model/sign-in.request';
+import {AuthService} from './auth.service';
 
 /**
  * Application service store for the IAM Bounded Context
@@ -13,6 +14,7 @@ import {SignInRequest} from '../domain/model/sign-in.request';
 @Service()
 export class IamStore {
   private iamApi = inject(IamApi);
+  private authService = inject(AuthService);
 
   readonly user = signal<User | null>(null);
 
@@ -23,7 +25,10 @@ export class IamStore {
   signUp(request: SignUpRequest) {
     return this.iamApi.signUp(request).pipe(
       map(resource=>UserAssembler.toEntityFromResource(resource)),
-      tap(user=>this.user.set(user))
+      tap(user=> {
+        this.user.set(user)
+        this.authService.currentUser.set(user);
+      })
     );
   }
 
@@ -39,7 +44,10 @@ export class IamStore {
         }
         return UserAssembler.toEntityFromResource(resource[0]);
       }),
-      tap(user=>this.user.set(user))
+      tap(user=>{
+        this.user.set(user);
+        this.authService.currentUser.set(user);
+      })
     );
   }
 }
