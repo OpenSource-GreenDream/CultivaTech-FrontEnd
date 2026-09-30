@@ -1,0 +1,31 @@
+.lang-pill-container {
+  display: inline-flex;
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  padding: 3px;
+  border: 1px solid #cbd5e1;
+  gap: 2px;
+}
+
+.lang-pill-btn {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  outline: none;
+}
+
+.lang-pill-btn:hover:not(.active) {
+  color: #1b4332;
+}
+
+.lang-pill-btn.active {
+  background-color: #1b4332;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}

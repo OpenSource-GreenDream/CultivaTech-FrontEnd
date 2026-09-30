@@ -43,6 +43,22 @@
       "click-3": "Regístrate aquí"
     }
   },
+  "layout": {
+    "nav": {
+      "home": "Inicio",
+      "monitoring": "Monitoreo",
+      "sensors": "Sensores",
+      "alerts": "Alertas",
+      "products": "Productos",
+      "notifications": "Notificaciones",
+      "profile": "Mi perfil"
+    },
+    "logout": "Cerrar sesión"
+  },
+  "home": {
+    "title": "Bienvenido a CultivaTech",
+    "description": "Selecciona una opción del menú lateral para gestionar tus cultivos, monitorear sensores y revisar alertas."
+  },
   "notification": {
     "types": {
       "SENSOR_ALERT": "Alertas de sensores",
