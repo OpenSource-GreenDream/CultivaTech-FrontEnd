@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { notificationAuthenticationGuard } from './notification/infrastructure/notification-authentication.guard';
+import { authenticationGuard } from './iam/infrastructure/authentication.guard';
 
 export const routes: Routes = [
   {
@@ -7,6 +7,8 @@ export const routes: Routes = [
     pathMatch: 'full',
     redirectTo: 'sign-in',
   },
+
+  // Public Routes: IAM
   {
     path: 'sign-in',
     loadComponent: () => import('./iam/presentation/views/sign-in/sign-in')
@@ -17,17 +19,33 @@ export const routes: Routes = [
     loadComponent: () => import('./iam/presentation/views/sign-up/sign-up')
       .then((view) => view.SignUp),
   },
+
+  // Private Routes
   {
-    path: 'dashboard',
-    pathMatch: 'full',
-    redirectTo: 'notifications',
+    path: '',
+    canActivate: [authenticationGuard],
+    loadComponent: () => import('./shared/presentation/components/layout/layout')
+      .then((m) => m.Layout),
+    children: [
+      {
+        path: 'dashboard',
+        redirectTo: 'home',
+        pathMatch: 'full',
+      },
+      {
+        path: 'home',
+        loadComponent: () => import('./shared/presentation/views/home/home')
+          .then((m) => m.Home),
+      },
+      {
+        path: 'notifications',
+        loadChildren: () => import('./notification/notification.routes')
+          .then((routes) => routes.NOTIFICATION_ROUTES),
+      },
+      // Other Bounded Contexts
+    ],
   },
-  {
-    path: 'notifications',
-    canActivate: [notificationAuthenticationGuard],
-    loadChildren: () => import('./notification/notification.routes')
-      .then((routes) => routes.NOTIFICATION_ROUTES),
-  },
+
   {
     path: '**',
     redirectTo: 'sign-in',
