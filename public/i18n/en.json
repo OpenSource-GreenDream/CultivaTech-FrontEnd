@@ -47,11 +47,13 @@
     "nav": {
       "home": "Home",
       "monitoring": "Monitoring",
+      "stock": "Stock",
       "sensors": "Sensors",
       "alerts": "Alerts",
       "products": "Products",
       "notifications": "Notifications",
       "profile": "My Profile"
+
     },
     "logout": "Sign Out"
   },

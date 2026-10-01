@@ -47,6 +47,7 @@
     "nav": {
       "home": "Inicio",
       "monitoring": "Monitoreo",
+      "stock": "Inventario",
       "sensors": "Sensores",
       "alerts": "Alertas",
       "products": "Productos",
