@@ -13,6 +13,7 @@
     </div>
   </div>
 
+
   <!-- BOTONES DE NAVEGACIÓN -->
 
   <div class="monitoring-tabs">
@@ -29,6 +30,35 @@
       (click)="goToHistory()">
       Historial de humedad
     </button>
+
+  </div>
+
+
+  <!-- FILTRO POR ZONA DE CULTIVO -->
+
+  <div
+    class="field-filter"
+    *ngIf="!loading && !errorMessage && fields.length > 0">
+
+    <label for="fieldSelect">
+      Zona de cultivo
+    </label>
+
+    <select
+      id="fieldSelect"
+      (change)="onFieldChange($event)">
+
+      <option value="">
+        Todas las zonas
+      </option>
+
+      <option
+        *ngFor="let field of fields"
+        [value]="field.id">
+        {{ field.name }}
+      </option>
+
+    </select>
 
   </div>
 
@@ -59,7 +89,7 @@
   </div>
 
 
-  <!-- SIN SENSORES -->
+  <!-- SIN SENSORES REGISTRADOS -->
 
   <div
     class="empty-state"
@@ -78,6 +108,26 @@
   </div>
 
 
+  <!-- SIN SENSORES EN LA ZONA SELECCIONADA -->
+
+  <div
+    class="empty-state"
+    *ngIf="
+      !loading &&
+      !errorMessage &&
+      sensors.length > 0 &&
+      filteredSensors.length === 0
+    ">
+
+    <h3>No hay sensores en esta zona</h3>
+
+    <p>
+      La zona de cultivo seleccionada no tiene sensores asociados.
+    </p>
+
+  </div>
+
+
   <!-- SENSORES -->
 
   <div
@@ -85,12 +135,12 @@
     *ngIf="
       !loading &&
       !errorMessage &&
-      sensors.length > 0
+      filteredSensors.length > 0
     ">
 
     <div
       class="sensor-card"
-      *ngFor="let sensor of sensors">
+      *ngFor="let sensor of filteredSensors">
 
       <div class="card-header">
 
