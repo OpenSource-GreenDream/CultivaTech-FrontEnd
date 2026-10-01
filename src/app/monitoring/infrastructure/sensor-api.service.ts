@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Sensor } from '../domain/model/sensor.entity';
@@ -9,23 +9,11 @@ import { SensorAssembler } from './sensor.assembler';
 
 const DEVICES_ENDPOINT = environment.devicesEndpoint;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class SensorApiService {
   private readonly http = inject(HttpClient);
 
   private readonly resourceUrl = `${environment.cultivatechBaseApi}${DEVICES_ENDPOINT}`;
-
-  getAll(): Observable<Sensor[]> {
-    return this.http
-      .get<SensorResource[]>(this.resourceUrl)
-      .pipe(
-        map((resources) =>
-          resources.map((resource) => SensorAssembler.toEntityFromResource(resource)),
-        ),
-      );
-  }
 
   create(request: SensorCreateRequest): Observable<Sensor> {
     const payload = {
