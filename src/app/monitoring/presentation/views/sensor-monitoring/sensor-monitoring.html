@@ -1,0 +1,165 @@
+<div class="monitoring-container">
+
+  <div class="header">
+    <div>
+      <p class="section-label">Monitoring Management</p>
+
+      <h1>Monitoreo de sensores</h1>
+
+      <p class="description">
+        Consulta los valores registrados por tus sensores y conoce
+        el estado de tus zonas de cultivo.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- CARGANDO -->
+
+  <div
+    class="empty-state"
+    *ngIf="loading">
+
+    <p>Cargando datos de monitoreo...</p>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    class="empty-state"
+    *ngIf="!loading && errorMessage">
+
+    <h3>Error al cargar el monitoreo</h3>
+
+    <p>
+      {{ errorMessage }}
+    </p>
+
+  </div>
+
+
+  <!-- SIN SENSORES -->
+
+  <div
+    class="empty-state"
+    *ngIf="
+      !loading &&
+      !errorMessage &&
+      sensors.length === 0
+    ">
+
+    <h3>No hay sensores registrados</h3>
+
+    <p>
+      Registra un sensor para comenzar a monitorear tu cultivo.
+    </p>
+
+  </div>
+
+
+  <!-- SENSORES -->
+
+  <div
+    class="sensor-grid"
+    *ngIf="
+      !loading &&
+      !errorMessage &&
+      sensors.length > 0
+    ">
+
+    <div
+      class="sensor-card"
+      *ngFor="let sensor of sensors">
+
+      <div class="card-header">
+
+        <div>
+          <p class="sensor-label">
+            Sensor
+          </p>
+
+          <h2>
+            {{ sensor.code }}
+          </h2>
+        </div>
+
+        <span class="status">
+          Registrado
+        </span>
+
+      </div>
+
+
+      <div class="field-info">
+
+        <span class="info-label">
+          Zona de cultivo
+        </span>
+
+        <strong>
+          {{ getFieldName(sensor.fieldId) }}
+        </strong>
+
+      </div>
+
+
+      <ng-container *ngIf="getReport(sensor.id) as report; else noReport">
+
+        <div class="value-section">
+
+          <p class="value-label">
+            Valor registrado
+          </p>
+
+          <div class="main-value">
+            {{ report.meanValue }}
+          </div>
+
+        </div>
+
+
+        <div class="report-details">
+
+          <div>
+            <span>Varianza</span>
+            <strong>{{ report.variance }}</strong>
+          </div>
+
+          <div>
+            <span>Desviación estándar</span>
+            <strong>{{ report.standardDeviation }}</strong>
+          </div>
+
+        </div>
+
+
+        <div class="interpretation">
+
+          <p class="interpretation-title">
+            Interpretación
+          </p>
+
+          <p>
+            {{ report.technicalInterpretation }}
+          </p>
+
+        </div>
+
+      </ng-container>
+
+
+      <ng-template #noReport>
+
+        <div class="no-report">
+          No existen datos registrados para este sensor.
+        </div>
+
+      </ng-template>
+
+    </div>
+
+  </div>
+
+</div>
