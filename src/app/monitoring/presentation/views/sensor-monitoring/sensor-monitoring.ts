@@ -22,6 +22,9 @@ export class SensorMonitoring implements OnInit {
   fields: Field[] = [];
   reports: Report[] = [];
 
+  // US12 - Zona seleccionada
+  selectedFieldId: number | null = null;
+
   loading = true;
   errorMessage = '';
 
@@ -101,6 +104,20 @@ export class SensorMonitoring implements OnInit {
 
   getReport(sensorId: number): Report | undefined {
     return this.reports.find((report) => Number(report.deviceId) === Number(sensorId));
+  }
+
+  onFieldChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+
+    this.selectedFieldId = value === '' ? null : Number(value);
+  }
+
+  get filteredSensors(): Sensor[] {
+    if (this.selectedFieldId === null) {
+      return this.sensors;
+    }
+
+    return this.sensors.filter((sensor) => Number(sensor.fieldId) === Number(this.selectedFieldId));
   }
 
   goToHistory(): void {
