@@ -46,6 +46,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./monitoring/monitoring.routes').then((routes) => routes.MONITORING_ROUTES),
       },
+      {
+        path: 'stock',
+        loadChildren: () =>
+          import('./stock/stock.routes').then((routes) => routes.STOCK_ROUTES),
+      },
       // Other Bounded Contexts
     ],
   },
