@@ -89,5 +89,26 @@
       "all-fields": "All zones",
       "toggle-label": "Enable or disable {{type}} notifications"
     }
+  },
+  "stock": {
+    "supply": {
+      "title": "Register agricultural input",
+      "description": "Add a new agricultural input to your inventory"
+    },
+    "form": {
+      "name": "Input name",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "name-placeholder": "e.g. Organic fertilizer",
+      "quantity-placeholder": "e.g. 25",
+      "unit-placeholder": "e.g. kg",
+      "error-name-required": "Input name is required",
+      "error-quantity-required": "Quantity is required",
+      "error-quantity-min": "Quantity must be greater than zero",
+      "error-unit-required": "Unit is required"
+    },
+    "submit": {
+      "register": "Register input"
+    }
   }
 }

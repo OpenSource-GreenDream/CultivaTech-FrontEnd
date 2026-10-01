@@ -89,5 +89,26 @@
       "all-fields": "Todas las zonas",
       "toggle-label": "Activar o desactivar las notificaciones de {{type}}"
     }
+  },
+  "stock": {
+    "supply": {
+      "title": "Registrar insumo agrícola",
+      "description": "Agrega un nuevo insumo agrícola a tu inventario"
+    },
+    "form": {
+      "name": "Nombre del insumo",
+      "quantity": "Cantidad",
+      "unit": "Unidad",
+      "name-placeholder": "Ej. Fertilizante orgánico",
+      "quantity-placeholder": "Ej. 25",
+      "unit-placeholder": "Ej. kg",
+      "error-name-required": "El nombre del insumo es obligatorio",
+      "error-quantity-required": "La cantidad es obligatoria",
+      "error-quantity-min": "La cantidad debe ser mayor que cero",
+      "error-unit-required": "La unidad es obligatoria"
+    },
+    "submit": {
+      "register": "Registrar insumo"
+    }
   }
 }
