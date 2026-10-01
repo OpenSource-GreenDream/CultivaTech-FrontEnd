@@ -1,0 +1,82 @@
+<div class="sensor-register-container">
+
+  <div class="page-header">
+    <p class="section-label">Monitoring Management</p>
+
+    <h1>Registrar sensor</h1>
+
+    <p class="description">
+      Registra un nuevo sensor y asígnalo a una zona de cultivo.
+    </p>
+  </div>
+
+  <div class="register-card">
+
+    <div class="form-group">
+      <label for="sensorCode">
+        Código del sensor
+      </label>
+
+      <input
+        id="sensorCode"
+        type="text"
+        [(ngModel)]="code"
+        placeholder="Ej. SENSOR-006"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="field">
+        Zona de cultivo
+      </label>
+
+      <select
+        id="field"
+        [(ngModel)]="fieldId"
+        [disabled]="loadingFields"
+      >
+        <option [ngValue]="null">
+          {{ loadingFields ? 'Cargando zonas...' : 'Selecciona una zona' }}
+        </option>
+
+        <option
+          *ngFor="let field of fields"
+          [ngValue]="field.id"
+        >
+          {{ field.name }}
+        </option>
+      </select>
+    </div>
+
+    <p
+      class="error-message"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+    </p>
+
+    <div class="actions">
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="cancel()"
+        [disabled]="saving"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        class="register-button"
+        (click)="registerSensor()"
+        [disabled]="saving || loadingFields"
+      >
+        {{ saving ? 'Registrando...' : 'Registrar sensor' }}
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

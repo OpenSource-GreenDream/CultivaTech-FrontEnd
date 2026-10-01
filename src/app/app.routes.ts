@@ -11,21 +11,21 @@ export const routes: Routes = [
   // Public Routes: IAM
   {
     path: 'sign-in',
-    loadComponent: () => import('./iam/presentation/views/sign-in/sign-in')
-      .then((view) => view.SignIn),
+    loadComponent: () =>
+      import('./iam/presentation/views/sign-in/sign-in').then((view) => view.SignIn),
   },
   {
     path: 'sign-up',
-    loadComponent: () => import('./iam/presentation/views/sign-up/sign-up')
-      .then((view) => view.SignUp),
+    loadComponent: () =>
+      import('./iam/presentation/views/sign-up/sign-up').then((view) => view.SignUp),
   },
 
   // Private Routes
   {
     path: '',
     canActivate: [authenticationGuard],
-    loadComponent: () => import('./shared/presentation/components/layout/layout')
-      .then((m) => m.Layout),
+    loadComponent: () =>
+      import('./shared/presentation/components/layout/layout').then((m) => m.Layout),
     children: [
       {
         path: 'dashboard',
@@ -34,13 +34,17 @@ export const routes: Routes = [
       },
       {
         path: 'home',
-        loadComponent: () => import('./shared/presentation/views/home/home')
-          .then((m) => m.Home),
+        loadComponent: () => import('./shared/presentation/views/home/home').then((m) => m.Home),
       },
       {
         path: 'notifications',
-        loadChildren: () => import('./notification/notification.routes')
-          .then((routes) => routes.NOTIFICATION_ROUTES),
+        loadChildren: () =>
+          import('./notification/notification.routes').then((routes) => routes.NOTIFICATION_ROUTES),
+      },
+      {
+        path: 'monitoring',
+        loadChildren: () =>
+          import('./monitoring/monitoring.routes').then((routes) => routes.MONITORING_ROUTES),
       },
       // Other Bounded Contexts
     ],

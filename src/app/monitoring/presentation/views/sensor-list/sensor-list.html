@@ -1,0 +1,127 @@
+<div class="sensor-container">
+
+  <div class="header">
+
+    <div>
+      <p class="section-label">
+        Monitoring Management
+      </p>
+
+      <h1>Sensores registrados</h1>
+
+      <p class="description">
+        Consulta los sensores asociados a tus zonas de cultivo.
+      </p>
+    </div>
+
+    <button
+      class="register-button"
+      (click)="registerSensor()">
+      + Registrar sensor
+    </button>
+
+  </div>
+
+
+  <div class="sensor-card">
+
+    <div class="card-header">
+
+      <h2>Mis sensores</h2>
+
+      <span
+        class="sensor-count"
+        *ngIf="!loading">
+        {{ sensors.length }} sensores
+      </span>
+
+    </div>
+
+
+    <!-- CARGANDO -->
+
+    <div
+      class="empty-state"
+      *ngIf="loading">
+
+      <p>Cargando sensores...</p>
+
+    </div>
+
+
+    <!-- ERROR -->
+
+    <div
+      class="empty-state"
+      *ngIf="!loading && errorMessage">
+
+      <h3>Error al cargar sensores</h3>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+    </div>
+
+
+    <!-- SIN SENSORES -->
+
+    <div
+      class="empty-state"
+      *ngIf="
+        !loading &&
+        !errorMessage &&
+        sensors.length === 0
+      ">
+
+      <h3>No hay sensores registrados</h3>
+
+      <p>
+        Registra un sensor para comenzar a monitorear tu cultivo.
+      </p>
+
+    </div>
+
+
+    <!-- LISTA DE SENSORES -->
+
+    <table
+      *ngIf="
+        !loading &&
+        !errorMessage &&
+        sensors.length > 0
+      ">
+
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Código</th>
+        <th>Zona de cultivo</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <tr *ngFor="let sensor of sensors">
+
+        <td>
+          {{ sensor.id }}
+        </td>
+
+        <td class="sensor-code">
+          {{ sensor.code }}
+        </td>
+
+        <td>
+          {{ getFieldName(sensor.fieldId) }}
+        </td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
