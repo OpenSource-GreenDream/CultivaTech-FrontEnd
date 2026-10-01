@@ -3,8 +3,10 @@ import { Routes } from '@angular/router';
 export const MONITORING_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'sensors',
-    pathMatch: 'full',
+    loadComponent: () =>
+      import('./presentation/views/sensor-monitoring/sensor-monitoring').then(
+        (m) => m.SensorMonitoring,
+      ),
   },
   {
     path: 'sensors',
@@ -15,5 +17,10 @@ export const MONITORING_ROUTES: Routes = [
     path: 'sensors/register',
     loadComponent: () =>
       import('./presentation/views/sensor-register/sensor-register').then((m) => m.SensorRegister),
+  },
+  {
+    path: 'sensor-history',
+    loadComponent: () =>
+      import('./presentation/views/sensor-history/sensor-history').then((m) => m.SensorHistory),
   },
 ];

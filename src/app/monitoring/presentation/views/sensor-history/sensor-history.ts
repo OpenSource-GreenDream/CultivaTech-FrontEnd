@@ -2,42 +2,42 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
+import { Report } from '../../../domain/model/report.entity';
 import { Sensor } from '../../../domain/model/sensor.entity';
 import { Field } from '../../../domain/model/field.entity';
-import { Report } from '../../../domain/model/report.entity';
 
+import { ReportApiService } from '../../../infrastructure/report-api.service';
 import { SensorApiService } from '../../../infrastructure/sensor-api.service';
 import { FieldApiService } from '../../../infrastructure/field-api.service';
-import { ReportApiService } from '../../../infrastructure/report-api.service';
 
 @Component({
-  selector: 'app-sensor-monitoring',
+  selector: 'app-sensor-history',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './sensor-monitoring.html',
-  styleUrl: './sensor-monitoring.css',
+  templateUrl: './sensor-history.html',
+  styleUrl: './sensor-history.css',
 })
-export class SensorMonitoring implements OnInit {
+export class SensorHistory implements OnInit {
+  reports: Report[] = [];
   sensors: Sensor[] = [];
   fields: Field[] = [];
-  reports: Report[] = [];
 
   loading = true;
   errorMessage = '';
 
   constructor(
+    private readonly reportApiService: ReportApiService,
     private readonly sensorApiService: SensorApiService,
     private readonly fieldApiService: FieldApiService,
-    private readonly reportApiService: ReportApiService,
-    private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadFields();
   }
 
-  loadData(): void {
+  private loadFields(): void {
     this.loading = true;
     this.errorMessage = '';
 
@@ -58,13 +58,6 @@ export class SensorMonitoring implements OnInit {
     this.sensorApiService.getAll().subscribe({
       next: (sensors: Sensor[]) => {
         this.sensors = [...sensors];
-
-        if (this.sensors.length === 0) {
-          this.loading = false;
-          this.cdr.detectChanges();
-          return;
-        }
-
         this.loadReports();
       },
 
@@ -78,37 +71,45 @@ export class SensorMonitoring implements OnInit {
   private loadReports(): void {
     this.reportApiService.getAll().subscribe({
       next: (reports: Report[]) => {
-        this.reports = [...reports];
+        this.reports = [...reports].sort(
+          (a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime(),
+        );
+
         this.loading = false;
-
-        console.log('REPORTES RECIBIDOS:', reports);
-
         this.cdr.detectChanges();
       },
 
       error: (error) => {
-        console.error('ERROR CARGANDO REPORTES:', error);
+        console.error('ERROR CARGANDO HISTORIAL:', error);
         this.handleError();
       },
     });
   }
 
-  getFieldName(fieldId: number): string {
-    const field = this.fields.find((item) => Number(item.id) === Number(fieldId));
+  getSensorCode(deviceId: number): string {
+    const sensor = this.sensors.find((item) => Number(item.id) === Number(deviceId));
 
-    return field ? field.name : `Campo ${fieldId}`;
+    return sensor ? sensor.code : `Sensor ${deviceId}`;
   }
 
-  getReport(sensorId: number): Report | undefined {
-    return this.reports.find((report) => Number(report.deviceId) === Number(sensorId));
+  getFieldName(deviceId: number): string {
+    const sensor = this.sensors.find((item) => Number(item.id) === Number(deviceId));
+
+    if (!sensor) {
+      return 'Sin zona';
+    }
+
+    const field = this.fields.find((item) => Number(item.id) === Number(sensor.fieldId));
+
+    return field ? field.name : `Campo ${sensor.fieldId}`;
   }
 
-  goToHistory(): void {
-    this.router.navigate(['/monitoring/sensor-history']);
+  goToSummary(): void {
+    this.router.navigate(['/monitoring']);
   }
 
   private handleError(): void {
-    this.errorMessage = 'No se pudieron cargar los datos de monitoreo.';
+    this.errorMessage = 'No se pudo cargar el historial de humedad.';
     this.loading = false;
     this.cdr.detectChanges();
   }
