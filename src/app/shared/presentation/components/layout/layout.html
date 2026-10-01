@@ -8,10 +8,10 @@
       <a routerLink="/home" routerLinkActive="active" class="nav-item">
         {{ 'layout.nav.home' | translate }}
       </a>
-      <a routerLink="/monitoring" routerLinkActive="active" class="nav-item">
+      <a routerLink="/monitoring" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
         {{ 'layout.nav.monitoring' | translate }}
       </a>
-      <a routerLink="/sensors" routerLinkActive="active" class="nav-item">
+      <a routerLink="/monitoring/sensors" routerLinkActive="active"  class="nav-item">
         {{ 'layout.nav.sensors' | translate }}
       </a>
       <a routerLink="/alerts" routerLinkActive="active" class="nav-item">
