@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, effect, input, output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -36,5 +36,9 @@ export class SupplyForm {
     } else {
       this.supplyForm.markAllAsTouched();
     }
+  }
+
+  reset(): void {
+    this.supplyForm.reset();
   }
 }
