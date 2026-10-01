@@ -111,6 +111,9 @@
     },
     "submit": {
       "register": "Register input"
+    },
+    "success": {
+      "registered": "Input registered successfully"
     }
   }
 }

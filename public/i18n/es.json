@@ -110,6 +110,9 @@
     },
     "submit": {
       "register": "Registrar insumo"
+    },
+    "success": {
+      "registered": "Insumo registrado correctamente"
     }
   }
 }
