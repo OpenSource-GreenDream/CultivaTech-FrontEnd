@@ -1,5 +1,3 @@
-import { NotificationType } from '../domain/model/notification-type.enum';
-
 export interface NotificationResource {
   id: number;
   profile_id: number;
@@ -7,7 +5,7 @@ export interface NotificationResource {
   message: string;
   is_read: boolean;
   is_alert: boolean;
-  type: NotificationType;
+  type: string;
   field_id: number | null;
   created_at: string;
   updated_at: string;

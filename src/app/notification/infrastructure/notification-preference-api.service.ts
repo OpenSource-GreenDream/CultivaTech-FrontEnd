@@ -14,6 +14,14 @@ export interface NotificationFieldOption {
   name: string;
 }
 
+interface CollectionResource<T> {
+  value: T[];
+}
+
+function unwrapCollection<T>(response: T[] | CollectionResource<T>): T[] {
+  return Array.isArray(response) ? response : response.value;
+}
+
 @Service()
 export class NotificationPreferenceApiService {
   private readonly http = inject(HttpClient);
@@ -23,14 +31,16 @@ export class NotificationPreferenceApiService {
   getFieldsByProfile(profileId: number): Observable<NotificationFieldOption[]> {
     const params = new HttpParams().set('profile_id', profileId);
 
-    return this.http.get<NotificationFieldOption[]>(this.fieldsUrl, { params });
+    return this.http.get<NotificationFieldOption[] | CollectionResource<NotificationFieldOption>>(this.fieldsUrl, { params }).pipe(
+      map(unwrapCollection),
+    );
   }
 
   getByProfile(profileId: number): Observable<NotificationPreference[]> {
     const params = new HttpParams().set('profile_id', profileId);
 
-    return this.http.get<NotificationPreferenceResource[]>(this.resourceUrl, { params }).pipe(
-      map((resources) => resources.map(NotificationPreferenceAssembler.toEntityFromResource)),
+    return this.http.get<NotificationPreferenceResource[] | CollectionResource<NotificationPreferenceResource>>(this.resourceUrl, { params }).pipe(
+      map((response) => unwrapCollection(response).map(NotificationPreferenceAssembler.toEntityFromResource)),
     );
   }
 

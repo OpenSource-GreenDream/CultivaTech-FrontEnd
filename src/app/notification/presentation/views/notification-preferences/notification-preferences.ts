@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { AuthService } from '../../../../iam/application/auth.service';
+import { IamStore } from '../../../../iam/application/iam.store';
 import { NotificationPreference } from '../../../domain/model/notification-preference.entity';
 import { NotificationType } from '../../../domain/model/notification-type.enum';
 import { NotificationApiService } from '../../../infrastructure/notification-api.service';
@@ -22,6 +23,7 @@ import {
 })
 export class NotificationPreferences implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly iamStore = inject(IamStore);
   private readonly notificationApi = inject(NotificationApiService);
   private readonly preferenceApi = inject(NotificationPreferenceApiService);
 
@@ -35,7 +37,7 @@ export class NotificationPreferences implements OnInit {
   readonly savingTypes = signal<NotificationType[]>([]);
 
   ngOnInit(): void {
-    const user = this.authService.currentUser();
+    const user = this.authService.currentUser() ?? this.iamStore.user();
     if (user === null) {
       this.hasError.set(true);
       return;
@@ -49,8 +51,12 @@ export class NotificationPreferences implements OnInit {
         }
         this.profileId.set(profileId);
         return forkJoin({
-          preferences: this.preferenceApi.getByProfile(profileId),
-          fields: this.preferenceApi.getFieldsByProfile(profileId),
+          preferences: this.preferenceApi.getByProfile(profileId).pipe(
+            catchError(() => of([])),
+          ),
+          fields: this.preferenceApi.getFieldsByProfile(profileId).pipe(
+            catchError(() => of([])),
+          ),
         });
       }),
       catchError(() => {
