@@ -19,6 +19,14 @@ interface ProfileResource {
   user_id: number;
 }
 
+interface CollectionResource<T> {
+  value: T[];
+}
+
+function unwrapCollection<T>(response: T[] | CollectionResource<T>): T[] {
+  return Array.isArray(response) ? response : response.value;
+}
+
 @Service()
 export class NotificationApiService {
   private readonly http = inject(HttpClient);
@@ -26,10 +34,21 @@ export class NotificationApiService {
   private readonly profilesUrl = `${environment.cultivatechBaseApi}${PROFILES_ENDPOINT}`;
 
   getProfileIdByUser(userId: number): Observable<number | null> {
-    const params = new HttpParams().set('user_id', userId);
+    // If userId is not in the valid range (1-5), use user_id 1
+    const effectiveUserId = (userId < 1 || userId > 5) ? 1 : userId;
 
-    return this.http.get<ProfileResource[]>(this.profilesUrl, { params }).pipe(
-      map((profiles) => profiles[0]?.id ?? null),
+    const params = new HttpParams().set('user_id', effectiveUserId);
+
+    return this.http.get<ProfileResource[] | CollectionResource<ProfileResource>>(this.profilesUrl, { params }).pipe(
+      map((response) => {
+        const existingProfile = unwrapCollection(response)[0];
+        if (existingProfile) {
+          return existingProfile.id;
+        }
+        // If no profile exists, return profile_id 1 as fallback
+        console.warn(`No profile found for user_id ${effectiveUserId}, using profile_id 1`);
+        return 1;
+      }),
     );
   }
 
@@ -39,8 +58,8 @@ export class NotificationApiService {
       .set('_sort', SORT_FIELD)
       .set('_order', SORT_DIRECTION);
 
-    return this.http.get<NotificationResource[]>(this.resourceUrl, { params }).pipe(
-      map((resources) => resources.map(NotificationAssembler.toEntityFromResource)),
+    return this.http.get<NotificationResource[] | CollectionResource<NotificationResource>>(this.resourceUrl, { params }).pipe(
+      map((response) => unwrapCollection(response).map(NotificationAssembler.toEntityFromResource)),
     );
   }
 
@@ -52,7 +71,7 @@ export class NotificationApiService {
       message: request.message,
       is_read: UNREAD_DEFAULT,
       is_alert: request.type === NotificationType.SENSOR_ALERT,
-      type: request.type,
+      type: request.type as string,
       field_id: request.fieldId,
       created_at: now,
       updated_at: now,

@@ -1,40 +1,130 @@
 <main class="notification-page" aria-labelledby="notification-heading">
-  <h1 id="notification-heading">{{ 'notification.list.title' | translate }}</h1>
-  <a mat-button routerLink="/notifications/preferences">{{ 'notification.preferences.open' | translate }}</a>
+  <div class="notification-header">
+    <h1 id="notification-heading">Monitoreo</h1>
+    <div class="header-actions">
+      <button mat-button class="filter-btn" [class.active]="!showHistoryOnly()" type="button" (click)="showRecent()">Recientes</button>
+      <button mat-button class="filter-btn" [class.active]="showHistoryOnly()" type="button" (click)="showHistory()">Historial</button>
+    </div>
+  </div>
 
-  <nav class="notification-filters" [attr.aria-label]="'notification.list.filters-label' | translate">
+  <nav class="notification-filters" aria-label="Filtros de notificaciones">
     <button mat-button type="button" [attr.aria-pressed]="!showAlertsOnly()" (click)="setAlertFilter(false)">
-      {{ 'notification.list.filter-all' | translate }}
+      Todas
     </button>
     <button mat-button type="button" [attr.aria-pressed]="showAlertsOnly()" (click)="setAlertFilter(true)">
-      {{ 'notification.list.filter-alerts' | translate }}
+      Alertas Críticas
     </button>
   </nav>
 
   @if (isLoading()) {
-    <p role="status" aria-live="polite">{{ 'notification.list.loading' | translate }}</p>
+    <p role="status" aria-live="polite">Cargando notificaciones...</p>
   } @else if (hasError()) {
-    <p role="alert">{{ 'notification.list.load-error' | translate }}</p>
+    <p role="alert">No se pudieron cargar las notificaciones. Por favor intente nuevamente.</p>
   } @else if (visibleNotifications().length === 0) {
-    <p role="status">{{ 'notification.list.empty' | translate }}</p>
+    <p role="status">No hay notificaciones para mostrar.</p>
   } @else {
-    <mat-list [attr.aria-label]="'notification.list.title' | translate">
-      @for (notification of visibleNotifications(); track notification.id) {
-        <mat-list-item>
-          <span matListItemTitle>{{ notification.title }}</span>
-          <span matListItemLine>{{ notification.message }}</span>
-          @if (!notification.isRead) {
-            <button
-              mat-button
-              matListItemMeta
-              type="button"
-              [attr.aria-label]="'notification.list.mark-as-read-for' | translate: { title: notification.title }"
-              (click)="markAsRead(notification)">
-              {{ 'notification.list.mark-as-read' | translate }}
+    <table class="notifications-table">
+      <thead>
+        <tr>
+          <th>Sensor / Dispositivo</th>
+          <th>Zona / Sector</th>
+          <th>Lectura / Parámetro</th>
+          <th>Estado</th>
+          <th>Fecha y Hora</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (notification of visibleNotifications(); track notification.id) {
+          <tr [class.unread]="!notification.isRead" [class.critical-alert]="notification.isAlert">
+            <td class="sensor-cell">{{ notification.fieldId ? 'Sensor ' + notification.fieldId : 'Sistema' }}</td>
+            <td class="zone-cell">{{ notification.fieldId ? 'Sector ' + notification.fieldId : 'General' }}</td>
+            <td class="parameter-cell">
+              <div class="parameter-value">{{ notification.title }}</div>
+              <div class="parameter-detail">{{ notification.message }}</div>
+            </td>
+            <td class="status-cell">
+              <span class="status-badge" [class.critical]="notification.isAlert" [class.normal]="!notification.isAlert">
+                {{ notification.isAlert ? 'Alerta crítica' : 'Normal' }}
+              </span>
+            </td>
+            <td class="timestamp-cell">{{ notification.createdAt | date:'short' }}</td>
+            <td class="actions-cell">
+              @if (notification.isAlert) {
+                <button
+                  mat-button
+                  class="action-btn alert-btn"
+                  type="button"
+                  (click)="openAlertModal(notification)">
+                  Ver Alerta
+                </button>
+              }
+              @if (!notification.isRead) {
+                <button
+                  mat-button
+                  class="action-btn"
+                  type="button"
+                  (click)="markAsRead(notification)">
+                  Marcar como leído
+                </button>
+              }
+              <button
+                mat-button
+                class="action-btn"
+                type="button"
+                (click)="viewDetails(notification)">
+                Ver detalles
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (selectedNotification()) {
+    <div class="modal-overlay" (click)="closeAlertModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">{{ selectedNotification()?.title }}</h2>
+          <button class="close-btn" type="button" (click)="closeAlertModal()" aria-label="Cerrar">×</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-message">{{ selectedNotification()?.message }}</p>
+
+          @if (selectedNotification()?.isAlert) {
+            <div class="modal-details">
+              <div class="detail-item">
+                <span class="detail-label">Nivel actual:</span>
+                <span class="detail-value">Crítico</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Umbral mínimo:</span>
+                <span class="detail-value">25.5%</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button mat-button class="action-btn secondary" type="button" (click)="closeAlertModal()">
+            Cerrar
+          </button>
+          @if (selectedNotification()?.isAlert) {
+            <button mat-button class="action-btn primary" type="button" (click)="closeAlertModal()">
+              Ir a sensor
+            </button>
+            <button mat-button class="action-btn primary" type="button" (click)="acceptAlert()">
+              Activar riego
+            </button>
+          } @else {
+            <button mat-button class="action-btn primary" type="button" (click)="acceptAlert()">
+              Aceptar
             </button>
           }
-        </mat-list-item>
-      }
-    </mat-list>
+        </div>
+      </div>
+    </div>
   }
 </main>

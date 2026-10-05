@@ -25,7 +25,7 @@ describe('NotificationPreferenceApiService', () => {
     const resource: NotificationPreferenceResource = {
       id: 4,
       profile_id: 12,
-      type: NotificationType.SENSOR_ALERT,
+      type: 'SENSOR_ALERT',
       field_id: null,
       enabled: true,
       created_at: '2026-09-22T00:00:00Z',
@@ -75,7 +75,7 @@ describe('NotificationPreferenceApiService', () => {
     const resource: NotificationPreferenceResource = {
       id: preference.id,
       profile_id: preference.profileId,
-      type: preference.type,
+      type: 'SENSOR_ALERT',
       field_id: preference.fieldId,
       enabled: preference.enabled,
       created_at: preference.createdAt,
@@ -98,7 +98,7 @@ describe('NotificationPreferenceApiService', () => {
     const resource: NotificationPreferenceResource = {
       id: 15,
       profile_id: 12,
-      type: NotificationType.SENSOR_ALERT,
+      type: 'SENSOR_ALERT',
       field_id: 7,
       enabled: false,
       created_at: '2026-09-22T00:00:00Z',
@@ -114,7 +114,7 @@ describe('NotificationPreferenceApiService', () => {
     );
     expect(request.request.method).toBe('POST');
     expect(request.request.body.profile_id).toBe(12);
-    expect(request.request.body.type).toBe(NotificationType.SENSOR_ALERT);
+    expect(request.request.body.type).toBe('SENSOR_ALERT');
     expect(request.request.body.field_id).toBe(7);
     expect(request.request.body.enabled).toBe(false);
     request.flush(resource);

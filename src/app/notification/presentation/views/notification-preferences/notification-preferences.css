@@ -5,6 +5,84 @@
   max-inline-size: 64rem;
 }
 
-.preference-list {
-  list-style: none;
+.preferences-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.preferences-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.back-link {
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.preferences-content {
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+}
+
+.field-selector {
+  margin-bottom: 2rem;
+}
+
+.field-selector mat-form-field {
+  width: 100%;
+}
+
+.preferences-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.preference-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.preference-item:last-child {
+  border-bottom: none;
+}
+
+.preference-info {
+  flex: 1;
+}
+
+.preference-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.preference-description {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+}
+
+.save-button {
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+}
+
+.save-button:disabled {
+  cursor: not-allowed;
 }

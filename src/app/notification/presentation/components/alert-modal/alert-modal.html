@@ -1,0 +1,41 @@
+<div mat-dialog-content>
+  <div class="alert-header">
+    <h2 class="alert-title">{{ notification?.title }}</h2>
+    <button class="close-btn" type="button" (click)="close()" aria-label="Cerrar">×</button>
+  </div>
+
+  <div class="alert-body">
+    <p class="alert-message">{{ notification?.message }}</p>
+
+    @if (notification?.isAlert) {
+      <div class="alert-details">
+        <div class="detail-item">
+          <span class="detail-label">Nivel actual:</span>
+          <span class="detail-value">Crítico</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Umbral mínimo:</span>
+          <span class="detail-value">25.5%</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="alert-actions" mat-dialog-actions>
+    <button mat-button class="action-btn secondary" type="button" (click)="close()">
+      Cerrar
+    </button>
+    @if (notification?.isAlert) {
+      <button mat-button class="action-btn primary" type="button" (click)="goToSensor()">
+        Ir a sensor
+      </button>
+      <button mat-button class="action-btn primary" type="button" (click)="accept()">
+        Activar riego
+      </button>
+    } @else {
+      <button mat-button class="action-btn primary" type="button" (click)="accept()">
+        Aceptar
+      </button>
+    }
+  </div>
+</div>
