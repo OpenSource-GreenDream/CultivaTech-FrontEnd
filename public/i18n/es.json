@@ -134,6 +134,21 @@
       "submit": {
         "register": "Registrar movimiento"
       }
+    },
+
+    "history": {
+      "title": "Historial de movimientos",
+      "description": "Revisa las entradas y salidas registradas en tu inventario",
+      "empty-title": "No hay movimientos registrados",
+      "empty-description": "No existen movimientos de stock disponibles para mostrar.",
+      "table": {
+        "supply": "ID del insumo",
+        "type": "Tipo de movimiento",
+        "quantity": "Cantidad",
+        "date": "Fecha",
+        "entry": "Entrada de stock",
+        "exit": "Salida de stock"
+      }
     }
   }
 }
