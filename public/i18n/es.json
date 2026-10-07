@@ -133,6 +133,9 @@
       },
       "submit": {
         "register": "Registrar movimiento"
+      },
+      "success": {
+        "registered": "Movimiento de stock registrado correctamente"
       }
     },
 
