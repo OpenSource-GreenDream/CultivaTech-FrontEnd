@@ -48,12 +48,12 @@
       "home": "Home",
       "monitoring": "Monitoring",
       "stock": "Stock",
+      "stock-movements": "Stock movements",
       "sensors": "Sensors",
       "alerts": "Alerts",
       "products": "Products",
       "notifications": "Notifications",
       "profile": "My Profile"
-
     },
     "logout": "Sign Out"
   },
