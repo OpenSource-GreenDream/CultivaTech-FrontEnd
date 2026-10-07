@@ -1,4 +1,4 @@
-import { StockMovementType } from '../domain/model/stock-movement-type';
+import { StockMovementType } from '../domain/model';
 
 export interface StockMovementResource {
   id: string;
