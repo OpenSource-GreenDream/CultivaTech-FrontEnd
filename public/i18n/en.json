@@ -135,6 +135,21 @@
       "submit": {
         "register": "Registrar movimiento"
       }
+    },
+
+    "history": {
+      "title": "Stock movement history",
+      "description": "Review the entries and exits recorded in your inventory",
+      "empty-title": "No movements recorded",
+      "empty-description": "There are no stock movements available to display.",
+      "table": {
+        "supply": "Input ID",
+        "type": "Movement type",
+        "quantity": "Quantity",
+        "date": "Date",
+        "entry": "Stock entry",
+        "exit": "Stock exit"
+      }
     }
   }
 }
