@@ -117,24 +117,25 @@
     },
 
     "movement": {
-      "title": "Registrar movimiento de stock",
-      "description": "Registra una entrada o salida de un insumo agrícola",
+      "title": "Register stock movement",
+      "description": "Register an entry or exit of an agricultural input",
       "form": {
-        "supply": "ID del insumo",
-        "supply-placeholder": "Ej. supply-001",
-        "type": "Tipo de movimiento",
-        "type-in": "Entrada de stock",
-        "type-out": "Salida de stock",
-        "quantity": "Cantidad",
-        "quantity-placeholder": "Ej. 10",
-        "error-supply-required": "El ID del insumo es obligatorio",
-        "error-type-required": "El tipo de movimiento es obligatorio",
-        "error-quantity-required": "La cantidad es obligatoria",
-        "error-quantity-min": "La cantidad debe ser mayor que cero"
+        "supply": "Input ID",
+        "supply-placeholder": "e.g. supply-001",
+        "type": "Movement type",
+        "type-in": "Stock entry",
+        "type-out": "Stock exit",
+        "quantity": "Quantity",
+        "quantity-placeholder": "e.g. 10",
+        "error-supply-required": "Input ID is required",
+        "error-type-required": "Movement type is required",
+        "error-quantity-required": "Quantity is required",
+        "error-quantity-min": "Quantity must be greater than zero"
       },
       "submit": {
-        "register": "Registrar movimiento"
-      }
+        "register": "Register movement"
+      },
+      "registered": "Stock movement registered successfully"
     },
 
     "history": {
