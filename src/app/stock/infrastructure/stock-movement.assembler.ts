@@ -1,5 +1,5 @@
 import { Service } from '@angular/core';
-import { StockMovement } from '../domain/model/stock-movement.entity';
+import { StockMovement } from '../domain/model';
 import { StockMovementResource } from './stock-movement-response';
 
 @Service()
