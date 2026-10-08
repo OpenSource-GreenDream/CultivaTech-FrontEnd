@@ -1,4 +1,4 @@
-import {FieldResource} from './field.response';
+import {FieldResource} from './field-response';
 import {Field} from '../domain/model/field.entity';
 import {Service} from '@angular/core';
 

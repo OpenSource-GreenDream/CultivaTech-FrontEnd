@@ -1,4 +1,4 @@
-import {InventoryResource} from './inventory-resource';
+import {InventoryResource} from './inventory-response';
 import {Inventory} from '../domain/model/inventory.entity';
 import {Service} from '@angular/core';
 

@@ -60,8 +60,8 @@ export const routes: Routes = [
       },
       {
         path: 'analytics',
-        loadChildren: () =>
-          import('./analytics/components/analytics-dashboard/analytics-dashboard').then((m) => m.AnalyticsDashboardComponent),
+        loadComponent: () => import('./analytics/presentation/views/analytics-dashboard/analytics-dashboard')
+          .then((m) => m.AnalyticsDashboardComponent),
       }
       // Other Bounded Contexts
     ],
