@@ -48,11 +48,11 @@ export const routes: Routes = [
           import('./profile/presentation/views/profile-management/profile-management')
             .then((m) => m.ProfileManagementComponent),
       },
-      //{
-      //  path: 'stock',
-      //  loadChildren: () =>
-      //    import('./stock/stock.routes').then((routes) => routes.STOCK_ROUTES),
-      //},
+      {
+        path: 'stock',
+        loadChildren: () =>
+          import('./stock/stock.routes').then((routes) => routes.STOCK_ROUTES),
+      },
       // Other Bounded Contexts
     ],
   },
