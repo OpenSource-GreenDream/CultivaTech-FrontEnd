@@ -1,0 +1,16 @@
+<div class="stock-page-container">
+  @if (successMessage) {
+    <div class="success-message">
+      <span>✓</span>
+      {{ "stock.update.success" | translate }}
+    </div>
+  }
+
+  <div class="form-section">
+    <app-update-stock-form (submitForm)="onUpdateStock($event)"></app-update-stock-form>
+  </div>
+
+  <div class="list-section">
+    <app-inventory-list [inventories]="inventories()"></app-inventory-list>
+  </div>
+</div>

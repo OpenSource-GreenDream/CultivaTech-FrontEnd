@@ -1,0 +1,41 @@
+<div class="card-container">
+  <div class="card-header">
+    <h2>{{ "stock.update.title" | translate }}</h2>
+    <p>{{ "stock.update.description" | translate }}</p>
+  </div>
+
+  <form [formGroup]="stockForm" (ngSubmit)="onSubmit()" class="form-content">
+    <div class="form-group">
+      <label for="inventoryId">{{ "stock.form.inventory-id" | translate }}</label>
+      <input
+        id="inventoryId"
+        type="number"
+        formControlName="inventoryId"
+        [placeholder]="'stock.form.inventory-id-placeholder' | translate"
+        [class.is-invalid]="stockForm.get('inventoryId')?.invalid && stockForm.get('inventoryId')?.touched"
+      />
+      @if (stockForm.get('inventoryId')?.touched && stockForm.get('inventoryId')?.hasError('required')) {
+        <span class="error-text">{{ "stock.form.error-inventory-id-required" | translate }}</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="stockQuantity">{{ "stock.form.quantity" | translate }}</label>
+      <input
+        id="stockQuantity"
+        type="number"
+        formControlName="stockQuantity"
+        min="0"
+        [placeholder]="'stock.form.quantity-placeholder' | translate"
+        [class.is-invalid]="stockForm.get('stockQuantity')?.invalid && stockForm.get('stockQuantity')?.touched"
+      />
+      @if (stockForm.get('stockQuantity')?.touched && stockForm.get('stockQuantity')?.hasError('required')) {
+        <span class="error-text">{{ "stock.form.error-quantity-required" | translate }}</span>
+      }
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="stockForm.invalid">
+      {{ "stock.form.submit" | translate }}
+    </button>
+  </form>
+</div>
