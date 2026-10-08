@@ -8,4 +8,9 @@ export const STOCK_ROUTES: Routes = [
         (m) => m.SupplyRegistration,
       ),
   },
+  {
+    path: 'movements',
+    loadComponent: () =>
+      import('./presentation/views/stock-movements/stock-movements').then((m) => m.StockMovements),
+  },
 ];

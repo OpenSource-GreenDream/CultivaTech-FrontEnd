@@ -1,10 +1,9 @@
 import { inject, Service, signal } from '@angular/core';
-import { Observable, tap, throwError } from 'rxjs';
+import { Observable, map, switchMap, tap, throwError } from 'rxjs';
 
 import { StockMovementApi } from '../infrastructure/stock-movement-api';
 import { StockMovement } from '../domain/model';
 import { CreateStockMovementRequest } from '../domain/model';
-import { StockMovementAssembler } from '../infrastructure/stock-movement.assembler';
 
 @Service()
 export class StockMovementStore {
@@ -13,15 +12,10 @@ export class StockMovementStore {
   readonly movements = signal<StockMovement[]>([]);
 
   loadMovements(): Observable<StockMovement[]> {
-    return this.stockMovementApi.getMovements().pipe(
-      tap((resources) => {
-        const movements = resources.map((resource) =>
-          StockMovementAssembler.toEntityFromResource(resource),
-        );
-
-        this.movements.set(movements);
-      }),
-    );
+    return new Observable((subscriber) => {
+      subscriber.next(this.movements());
+      subscriber.complete();
+    });
   }
 
   createMovement(request: CreateStockMovementRequest): Observable<StockMovement> {
@@ -37,10 +31,31 @@ export class StockMovementStore {
       return throwError(() => new Error('Invalid stock movement type'));
     }
 
-    return this.stockMovementApi.createMovement(request).pipe(
-      tap((resource) => {
-        const movement = StockMovementAssembler.toEntityFromResource(resource);
+    return this.stockMovementApi.getSupply(request.supplyId).pipe(
+      switchMap((supply) => {
+        const currentQuantity = supply.quantity;
 
+        const newQuantity =
+          request.type === 'IN'
+            ? currentQuantity + request.quantity
+            : currentQuantity - request.quantity;
+
+        if (newQuantity < 0) {
+          return throwError(() => new Error('Stock quantity cannot be negative'));
+        }
+
+        return this.stockMovementApi.updateSupplyQuantity(request.supplyId, newQuantity).pipe(
+          map((): StockMovement => ({
+            id: crypto.randomUUID(),
+            supplyId: request.supplyId,
+            type: request.type,
+            quantity: request.quantity,
+            createdAt: new Date().toISOString(),
+          })),
+        );
+      }),
+
+      tap((movement) => {
         this.movements.update((movements) => [...movements, movement]);
       }),
     );

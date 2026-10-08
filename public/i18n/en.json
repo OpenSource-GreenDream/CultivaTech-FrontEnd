@@ -48,12 +48,12 @@
       "home": "Home",
       "monitoring": "Monitoring",
       "stock": "Stock",
+      "stock-movements": "Stock movements",
       "sensors": "Sensors",
       "alerts": "Alerts",
       "products": "Products",
       "notifications": "Notifications",
       "profile": "My Profile"
-
     },
     "logout": "Sign Out"
   },
@@ -114,6 +114,43 @@
     },
     "success": {
       "registered": "Input registered successfully"
+    },
+
+    "movement": {
+      "title": "Register stock movement",
+      "description": "Register an entry or exit of an agricultural input",
+      "form": {
+        "supply": "Input ID",
+        "supply-placeholder": "e.g. supply-001",
+        "type": "Movement type",
+        "type-in": "Stock entry",
+        "type-out": "Stock exit",
+        "quantity": "Quantity",
+        "quantity-placeholder": "e.g. 10",
+        "error-supply-required": "Input ID is required",
+        "error-type-required": "Movement type is required",
+        "error-quantity-required": "Quantity is required",
+        "error-quantity-min": "Quantity must be greater than zero"
+      },
+      "submit": {
+        "register": "Register movement"
+      },
+      "registered": "Stock movement registered successfully"
+    },
+
+    "history": {
+      "title": "Stock movement history",
+      "description": "Review the entries and exits recorded in your inventory",
+      "empty-title": "No movements recorded",
+      "empty-description": "There are no stock movements available to display.",
+      "table": {
+        "supply": "Input ID",
+        "type": "Movement type",
+        "quantity": "Quantity",
+        "date": "Date",
+        "entry": "Stock entry",
+        "exit": "Stock exit"
+      }
     }
   }
 }

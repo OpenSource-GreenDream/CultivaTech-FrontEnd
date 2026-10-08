@@ -6,7 +6,7 @@ import {
   Validators
 } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CreateSupplyRequest } from '../../../domain/model/create-supply.request';
+import { CreateSupplyRequest } from '../../../domain/model';
 
 @Component({
   imports: [
