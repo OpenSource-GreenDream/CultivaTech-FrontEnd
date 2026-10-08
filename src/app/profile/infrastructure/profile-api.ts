@@ -4,7 +4,7 @@ import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {ProfileResource} from './profile.response';
 import {CreateProfileRequest} from '../domain/model/create-profile.request';
-import {FieldResource} from './field.response';
+import {FieldResource} from './field-response';
 import {CreateFieldRequest} from '../domain/model/create-field.request';
 import {FieldAssembler} from './field.assembler';
 
