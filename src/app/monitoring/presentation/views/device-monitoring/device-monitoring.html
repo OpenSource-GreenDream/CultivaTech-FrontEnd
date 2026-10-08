@@ -1,0 +1,102 @@
+<div class="monitoring-container">
+  <div class="header">
+    <div>
+      <p class="section-label">{{ "monitoring.management.label" | translate }}</p>
+      <h1>{{ "monitoring.title" | translate }}</h1>
+      <p class="description">{{ "monitoring.description" | translate }}</p>
+    </div>
+  </div>
+
+  <div class="monitoring-tabs">
+    <button type="button" class="tab-button active">
+      {{ "monitoring.tabs.summary" | translate }}
+    </button>
+    <button type="button" class="tab-button" (click)="goToHistory()">
+      {{ "monitoring.tabs.history" | translate }}
+    </button>
+  </div>
+
+  @if (!loading() && fields().length > 0) {
+    <div class="field-filter">
+      <label for="fieldSelect">{{ "monitoring.filter.field-label" | translate }}</label>
+      <select id="fieldSelect" (change)="onFieldChange($event)">
+        <option value="">{{ "monitoring.filter.all-fields" | translate }}</option>
+        @for (field of fields(); track field.id) {
+          <option [value]="field.id">{{ field.name }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="empty-state">
+      <p>{{ "monitoring.loading" | translate }}</p>
+    </div>
+  } @else {
+    @if (filteredDevices().length === 0) {
+      <div class="empty-state">
+        <h3>{{ "monitoring.empty.title" | translate }}</h3>
+        <p>{{ "monitoring.empty.description" | translate }}</p>
+      </div>
+    } @else {
+      <div class="device-grid">
+        @for (device of filteredDevices(); track device.id) {
+          <div class="device-card">
+            <div class="card-header">
+              <div>
+                <p class="device-label">MAC: {{ device.macAddress }}</p>
+                <h2>{{ "monitoring.card.device-title" | translate }} #{{ device.id }}</h2>
+              </div>
+              <span
+                class="status"
+                [class.active]="device.status === 'ACTIVE'"
+                [class.warning]="device.status === 'WARNING_BATTERY'"
+                [class.offline]="device.status === 'OFFLINE'">
+                {{ device.status }}
+              </span>
+            </div>
+
+            <div class="field-info">
+              <span class="info-label">{{ "monitoring.card.field-zone" | translate }}</span>
+              <strong>{{ getFieldName(device.fieldId) }}</strong>
+            </div>
+
+            <div class="sync-info">
+              <span class="info-label">{{ "monitoring.card.last-sync" | translate }}</span>
+              <small>{{ device.lastSync | date:'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+
+            @if (getReport(device.id); as report) {
+              <div class="value-section">
+                <p class="value-label">{{ "monitoring.card.registered-value" | translate }}</p>
+                <div class="main-value">{{ report.meanValue }}%</div>
+              </div>
+
+              <div class="report-details">
+                <div>
+                  <span>{{ "monitoring.card.variance" | translate }}</span>
+                  <strong>{{ report.variance }}</strong>
+                </div>
+                <div>
+                  <span>{{ "monitoring.card.std-dev" | translate }}</span>
+                  <strong>{{ report.standardDeviation }}</strong>
+                </div>
+              </div>
+
+              @if (report.technicalInterpretation) {
+                <div class="interpretation">
+                  <p class="interpretation-title">{{ "monitoring.card.interpretation" | translate }}</p>
+                  <p>{{ report.technicalInterpretation }}</p>
+                </div>
+              }
+            } @else {
+              <div class="no-report">
+                {{ "monitoring.card.no-data" | translate }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,62 @@
+<div class="analytics-container">
+  <div class="header">
+    <h2>Dashboard de Analítica e Indicadores Clave</h2>
+
+    @if (devices().length > 0) {
+      <div class="device-selector">
+        <label for="deviceSelect">Dispositivo IoT:</label>
+        <select
+          id="deviceSelect"
+          [value]="selectedDeviceId()"
+          (change)="onDeviceChange($event)">
+          @for (device of devices(); track device.id) {
+            <option [value]="device.id">
+              Dispositivo #{{ device.id }} ({{ device.macAddress }})
+            </option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading">
+      Cargando indicadores clave...
+    </div>
+  } @else {
+    @if (indicators()) {
+      <div class="cards-grid">
+        <div class="card">
+          <span class="card-title">Promedio de Media</span>
+          <span class="card-value">{{ indicators().averageMean }}</span>
+        </div>
+
+        <div class="card">
+          <span class="card-title">Promedio de Varianza</span>
+          <span class="card-value">{{ indicators().averageVariance }}</span>
+        </div>
+
+        <div class="card">
+          <span class="card-title">Promedio Desviación Estándar</span>
+          <span class="card-value">{{ indicators().averageDeviation }}</span>
+        </div>
+
+        <div class="card">
+          <span class="card-title">Total de Reportes</span>
+          <span class="card-value">{{ indicators().totalReports }}</span>
+        </div>
+
+        <div class="card status-card">
+          <span class="card-title">Estado del Sistema</span>
+          <span
+            class="card-value status-badge"
+            [class.optimo]="indicators().status === 'Optimal'"
+            [class.alerta]="indicators().status === 'Alert'"
+            [class.sin-datos]="indicators().status === 'No Data'">
+            {{ indicators().status }}
+          </span>
+        </div>
+      </div>
+    }
+  }
+</div>

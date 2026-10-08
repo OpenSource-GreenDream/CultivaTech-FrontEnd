@@ -1,0 +1,272 @@
+.monitoring-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.section-label {
+  margin: 0 0 0.4rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+h1 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+.description {
+  margin-top: 0.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* TAB NAVIGATION */
+
+.monitoring-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  min-width: 160px;
+  padding: 0.75rem 1.25rem;
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background: #f8fafc;
+  border-color: #2e7d32;
+}
+
+.tab-button.active {
+  background: #2e7d32;
+  color: #ffffff;
+  border-color: #2e7d32;
+}
+
+/* FILTRO DE ZONAS */
+
+.field-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 1.75rem;
+}
+
+.field-filter label {
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.field-filter select {
+  min-width: 260px;
+  padding: 0.65rem 1rem;
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-filter select:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+/* TARJETAS DE DISPOSITIVOS */
+
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.device-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.device-label {
+  margin: 0 0 0.25rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.card-header h2 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.status {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.warning {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status.offline {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.field-info, .sync-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.info-label {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.field-info strong {
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.sync-info small {
+  color: #475569;
+  font-size: 0.8rem;
+}
+
+.value-section {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.value-label {
+  margin: 0 0 0.4rem;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.main-value {
+  color: #2e7d32;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.report-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.report-details div {
+  background: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+.report-details span {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.report-details strong {
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.interpretation {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  border-radius: 8px;
+}
+
+.interpretation-title {
+  margin: 0 0 0.35rem;
+  color: #166534;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.interpretation p:last-child {
+  margin: 0;
+  color: #334155;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.no-report, .empty-state {
+  margin-top: 1.25rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  text-align: center;
+  color: #64748b;
+}
+
+@media (max-width: 900px) {
+  .device-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .monitoring-tabs {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    width: 100%;
+  }
+}
