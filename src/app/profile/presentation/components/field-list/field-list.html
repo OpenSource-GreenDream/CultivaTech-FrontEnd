@@ -1,47 +1,47 @@
 <div class="fields-section">
   <div class="section-actions">
-    <h3 class="title">Mis Lotes de Cultivo</h3>
+    <h3 class="title">{{ "fields.title" | translate }}</h3>
     <button class="btn-primary" (click)="showForm = !showForm">
-      {{ showForm ? 'Cancelar' : '+ Registrar Lote' }}
+      {{ (showForm ? 'fields.cancel-btn' : 'fields.register-btn') | translate }}
     </button>
   </div>
 
   @if (showForm) {
     <div class="card form-card">
-      <h4 class="form-title">Registrar Nuevo Lote</h4>
+      <h4 class="form-title">{{ "fields.form.title" | translate }}</h4>
       <form (ngSubmit)="submitField()" class="field-form">
         <div class="form-group">
-          <label>Nombre del Lote</label>
-          <input type="text" [(ngModel)]="newField.name" name="name" required placeholder="Ej. Lote Papa Amarilla A1" />
+          <label>{{ "fields.form.name-label" | translate }}</label>
+          <input type="text" [(ngModel)]="newField.name" name="name" required [placeholder]="'fields.form.name-placeholder' | translate" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Tamaño (m²)</label>
+            <label>{{ "fields.form.size-label" | translate }}</label>
             <input type="number" [(ngModel)]="newField.sizeM2" name="sizeM2" required placeholder="15000" />
           </div>
 
           <div class="form-group">
-            <label>Tipo de Suelo</label>
-            <input type="text" [(ngModel)]="newField.soilType" name="soilType" required placeholder="Franco-Arenoso" />
+            <label>{{ "fields.form.soil-label" | translate }}</label>
+            <input type="text" [(ngModel)]="newField.soilType" name="soilType" required [placeholder]="'fields.form.soil-placeholder' | translate" />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Latitud</label>
+            <label>{{ "fields.form.latitude-label" | translate }}</label>
             <input type="number" step="any" [(ngModel)]="newField.latitude" name="latitude" required placeholder="-12.046374" />
           </div>
 
           <div class="form-group">
-            <label>Longitud</label>
+            <label>{{ "fields.form.longitude-label" | translate }}</label>
             <input type="number" step="any" [(ngModel)]="newField.longitude" name="longitude" required placeholder="-77.042793" />
           </div>
         </div>
 
         <div class="form-buttons">
           <button type="submit" class="btn-submit" [disabled]="isSubmitting">
-            {{ isSubmitting ? 'Guardando...' : 'Guardar Lote' }}
+            {{ (isSubmitting ? 'fields.form.submitting' : 'fields.form.submit') | translate }}
           </button>
         </div>
       </form>
@@ -50,30 +50,30 @@
 
   @if (fields.length === 0) {
     <div class="card empty-fields">
-      <p>No tienes lotes registrados en este fundo. Haz clic en <strong>+ Registrar Lote</strong> para agregar uno.</p>
+      <p>{{ "fields.empty" | translate }}</p>
     </div>
   } @else {
     <div class="fields-grid">
       @for (field of fields; track field.id) {
         <div class="card field-card">
           <div class="field-header">
-            <span class="field-id">LOTE #{{ field.id }}</span>
+            <span class="field-id">{{ "fields.card.lot-id" | translate:{ id: field.id } }}</span>
             <h4 class="field-name">{{ field.name }}</h4>
           </div>
 
           <div class="field-details">
             <div class="detail-item">
-              <span class="detail-label">Suelo</span>
+              <span class="detail-label">{{ "fields.card.soil" | translate }}</span>
               <span class="detail-value">{{ field.soilType }}</span>
             </div>
 
             <div class="detail-item">
-              <span class="detail-label">Área</span>
+              <span class="detail-label">{{ "fields.card.area" | translate }}</span>
               <span class="detail-value">{{ field.sizeM2 | number }} m²</span>
             </div>
 
             <div class="detail-item full-width">
-              <span class="detail-label">Coordenadas</span>
+              <span class="detail-label">{{ "fields.card.coordinates" | translate }}</span>
               <span class="detail-value geo">{{ field.latitude }}, {{ field.longitude }}</span>
             </div>
           </div>

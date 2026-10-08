@@ -53,7 +53,8 @@
       "alerts": "Alertas",
       "products": "Productos",
       "notifications": "Notificaciones",
-      "profile": "Mi perfil"
+      "profile": "Mi perfil",
+      "analytics": "Reportes e indicadores"
     },
     "logout": "Cerrar sesión"
   },
@@ -92,22 +93,89 @@
       "toggle-label": "Activar o desactivar las notificaciones de {{type}}"
     }
   },
+  "analytics": {
+    "title": "Dashboard de Analítica e Indicadores Clave",
+    "device-label": "Dispositivo IoT:",
+    "device-option": "Dispositivo #{{id}} ({{mac}})",
+    "loading": "Cargando indicadores clave...",
+    "cards": {
+      "average-mean": "Promedio de Media",
+      "average-variance": "Promedio de Varianza",
+      "average-deviation": "Promedio Desviación Estándar",
+      "total-reports": "Total de Reportes",
+      "status": "Estado del Sistema"
+    }
+  },
+  "fields": {
+    "title": "Mis Lotes de Cultivo",
+    "register-btn": "+ Registrar Lote",
+    "cancel-btn": "Cancelar",
+    "form": {
+      "title": "Registrar Nuevo Lote",
+      "name-label": "Nombre del Lote",
+      "name-placeholder": "Ej. Lote Papa Amarilla A1",
+      "size-label": "Tamaño (m²)",
+      "soil-label": "Tipo de Suelo",
+      "soil-placeholder": "Franco-Arenoso",
+      "latitude-label": "Latitud",
+      "longitude-label": "Longitud",
+      "submit": "Guardar Lote",
+      "submitting": "Guardando..."
+    },
+    "empty": "No tienes lotes registrados en este fundo. Haz clic en + Registrar Lote para agregar uno.",
+    "card": {
+      "lot-id": "LOTE #{{id}}",
+      "soil": "Suelo",
+      "area": "Área",
+      "coordinates": "Coordenadas"
+    }
+  },
+  "profile": {
+    "management": {
+      "title": "Gestión de Fundo y Terrenos",
+      "subtitle": "Administra la información de tu fundo y supervisa cada uno de tus lotes agrícolas.",
+      "loading": "Cargando información del fundo..."
+    },
+    "info": {
+      "title": "Información del Fundo",
+      "farm-name": "Nombre del Fundo",
+      "contact-phone": "Teléfono de Contacto",
+      "thresholds-title": "Configuración de Umbrales",
+      "moisture-threshold": "Umbral de Humedad",
+      "temp-threshold": "Umbral de Temp.",
+      "empty": "No se encontró un perfil de fundo asociado a esta cuenta."
+    }
+  },
   "stock": {
+    "inventory": {
+      "title": "Gestión de Inventario",
+      "description": "Vista general del stock disponible en las ubicaciones registradas",
+      "empty-title": "Sin ítems en el inventario",
+      "empty-description": "No hay productos de stock registrados en este momento.",
+      "table": {
+        "product-id": "ID de Producto",
+        "quantity": "Cantidad en Stock",
+        "location": "Ubicación en Almacén",
+        "updated-at": "Última Actualización"
+      }
+    },
+    "update": {
+      "title": "Actualizar Stock de Inventario",
+      "description": "Ajusta la cantidad de stock para un registro de inventario específico",
+      "success": "Stock actualizado correctamente"
+    },
+    "form": {
+      "inventory-id": "ID de Inventario",
+      "inventory-id-placeholder": "Ej. 101",
+      "quantity": "Cantidad",
+      "quantity-placeholder": "Ej. 50",
+      "error-inventory-id-required": "El ID de inventario es obligatorio",
+      "error-quantity-required": "La cantidad es obligatoria",
+      "submit": "Actualizar Stock"
+    },
     "supply": {
       "title": "Registrar insumo agrícola",
       "description": "Agrega un nuevo insumo agrícola a tu inventario"
-    },
-    "form": {
-      "name": "Nombre del insumo",
-      "quantity": "Cantidad",
-      "unit": "Unidad",
-      "name-placeholder": "Ej. Fertilizante orgánico",
-      "quantity-placeholder": "Ej. 25",
-      "unit-placeholder": "Ej. kg",
-      "error-name-required": "El nombre del insumo es obligatorio",
-      "error-quantity-required": "La cantidad es obligatoria",
-      "error-quantity-min": "La cantidad debe ser mayor que cero",
-      "error-unit-required": "La unidad es obligatoria"
     },
     "submit": {
       "register": "Registrar insumo"
@@ -115,7 +183,6 @@
     "success": {
       "registered": "Insumo registrado correctamente"
     },
-
     "movement": {
       "title": "Registrar movimiento de stock",
       "description": "Registra una entrada o salida de un insumo agrícola",
@@ -139,7 +206,6 @@
         "registered": "Movimiento de stock registrado correctamente"
       }
     },
-
     "history": {
       "title": "Historial de movimientos",
       "description": "Revisa las entradas y salidas registradas en tu inventario",
@@ -153,6 +219,34 @@
         "entry": "Entrada de stock",
         "exit": "Salida de stock"
       }
+    }
+  },
+  "monitoring": {
+    "management.label": "Gestión de Monitoreo",
+    "title": "Monitoreo de Dispositivos",
+    "description": "Supervisión y lecturas en tiempo real de los sensores e indicadores de campo.",
+    "tabs": {
+      "summary": "Resumen",
+      "history": "Historial"
+    },
+    "filter": {
+      "field-label": "Filtrar por lote:",
+      "all-fields": "Todos los lotes"
+    },
+    "loading": "Cargando datos de monitoreo...",
+    "empty": {
+      "title": "Sin dispositivos",
+      "description": "No se encontraron dispositivos asociados para el lote seleccionado."
+    },
+    "card": {
+      "device-title": "Dispositivo",
+      "field-zone": "Zona / Lote:",
+      "last-sync": "Última sinc.:",
+      "registered-value": "Valor Registrado",
+      "variance": "Varianza:",
+      "std-dev": "Desv. Estándar:",
+      "interpretation": "Interpretación:",
+      "no-data": "Sin reportes disponibles"
     }
   }
 }

@@ -1,17 +1,17 @@
 <div class="analytics-container">
   <div class="header">
-    <h2>Dashboard de Analítica e Indicadores Clave</h2>
+    <h2>{{ "analytics.title" | translate }}</h2>
 
     @if (devices().length > 0) {
       <div class="device-selector">
-        <label for="deviceSelect">Dispositivo IoT:</label>
+        <label for="deviceSelect">{{ "analytics.device-label" | translate }}</label>
         <select
           id="deviceSelect"
           [value]="selectedDeviceId()"
           (change)="onDeviceChange($event)">
           @for (device of devices(); track device.id) {
             <option [value]="device.id">
-              Dispositivo #{{ device.id }} ({{ device.macAddress }})
+              {{ "analytics.device-option" | translate:{ id: device.id, mac: device.macAddress } }}
             </option>
           }
         </select>
@@ -21,33 +21,33 @@
 
   @if (loading()) {
     <div class="loading">
-      Cargando indicadores clave...
+      {{ "analytics.loading" | translate }}
     </div>
   } @else {
     @if (indicators()) {
       <div class="cards-grid">
         <div class="card">
-          <span class="card-title">Promedio de Media</span>
+          <span class="card-title">{{ "analytics.cards.average-mean" | translate }}</span>
           <span class="card-value">{{ indicators().averageMean }}</span>
         </div>
 
         <div class="card">
-          <span class="card-title">Promedio de Varianza</span>
+          <span class="card-title">{{ "analytics.cards.average-variance" | translate }}</span>
           <span class="card-value">{{ indicators().averageVariance }}</span>
         </div>
 
         <div class="card">
-          <span class="card-title">Promedio Desviación Estándar</span>
+          <span class="card-title">{{ "analytics.cards.average-deviation" | translate }}</span>
           <span class="card-value">{{ indicators().averageDeviation }}</span>
         </div>
 
         <div class="card">
-          <span class="card-title">Total de Reportes</span>
+          <span class="card-title">{{ "analytics.cards.total-reports" | translate }}</span>
           <span class="card-value">{{ indicators().totalReports }}</span>
         </div>
 
         <div class="card status-card">
-          <span class="card-title">Estado del Sistema</span>
+          <span class="card-title">{{ "analytics.cards.status" | translate }}</span>
           <span
             class="card-value status-badge"
             [class.optimo]="indicators().status === 'Optimal'"
