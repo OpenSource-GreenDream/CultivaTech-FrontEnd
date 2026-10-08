@@ -1,9 +1,10 @@
 {
   "name": "cultivatech-front",
-  "version": "0.0.0",
+  "version": "0.9.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:prod": "serve -s dist/cultivatech-front/browser -l $PORT",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
