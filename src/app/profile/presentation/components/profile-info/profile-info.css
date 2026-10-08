@@ -1,0 +1,113 @@
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.profile-info-card .card-header {
+  background: linear-gradient(135deg, #52b788 0%, #2d6a4f 100%);
+  padding: 1.1rem 1.5rem;
+}
+
+.card-title {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.725rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.name-value {
+  font-size: 1.2rem;
+  color: #1b4332;
+  font-weight: 700;
+}
+
+.divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 0.25rem 0;
+}
+
+.sub-heading {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0;
+}
+
+.threshold-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.threshold-badge {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  border-radius: 10px;
+  text-align: center;
+  gap: 0.2rem;
+}
+
+.threshold-badge.moisture {
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+}
+
+.threshold-badge.temp {
+  background-color: #ffedd5;
+  border: 1px solid #fed7aa;
+}
+
+.badge-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.threshold-badge.moisture .badge-value {
+  color: #0369a1;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.threshold-badge.temp .badge-value {
+  color: #c2410c;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
