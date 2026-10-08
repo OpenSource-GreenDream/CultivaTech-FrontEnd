@@ -43,10 +43,16 @@ export const routes: Routes = [
           .then((routes) => routes.NOTIFICATION_ROUTES),
       },
       {
-        path: 'stock',
-        loadChildren: () =>
-          import('./stock/stock.routes').then((routes) => routes.STOCK_ROUTES),
+        path: 'profile',
+        loadComponent: () =>
+          import('./profile/presentation/views/profile-management/profile-management')
+            .then((m) => m.ProfileManagementComponent),
       },
+      //{
+      //  path: 'stock',
+      //  loadChildren: () =>
+      //    import('./stock/stock.routes').then((routes) => routes.STOCK_ROUTES),
+      //},
       // Other Bounded Contexts
     ],
   },
