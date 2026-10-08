@@ -1,39 +1,39 @@
 <div class="card profile-info-card">
   <div class="card-header">
-    <h3 class="card-title">Información del Fundo</h3>
+    <h3 class="card-title">{{ "profile.info.title" | translate }}</h3>
   </div>
 
   @if (profile) {
     <div class="card-body">
       <div class="info-group">
-        <span class="info-label">Nombre del Fundo</span>
+        <span class="info-label">{{ "profile.info.farm-name" | translate }}</span>
         <span class="info-value name-value">{{ profile.fundoName }}</span>
       </div>
 
       <div class="info-group">
-        <span class="info-label">Teléfono de Contacto</span>
+        <span class="info-label">{{ "profile.info.contact-phone" | translate }}</span>
         <span class="info-value">{{ profile.contactPhone }}</span>
       </div>
 
       <div class="divider"></div>
 
-      <h4 class="sub-heading">Configuración de Umbrales</h4>
+      <h4 class="sub-heading">{{ "profile.info.thresholds-title" | translate }}</h4>
 
       <div class="threshold-grid">
         <div class="threshold-badge moisture">
-          <span class="badge-label">Umbral de Humedad</span>
+          <span class="badge-label">{{ "profile.info.moisture-threshold" | translate }}</span>
           <span class="badge-value">{{ profile.moistureThreshold }}%</span>
         </div>
 
         <div class="threshold-badge temp">
-          <span class="badge-label">Umbral de Temp.</span>
+          <span class="badge-label">{{ "profile.info.temp-threshold" | translate }}</span>
           <span class="badge-value">{{ profile.tempThreshold }}°C</span>
         </div>
       </div>
     </div>
   } @else {
     <div class="card-body empty-state">
-      <p>No se encontró un perfil de fundo asociado a esta cuenta.</p>
+      <p>{{ "profile.info.empty" | translate }}</p>
     </div>
   }
 </div>

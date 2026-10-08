@@ -5,6 +5,7 @@ import {ProfileContextService} from '../../../application/profile-context.servic
 import {CreateFieldRequest} from '../../../domain/model/create-field.request';
 import {FormsModule} from '@angular/forms';
 import {DecimalPipe} from '@angular/common';
+import {TranslatePipe} from '@ngx-translate/core';
 
 /**
  * TODO: DELETE THIS METHOD WHEN INTEGRATING WITH THE REAL BACKEND!!!
@@ -20,7 +21,8 @@ function generateMockFieldId(): number {
 @Component({
   imports: [
     FormsModule,
-    DecimalPipe
+    DecimalPipe,
+    TranslatePipe
   ],
   selector: 'app-field-list',
   styleUrl: './field-list.css',

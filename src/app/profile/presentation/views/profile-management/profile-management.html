@@ -1,12 +1,12 @@
 <div class="profile-container">
   <div class="header-section">
-    <h2 class="section-title">Gestión de Fundo y Terrenos</h2>
-    <p class="section-subtitle">Administra la información de tu fundo y supervisa cada uno de tus lotes agrícolas.</p>
+    <h2 class="section-title">{{ "profile.management.title" | translate }}</h2>
+    <p class="section-subtitle">{{ "profile.management.subtitle" | translate }}</p>
   </div>
 
   @if (isLoading) {
     <div class="loading-state">
-      <p>Cargando información del fundo...</p>
+      <p>{{ "profile.management.loading" | translate }}</p>
     </div>
   } @else {
     <div class="profile-grid">
