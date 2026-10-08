@@ -1,0 +1,23 @@
+<div class="profile-container">
+  <div class="header-section">
+    <h2 class="section-title">Gestión de Fundo y Terrenos</h2>
+    <p class="section-subtitle">Administra la información de tu fundo y supervisa cada uno de tus lotes agrícolas.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">
+      <p>Cargando información del fundo...</p>
+    </div>
+  } @else {
+    <div class="profile-grid">
+      <!-- Fundo Target info -->
+      <app-profile-info [profile]="profileStore.currentProfile()"></app-profile-info>
+
+      <!-- Fields list-->
+      <app-field-list
+        [fields]="profileStore.fields()"
+        (fieldCreated)="onFieldCreated()">
+      </app-field-list>
+    </div>
+  }
+</div>
