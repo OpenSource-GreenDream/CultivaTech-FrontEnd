@@ -53,6 +53,16 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./stock/stock.routes').then((routes) => routes.STOCK_ROUTES),
       },
+      {
+        path: 'monitoring',
+        loadComponent: () => import('./monitoring/presentation/views/device-monitoring/device-monitoring')
+          .then((m) => m.DeviceMonitoring),
+      },
+      {
+        path: 'analytics',
+        loadChildren: () =>
+          import('./analytics/components/analytics-dashboard/analytics-dashboard').then((m) => m.AnalyticsDashboardComponent),
+      }
       // Other Bounded Contexts
     ],
   },
