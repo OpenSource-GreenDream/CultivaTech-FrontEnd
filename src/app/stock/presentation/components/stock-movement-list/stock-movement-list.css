@@ -1,0 +1,111 @@
+.movement-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.movement-header {
+  margin-bottom: 1.5rem;
+}
+
+.movement-header h2 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem 0;
+}
+
+.movement-header p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f8fafc;
+}
+
+th {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+td {
+  padding: 1rem;
+  border-top: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.movement-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.movement-in {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.movement-out {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 2rem;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background-color: #f8fafc;
+  box-sizing: border-box;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.empty-state h3 {
+  color: #334155;
+  font-size: 1.1rem;
+  margin: 0 0 0.4rem 0;
+}
+
+.empty-state p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+  max-width: 420px;
+}

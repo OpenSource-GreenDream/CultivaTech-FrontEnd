@@ -8,7 +8,7 @@ describe('NotificationPreferenceAssembler', () => {
     const resource: NotificationPreferenceResource = {
       id: 4,
       profile_id: 12,
-      type: NotificationType.SENSOR_ALERT,
+      type: 'SENSOR_ALERT',
       field_id: 7,
       enabled: false,
       created_at: '2026-09-22T00:00:00Z',
@@ -26,5 +26,21 @@ describe('NotificationPreferenceAssembler', () => {
       resource.created_at,
       resource.updated_at,
     ));
+  });
+
+  it('handles invalid notification type by defaulting to SYSTEM_INFO', () => {
+    const resource: NotificationPreferenceResource = {
+      id: 4,
+      profile_id: 12,
+      type: 'INVALID_TYPE',
+      field_id: null,
+      enabled: true,
+      created_at: '2026-09-22T00:00:00Z',
+      updated_at: '2026-09-22T01:00:00Z',
+    };
+
+    const entity = NotificationPreferenceAssembler.toEntityFromResource(resource);
+
+    expect(entity.type).toBe(NotificationType.SYSTEM_INFO);
   });
 });

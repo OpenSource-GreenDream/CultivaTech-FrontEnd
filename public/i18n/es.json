@@ -47,6 +47,8 @@
     "nav": {
       "home": "Inicio",
       "monitoring": "Monitoreo",
+      "stock": "Inventario",
+      "stock-movements": "Movimientos de stock",
       "sensors": "Sensores",
       "alerts": "Alertas",
       "products": "Productos",
@@ -88,6 +90,69 @@
       "field-label": "Zona de cultivo",
       "all-fields": "Todas las zonas",
       "toggle-label": "Activar o desactivar las notificaciones de {{type}}"
+    }
+  },
+  "stock": {
+    "supply": {
+      "title": "Registrar insumo agrícola",
+      "description": "Agrega un nuevo insumo agrícola a tu inventario"
+    },
+    "form": {
+      "name": "Nombre del insumo",
+      "quantity": "Cantidad",
+      "unit": "Unidad",
+      "name-placeholder": "Ej. Fertilizante orgánico",
+      "quantity-placeholder": "Ej. 25",
+      "unit-placeholder": "Ej. kg",
+      "error-name-required": "El nombre del insumo es obligatorio",
+      "error-quantity-required": "La cantidad es obligatoria",
+      "error-quantity-min": "La cantidad debe ser mayor que cero",
+      "error-unit-required": "La unidad es obligatoria"
+    },
+    "submit": {
+      "register": "Registrar insumo"
+    },
+    "success": {
+      "registered": "Insumo registrado correctamente"
+    },
+
+    "movement": {
+      "title": "Registrar movimiento de stock",
+      "description": "Registra una entrada o salida de un insumo agrícola",
+      "form": {
+        "supply": "ID del insumo",
+        "supply-placeholder": "Ej. supply-001",
+        "type": "Tipo de movimiento",
+        "type-in": "Entrada de stock",
+        "type-out": "Salida de stock",
+        "quantity": "Cantidad",
+        "quantity-placeholder": "Ej. 10",
+        "error-supply-required": "El ID del insumo es obligatorio",
+        "error-type-required": "El tipo de movimiento es obligatorio",
+        "error-quantity-required": "La cantidad es obligatoria",
+        "error-quantity-min": "La cantidad debe ser mayor que cero"
+      },
+      "submit": {
+        "register": "Registrar movimiento"
+      },
+      "success": {
+        "registered": "Movimiento de stock registrado correctamente"
+      }
+    },
+
+    "history": {
+      "title": "Historial de movimientos",
+      "description": "Revisa las entradas y salidas registradas en tu inventario",
+      "empty-title": "No hay movimientos registrados",
+      "empty-description": "No existen movimientos de stock disponibles para mostrar.",
+      "table": {
+        "supply": "ID del insumo",
+        "type": "Tipo de movimiento",
+        "quantity": "Cantidad",
+        "date": "Fecha",
+        "entry": "Entrada de stock",
+        "exit": "Salida de stock"
+      }
     }
   }
 }

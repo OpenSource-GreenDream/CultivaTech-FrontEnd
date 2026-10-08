@@ -42,6 +42,11 @@ export const routes: Routes = [
         loadChildren: () => import('./notification/notification.routes')
           .then((routes) => routes.NOTIFICATION_ROUTES),
       },
+      {
+        path: 'stock',
+        loadChildren: () =>
+          import('./stock/stock.routes').then((routes) => routes.STOCK_ROUTES),
+      },
       // Other Bounded Contexts
     ],
   },

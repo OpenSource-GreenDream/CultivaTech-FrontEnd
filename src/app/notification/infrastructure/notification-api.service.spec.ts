@@ -44,7 +44,7 @@ describe('NotificationApiService', () => {
       message: 'A new review is available.',
       is_read: false,
       is_alert: false,
-      type: NotificationType.NEW_REVIEW,
+      type: 'NEW_REVIEW',
       field_id: null,
       created_at: '2026-09-21T06:01:10Z',
       updated_at: '2026-09-21T06:01:10Z',
@@ -74,7 +74,7 @@ describe('NotificationApiService', () => {
       message: 'A new review is available.',
       is_read: true,
       is_alert: false,
-      type: NotificationType.NEW_REVIEW,
+      type: 'NEW_REVIEW',
       field_id: null,
       created_at: '2026-09-21T06:01:10Z',
       updated_at: '2026-09-21T06:01:10Z',
@@ -87,7 +87,7 @@ describe('NotificationApiService', () => {
       message: resource.message,
       isRead: false,
       isAlert: resource.is_alert,
-      type: resource.type,
+      type: NotificationType.NEW_REVIEW,
       fieldId: resource.field_id,
       createdAt: resource.created_at,
       updatedAt: resource.updated_at,
@@ -110,7 +110,7 @@ describe('NotificationApiService', () => {
       message: 'Demand increased this week.',
       is_read: false,
       is_alert: false,
-      type: NotificationType.PRODUCT_DEMAND,
+      type: 'PRODUCT_DEMAND',
       field_id: null,
       created_at: '2026-09-22T12:00:00Z',
       updated_at: '2026-09-22T12:00:00Z',
@@ -129,7 +129,7 @@ describe('NotificationApiService', () => {
     );
     expect(request.request.method).toBe('POST');
     expect(request.request.body.profile_id).toBe(5);
-    expect(request.request.body.type).toBe(NotificationType.PRODUCT_DEMAND);
+    expect(request.request.body.type).toBe('PRODUCT_DEMAND');
     expect(request.request.body.is_read).toBe(false);
     request.flush(resource);
   });
@@ -142,7 +142,7 @@ describe('NotificationApiService', () => {
       message: 'A review was posted for your product.',
       is_read: false,
       is_alert: false,
-      type: NotificationType.NEW_REVIEW,
+      type: 'NEW_REVIEW',
       field_id: null,
       created_at: '2026-09-22T13:00:00Z',
       updated_at: '2026-09-22T13:00:00Z',
@@ -160,7 +160,7 @@ describe('NotificationApiService', () => {
       `${environment.cultivatechBaseApi}${environment.notificationsEndpoint}`,
     );
     expect(request.request.method).toBe('POST');
-    expect(request.request.body.type).toBe(NotificationType.NEW_REVIEW);
+    expect(request.request.body.type).toBe('NEW_REVIEW');
     request.flush(resource);
   });
 
@@ -172,7 +172,7 @@ describe('NotificationApiService', () => {
       message: 'A related product is now available.',
       is_read: false,
       is_alert: false,
-      type: NotificationType.PRODUCT_OF_INTEREST,
+      type: 'PRODUCT_OF_INTEREST',
       field_id: null,
       created_at: '2026-09-22T14:00:00Z',
       updated_at: '2026-09-22T14:00:00Z',
@@ -190,7 +190,7 @@ describe('NotificationApiService', () => {
       `${environment.cultivatechBaseApi}${environment.notificationsEndpoint}`,
     );
     expect(request.request.method).toBe('POST');
-    expect(request.request.body.type).toBe(NotificationType.PRODUCT_OF_INTEREST);
+    expect(request.request.body.type).toBe('PRODUCT_OF_INTEREST');
     request.flush(resource);
   });
 
@@ -202,7 +202,7 @@ describe('NotificationApiService', () => {
       message: 'An offer is available and stock was updated.',
       is_read: false,
       is_alert: false,
-      type: NotificationType.OFFER_OR_STOCK_CHANGE,
+      type: 'OFFER_OR_STOCK_CHANGE',
       field_id: null,
       created_at: '2026-09-22T15:00:00Z',
       updated_at: '2026-09-22T15:00:00Z',
@@ -220,7 +220,7 @@ describe('NotificationApiService', () => {
       `${environment.cultivatechBaseApi}${environment.notificationsEndpoint}`,
     );
     expect(request.request.method).toBe('POST');
-    expect(request.request.body.type).toBe(NotificationType.OFFER_OR_STOCK_CHANGE);
+    expect(request.request.body.type).toBe('OFFER_OR_STOCK_CHANGE');
     request.flush(resource);
   });
 });

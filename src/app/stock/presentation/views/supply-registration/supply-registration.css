@@ -1,0 +1,19 @@
+.registration-container {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.success-message {
+  position: fixed;
+  top: 110px;
+  right: 3rem;
+
+}
+
+.success-message span {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
