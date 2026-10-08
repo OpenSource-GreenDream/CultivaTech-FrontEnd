@@ -1,0 +1,42 @@
+<div class="inventory-container">
+  <div class="inventory-header">
+    <h2>{{ "stock.inventory.title" | translate }}</h2>
+    <p>{{ "stock.inventory.description" | translate }}</p>
+  </div>
+
+  @if (inventories().length === 0) {
+    <div class="empty-state">
+      <h3>{{ "stock.inventory.empty-title" | translate }}</h3>
+      <p>{{ "stock.inventory.empty-description" | translate }}</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>{{ "stock.inventory.table.product-id" | translate }}</th>
+          <th>{{ "stock.inventory.table.quantity" | translate }}</th>
+          <th>{{ "stock.inventory.table.location" | translate }}</th>
+          <th>{{ "stock.inventory.table.updated-at" | translate }}</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (item of inventories(); track item.id) {
+            <tr>
+              <td>#{{ item.id }}</td>
+              <td>{{ item.productId }}</td>
+              <td>
+                <span class="stock-badge" [class.low-stock]="item.stockQuantity < 15">
+                  {{ item.stockQuantity }}
+                </span>
+              </td>
+              <td>{{ item.warehouseLocation }}</td>
+              <td>{{ item.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

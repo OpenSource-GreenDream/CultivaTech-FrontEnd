@@ -1,4 +1,4 @@
-.movement-container {
+.inventory-container {
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
@@ -7,18 +7,18 @@
   box-sizing: border-box;
 }
 
-.movement-header {
+.inventory-header {
   margin-bottom: 1.5rem;
 }
 
-.movement-header h2 {
+.inventory-header h2 {
   color: #1e293b;
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 0.4rem 0;
 }
 
-.movement-header p {
+.inventory-header p {
   color: #64748b;
   font-size: 0.9rem;
   margin: 0;
@@ -59,21 +59,17 @@ tbody tr:hover {
   background-color: #f8fafc;
 }
 
-.movement-badge {
+.stock-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.35rem 0.7rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 999px;
-  font-size: 0.78rem;
   font-weight: 600;
-}
-
-.movement-in {
   background-color: #dcfce7;
   color: #166534;
 }
 
-.movement-out {
+.stock-badge.low-stock {
   background-color: #fee2e2;
   color: #991b1b;
 }
@@ -83,29 +79,15 @@ tbody tr:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 220px;
+  min-height: 200px;
   padding: 2rem;
   text-align: center;
   border: 1px dashed #cbd5e1;
   border-radius: 12px;
   background-color: #f8fafc;
-  box-sizing: border-box;
 }
 
 .empty-icon {
   font-size: 2.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.empty-state h3 {
-  color: #334155;
-  font-size: 1.1rem;
-  margin: 0 0 0.4rem 0;
-}
-
-.empty-state p {
-  color: #64748b;
-  font-size: 0.9rem;
-  margin: 0;
-  max-width: 420px;
+  margin-bottom: 0.5rem;
 }
