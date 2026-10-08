@@ -1,8 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {AnalyticsStore} from '../../../application/analytics.store';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
-  imports: [],
+  imports: [
+    TranslatePipe
+  ],
   selector: 'app-analytics-dashboard',
   styleUrl: './analytics-dashboard.css',
   templateUrl: './analytics-dashboard.html',

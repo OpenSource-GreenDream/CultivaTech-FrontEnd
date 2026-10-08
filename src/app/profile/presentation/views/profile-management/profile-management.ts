@@ -3,11 +3,13 @@ import {ProfileStore} from '../../../application/profile.store';
 import {ProfileContextService} from '../../../application/profile-context.service';
 import {ProfileInfo} from '../../components/profile-info/profile-info';
 import {FieldList} from '../../components/field-list/field-list';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   imports: [
     ProfileInfo,
-    FieldList
+    FieldList,
+    TranslatePipe
   ],
   selector: 'app-profile-management',
   styleUrl: './profile-management.css',
