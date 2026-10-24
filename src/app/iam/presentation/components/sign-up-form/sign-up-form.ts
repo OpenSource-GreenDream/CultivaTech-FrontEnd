@@ -1,6 +1,6 @@
 import {Component, output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {SignUpRequest} from '../../../domain/model/sign-up.request';
+import {SignUpRequest} from '../../../infrastructure/sign-up.request';
 import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
@@ -18,11 +18,19 @@ export class SignUpForm {
 
   signUpForm: FormGroup;
 
+  rolesList = [
+    { value: 'agricultor', label: 'Agricultor' },
+    { value: 'proveedor', label: 'Proveedor' },
+    { value: 'clienteb2b', label: 'Cliente B2B' },
+    { value: 'administrador', label: 'Administrador' }
+  ];
+
   constructor(private fb: FormBuilder) {
     this.signUpForm = this.fb.group({
       emailAddress: ['', [Validators.required, Validators.email]],
       password_hash: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      role: ['agricultor', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
 
@@ -34,8 +42,8 @@ export class SignUpForm {
 
   onSubmit() {
     if (this.signUpForm.valid) {
-      const { emailAddress, password_hash } = this.signUpForm.value;
-      this.submitForm.emit({ email_address: emailAddress, password_hash });
+      const { emailAddress, password_hash, role } = this.signUpForm.value;
+      this.submitForm.emit({ email_address: emailAddress, password_hash, role });
     } else {
       this.signUpForm.markAllAsTouched();
     }

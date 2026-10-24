@@ -20,7 +20,8 @@
       "text": "Already have an account?",
       "click-2": "Log in",
       "click-3": "Sign In"
-    }
+    },
+    "roles": "User Role"
   },
   "sign-in": {
     "container": {

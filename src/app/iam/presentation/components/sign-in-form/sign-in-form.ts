@@ -1,5 +1,5 @@
 import {Component, output} from '@angular/core';
-import {SignInRequest} from '../../../domain/model/sign-in.request';
+import {SignInRequest} from '../../../infrastructure/sign-in.request';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
 

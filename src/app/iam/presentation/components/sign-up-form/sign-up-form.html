@@ -37,9 +37,6 @@
           placeholder="••••••••"
           [class.is-invalid]="signUpForm.get('password_hash')?.invalid && signUpForm.get('password_hash')?.touched"
         />
-        @if (signUpForm.get('password_hash')?.touched && signUpForm.get('password_hash')?.hasError('required')) {
-          <span class="error-text"></span>
-        }
       </div>
 
       <div class="form-group">
@@ -55,6 +52,15 @@
           <span class="error-text">{{"sign-up.form.error-4" | translate}}</span>
         }
       </div>
+    </div>
+
+    <div class="form-group">
+      <label for="role">{{"sign-up.roles" | translate}}</label>
+      <select id="role" formControlName="role" class="form-control lang-select" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+        @for (r of rolesList; track r.value) {
+          <option [value]="r.value">{{ r.label }}</option>
+        }
+      </select>
     </div>
 
     <button type="submit" class="btn-primary" [disabled]="signUpForm.invalid">

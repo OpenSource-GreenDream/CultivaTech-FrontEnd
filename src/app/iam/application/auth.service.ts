@@ -11,6 +11,15 @@ export class AuthService {
 
   readonly isSignedIn = computed(() => this.currentUser() !== null);
 
+  /**
+   * Helper optional to verify current rol user
+   */
+  hasRole(roleName: string): boolean {
+    const user = this.currentUser();
+    if (!user || !user.roles) return false;
+    return user.roles.some(role => role.name === roleName);
+  }
+
   signOut(): void {
     this.currentUser.set(null);
   }
