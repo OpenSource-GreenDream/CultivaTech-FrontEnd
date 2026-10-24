@@ -1,7 +1,7 @@
 import {Component, inject} from '@angular/core';
 import {IamStore} from '../../../application/iam.store';
 import {Router} from '@angular/router';
-import {SignInRequest} from '../../../domain/model/sign-in.request';
+import {SignInRequest} from '../../../infrastructure/sign-in.request';
 import {SignInForm} from '../../components/sign-in-form/sign-in-form';
 import {TranslatePipe} from '@ngx-translate/core';
 
