@@ -4,5 +4,6 @@
  */
 export interface SignUpRequest{
   email_address: string;
-  password_hash: string;
+  password_hash: string
+  role: string;
 }

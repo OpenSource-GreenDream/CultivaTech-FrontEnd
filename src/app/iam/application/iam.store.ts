@@ -1,10 +1,10 @@
 import {inject, resource, Service, signal} from '@angular/core';
 import {IamApi} from '../infrastructure/iam-api';
 import {User} from '../domain/model/user.entity';
-import {SignUpRequest} from '../domain/model/sign-up.request';
+import {SignUpRequest} from '../infrastructure/sign-up.request';
 import {map, Observable, tap} from 'rxjs';
 import {UserAssembler} from '../infrastructure/user.assembler';
-import {SignInRequest} from '../domain/model/sign-in.request';
+import {SignInRequest} from '../infrastructure/sign-in.request';
 import {AuthService} from './auth.service';
 
 /**

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authenticationGuard } from './iam/infrastructure/authentication.guard';
+import {MONITORING_ROUTES} from './monitoring/monitoring-routes';
 
 export const routes: Routes = [
   {
@@ -55,15 +56,14 @@ export const routes: Routes = [
       },
       {
         path: 'monitoring',
-        loadComponent: () => import('./monitoring/presentation/views/device-monitoring/device-monitoring')
-          .then((m) => m.DeviceMonitoring),
+        loadChildren: () => import('./monitoring/monitoring-routes')
+          .then((routes) => MONITORING_ROUTES),
       },
       {
         path: 'analytics',
         loadComponent: () => import('./analytics/presentation/views/analytics-dashboard/analytics-dashboard')
           .then((m) => m.AnalyticsDashboardComponent),
       }
-      // Other Bounded Contexts
     ],
   },
 

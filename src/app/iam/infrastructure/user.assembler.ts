@@ -1,6 +1,7 @@
 import { Service } from '@angular/core';
-import {UserResource} from './user-response';
+import {RoleResource, UserResource} from './user-response';
 import {User} from '../domain/model/user.entity';
+import {Role} from '../domain/model/role.entity';
 
 /**
  * Service to transform application with API.
@@ -9,10 +10,14 @@ import {User} from '../domain/model/user.entity';
 @Service()
 export class UserAssembler {
   static toEntityFromResource(resource: UserResource): User{
+    const roles: Role[] = resource.roles?
+      resource.roles.map((r: RoleResource) => new Role(r.id, r.name, r.description))
+      : [];
     return new User(
       resource.id,
       resource.email_address,
-      resource.password_hash
+      resource.password_hash,
+      roles
     );
   }
 
@@ -22,6 +27,11 @@ export class UserAssembler {
       id: entity.id,
       email_address: entity.email_address,
       password_hash: entity.passwordHash,
+      roles: entity.roles.map(r=>({
+        id: r.id,
+        name: r.name,
+        description: r.description
+      })),
       created_at: nowISO,
       updated_at: nowISO,
     };

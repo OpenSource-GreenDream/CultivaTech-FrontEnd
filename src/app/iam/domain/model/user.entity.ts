@@ -1,4 +1,5 @@
 import {BaseEntity} from '../../../shared/domain/model/base.entity';
+import {Role} from './role.entity';
 
 /**
  * User entity to represents users in the project.
@@ -8,7 +9,8 @@ export class User implements BaseEntity{
   constructor(
     public id: number,
     public email_address: string,
-    public passwordHash: string
+    public passwordHash: string,
+    public roles: Role[] = []
   ) {
   }
 }

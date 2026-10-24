@@ -9,6 +9,7 @@ import {DeviceAssembler} from '../infrastructure/device.assembler';
 import {FieldAssembler} from '../../profile/infrastructure/field.assembler';
 import {AnalyticsApi} from '../../analytics/infrastructure/analytics-api';
 import {AnalyticsReport} from '../../analytics/domain/model/entity/analytics-report';
+import {CreateDeviceRequest} from '../domain/model/create-device.request';
 
 @Service()
 export class MonitoringStore{
@@ -34,6 +35,12 @@ export class MonitoringStore{
     const list = this.devices();
     if (fieldId === null) return list;
     return list.filter((device) => device.fieldId === fieldId);
+  });
+
+  readonly sortedReports = computed(()=>{
+    return [...this.reports()].sort((a, b)=>
+      new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime()
+    )
   });
 
   loadMonitoringData(): Observable<void> {
@@ -74,5 +81,14 @@ export class MonitoringStore{
 
   setSelectedField(fieldId: number | null): void {
     this.selectedFieldId.set(fieldId);
+  }
+
+  createDevice(request: CreateDeviceRequest): Observable<Device> {
+    return this.deviceApi.createDevice(request).pipe(
+      map(DeviceAssembler.toEntityFromResource),
+      tap((newDevice)=>{
+        this._devices.update((current)=>[...current, newDevice]);
+      })
+    )
   }
 }
