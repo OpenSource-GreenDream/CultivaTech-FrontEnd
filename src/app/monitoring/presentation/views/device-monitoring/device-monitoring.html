@@ -5,10 +5,13 @@
       <h1>{{ "monitoring.title" | translate }}</h1>
       <p class="description">{{ "monitoring.description" | translate }}</p>
     </div>
+    <button type="button" class="btn-primary" (click)="goToCreateDevice()">
+      + Registrar Sensor
+    </button>
   </div>
 
   <div class="monitoring-tabs">
-    <button type="button" class="tab-button active">
+    <button type="button" class="tab-button active" (click)="goToSummary()">
       {{ "monitoring.tabs.summary" | translate }}
     </button>
     <button type="button" class="tab-button" (click)="goToHistory()">

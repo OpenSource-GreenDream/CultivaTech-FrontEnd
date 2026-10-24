@@ -1,9 +1,10 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {MonitoringStore} from '../../../application/monitoring.store';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
 import {AnalyticsReport} from '../../../../analytics/domain/model/entity/analytics-report';
+import {CreateDevice} from '../create-device/create-device';
 
 @Component({
   imports: [
@@ -42,5 +43,13 @@ export class DeviceMonitoring {
 
   goToHistory(): void {
     this.router.navigate(['/monitoring/sensor-history']);
+  }
+
+  goToCreateDevice(): void {
+    this.router.navigate(['/monitoring/create-device']);
+  }
+
+  goToSummary(): void {
+    this.router.navigate(['/monitoring']);
   }
 }

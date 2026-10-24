@@ -1,0 +1,49 @@
+<div class="monitoring-container">
+  <div class="header">
+    <button type="button" class="btn-back" (click)="goBack()">← Volver al Monitoreo</button>
+    <div>
+      <p class="section-label">Historial de Telemetría</p>
+      <h1>Historial de Humedad y Sensores</h1>
+      <p class="description">Consulta los registros ordenados cronológicamente por sensor.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state">
+      <p>{{ "monitoring.loading" | translate }}</p>
+    </div>
+  } @else {
+    @if (reports().length === 0) {
+      <div class="empty-state">
+        <h3>No hay datos disponibles</h3>
+        <p>No existen registros de humedad o telemetría para mostrar en este momento.</p>
+      </div>
+    } @else {
+      <div class="history-list">
+        @for (report of reports(); track report.id) {
+          <div class="history-card">
+            <div class="history-header">
+              <span class="device-badge">Sensor ID: #{{ report.deviceId }}</span>
+              <small>{{ report.generatedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+            <div class="history-body">
+              <div class="metric-box">
+                <span>Humedad Promedio</span>
+                <strong>{{ report.meanValue }}%</strong>
+              </div>
+              <div class="metric-details">
+                <p><strong>Varianza:</strong> {{ report.variance }}</p>
+                <p><strong>Desviación Estándar:</strong> {{ report.standardDeviation }}</p>
+              </div>
+            </div>
+            @if (report.technicalInterpretation) {
+              <div class="history-footer">
+                <p><em>{{ report.technicalInterpretation }}</em></p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
