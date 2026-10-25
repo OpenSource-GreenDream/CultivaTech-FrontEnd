@@ -2,21 +2,10 @@ import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {Field} from '../../../domain/model/field.entity';
 import {ProfileStore} from '../../../application/profile.store';
 import {ProfileContextService} from '../../../application/profile-context.service';
-import {CreateFieldRequest} from '../../../domain/model/create-field.request';
+import {CreateFieldRequest} from '../../../infrastructure/create-field.request';
 import {FormsModule} from '@angular/forms';
 import {DecimalPipe} from '@angular/common';
 import {TranslatePipe} from '@ngx-translate/core';
-
-/**
- * TODO: DELETE THIS METHOD WHEN INTEGRATING WITH THE REAL BACKEND!!!
- * The ID generation are mock implementations for JSON Server / Frontend prototyping.
- * REMOVE this manual ID assignment when integrating with the real Spring Boot / Express backend,
- * as the database will automatically generate unique IDs.
- * @author Jorge Manuel Retuerto Rodriguez - U202318612
- */
-function generateMockFieldId(): number {
-  return Math.floor(100000 + Math.random() * 900000);
-}
 
 @Component({
   imports: [
@@ -57,9 +46,7 @@ export class FieldList {
 
     this.isSubmitting = true;
 
-    // TODO: DELETE MOCK WHEN INTEGRATING BACKEND!!!
-    const requestPayload: Omit<CreateFieldRequest, 'profile_id'> & { id?: number } = {
-      id: generateMockFieldId(),
+    const requestPayload: Omit<CreateFieldRequest, 'profile_id'> = {
       name: this.newField.name,
       size_m2: this.newField.sizeM2,
       soil_type: this.newField.soilType,

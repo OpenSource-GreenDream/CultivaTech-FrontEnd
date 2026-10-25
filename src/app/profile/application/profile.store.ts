@@ -1,4 +1,4 @@
-import {CreateFieldRequest} from '../domain/model/create-field.request';
+import {CreateFieldRequest} from '../infrastructure/create-field.request';
 import {catchError, map, Observable, of, tap, throwError} from 'rxjs';
 import {Field} from '../domain/model/field.entity';
 import {FieldAssembler} from '../infrastructure/field.assembler';
@@ -7,7 +7,7 @@ import {ProfileApi} from '../infrastructure/profile-api';
 import {AuthService} from '../../iam/application/auth.service';
 import {Profile} from '../domain/model/profile.entity';
 import {ProfileAssembler} from '../infrastructure/profile.assembler';
-import {CreateProfileRequest} from '../domain/model/create-profile.request';
+import {CreateProfileRequest} from '../infrastructure/create-profile.request';
 import {ProfileContextService} from './profile-context.service';
 
 /**
@@ -72,23 +72,18 @@ export class ProfileStore {
    */
   loadFieldsForCurrentProfile(): Observable<Field[]> {
     const profileId = this.profileContext.currentProfileId();
-    console.log('[ProfileStore] loadFieldsForCurrentProfile invocado con profileId:', profileId);
 
     if (!profileId) {
-      console.warn('[ProfileStore] Sin profileId activo para cargar campos.');
       this.fields.set([]);
       return of([]);
     }
 
     return this.profileApi.getFieldsByProfileId(profileId).pipe(
-      tap((resources) => console.log('[ProfileStore] Respuesta RAW de fields:', resources)),
       map((resources) => resources.map(res => FieldAssembler.toEntityFromResource(res))),
       tap((fields) => {
-        console.log('[ProfileStore] Entidades Field mapeadas:', fields);
         this.fields.set(fields);
       }),
-      catchError((err) => {
-        console.error('[ProfileStore] Error al consultar campos:', err);
+      catchError(() => {
         this.fields.set([]);
         return of([]);
       })
