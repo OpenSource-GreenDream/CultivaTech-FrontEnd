@@ -1,0 +1,75 @@
+<div class="stock-container">
+  <div class="header">
+    <button type="button" class="btn-back" (click)="onCancel()">Volver al Inventario</button>
+    <div>
+      <p class="section-label">Registro de Insumos</p>
+      <h1>Agregar Nuevo Insumo al Inventario</h1>
+      <p class="description">Ingresa los datos del insumo agrícola para registrar su disponibilidad inicial.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="supplyForm" (ngSubmit)="onSubmit()" class="form-content">
+      <div class="form-group">
+        <label for="productId">Insumo del Catálogo</label>
+        <select id="productId" formControlName="productId" class="form-control">
+          <option value="">Seleccione un insumo...</option>
+          @for (product of products(); track product.id) {
+            <option [value]="product.id">{{ product.name }}</option>
+          }
+        </select>
+        @if (supplyForm.get('productId')?.touched && supplyForm.get('productId')?.hasError('required')) {
+          <span class="error-text">Debe seleccionar un insumo obligatoriamente.</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="name">Nombre del Insumo</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Ej. Nodo Sensor IoT CultivaTech V1"
+        />
+        @if (supplyForm.get('name')?.touched && supplyForm.get('name')?.hasError('required')) {
+          <span class="error-text">El nombre del insumo es obligatorio.</span>
+        }
+        @if (supplyForm.get('name')?.touched && supplyForm.get('name')?.hasError('minlength')) {
+          <span class="error-text">El nombre debe tener al menos 3 caracteres.</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="stockQuantity">Cantidad Inicial Disponible</label>
+        <input
+          id="stockQuantity"
+          type="number"
+          min="0"
+          formControlName="stockQuantity"
+          placeholder="Ej. 50"
+        />
+        @if (supplyForm.get('stockQuantity')?.touched && supplyForm.get('stockQuantity')?.hasError('min')) {
+          <span class="error-text">La cantidad no puede ser negativa.</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="warehouseLocation">Ubicación en Almacén</label>
+        <input
+          id="warehouseLocation"
+          type="text"
+          formControlName="warehouseLocation"
+          placeholder="Ej. Almacén Central - Sector B2"
+        />
+        @if (supplyForm.get('warehouseLocation')?.touched && supplyForm.get('warehouseLocation')?.hasError('required')) {
+          <span class="error-text">La ubicación del almacén es requerida.</span>
+        }
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn-secondary" (click)="onCancel()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="supplyForm.invalid">Registrar Insumo</button>
+      </div>
+    </form>
+  </div>
+</div>

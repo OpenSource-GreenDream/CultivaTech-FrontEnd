@@ -10,10 +10,8 @@
     </div>
   } @else {
     <div class="profile-grid">
-      <!-- Fundo Target info -->
       <app-profile-info [profile]="profileStore.currentProfile()"></app-profile-info>
 
-      <!-- Fields list-->
       <app-field-list
         [fields]="profileStore.fields()"
         (fieldCreated)="onFieldCreated()">

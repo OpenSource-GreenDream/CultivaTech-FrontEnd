@@ -23,23 +23,19 @@ export class ProfileManagementComponent implements OnInit {
   isLoading = true;
 
   ngOnInit(): void {
-    console.log('[ProfileManagementComponent] ngOnInit iniciado.');
     this.isLoading = true;
-
     this.profileContext.fetchCurrentProfile().subscribe({
       next: (profile) => {
-        console.log('[ProfileManagementComponent] fetchCurrentProfile result:', profile);
         if (profile) {
           this.profileStore.currentProfile.set(profile);
           this.loadFields();
         } else {
-          console.warn('[ProfileManagementComponent] Sin perfil. Finalizando estado de carga.');
           this.isLoading = false;
           this.cdr.detectChanges();
         }
       },
       error: (err) => {
-        console.error('[ProfileManagementComponent] Error en fetchCurrentProfile:', err);
+        console.error('Error fetching profile context:', err);
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -47,15 +43,13 @@ export class ProfileManagementComponent implements OnInit {
   }
 
   private loadFields(): void {
-    console.log('[ProfileManagementComponent] Cargando campos del fundo...');
     this.profileStore.loadFieldsForCurrentProfile().subscribe({
       next: (fields) => {
-        console.log('[ProfileManagementComponent] Campos cargados exitosamente:', fields);
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('[ProfileManagementComponent] Error al cargar campos:', err);
+        console.error('Error loading fields:', err);
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -63,7 +57,6 @@ export class ProfileManagementComponent implements OnInit {
   }
 
   onFieldCreated(): void {
-    console.log('[ProfileManagementComponent] Nuevo campo creado. Recargando lista de campos...');
     this.loadFields();
   }
 }

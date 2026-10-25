@@ -1,5 +1,5 @@
 import {Component, output} from '@angular/core';
-import {UpdateStockRequest} from '../../../domain/model/update-stock.request';
+import {UpdateStockRequest} from '../../../infrastructure/update-stock.request';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
 

@@ -8,6 +8,7 @@ export class InventoryAssembler {
     return {
       id: resource.id,
       productId: resource.product_id,
+      name: resource.name,
       stockQuantity: resource.stock_quantity,
       warehouseLocation: resource.warehouse_location,
       createdAt: resource.created_at,
@@ -19,6 +20,7 @@ export class InventoryAssembler {
     return {
       id: entity.id,
       product_id: entity.productId,
+      name: entity.name,
       stock_quantity: entity.stockQuantity,
       warehouse_location: entity.warehouseLocation,
       created_at: entity.createdAt,
