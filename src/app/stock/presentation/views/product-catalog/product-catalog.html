@@ -1,0 +1,63 @@
+<div class="stock-container">
+  <div class="header">
+    <button type="button" class="btn-back" (click)="goBack()">Volver al Inventario</button>
+    <div>
+      <p class="section-label">Catálogo Agrícola</p>
+      <h1>Catálogo de Productos</h1>
+      <p class="description">Consulta los productos y suministros disponibles en la plataforma.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state">
+      <p>Cargando catálogo...</p>
+    </div>
+  } @else {
+    @if (products().length === 0) {
+      <div class="empty-state">
+        <h3>Catálogo sin productos</h3>
+        <p>No existen productos registrados en este momento.</p>
+      </div>
+    } @else {
+      <div class="catalog-grid">
+        @for (product of products(); track product.id) {
+          <div class="product-card" (click)="viewDetail(product)">
+            <div class="product-image-box">
+              <img [src]="product.imageUrl || 'assets/placeholder-product.png'" [alt]="product.name" />
+            </div>
+            <div class="product-info">
+              <span class="category-tag">{{ product.category }}</span>
+              <h3>{{ product.name }}</h3>
+              <p class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</p>
+              <span class="availability" [class.available]="product.isAvailable">
+                {{ product.isAvailable ? 'Disponible' : 'Agotado' }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (selectedProduct(); as product) {
+    <div class="modal-overlay" (click)="closeDetail()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ product.name }}</h2>
+          <button type="button" class="close-btn" (click)="closeDetail()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="category">Categoría: <strong>{{ product.category }}</strong></p>
+          <p class="price-large">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</p>
+          <p class="description">{{ product.description }}</p>
+          <div class="status-box" [class.in-stock]="product.isAvailable">
+            {{ product.isAvailable ? 'Producto disponible para compra' : 'Producto no disponible actualmente' }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeDetail()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

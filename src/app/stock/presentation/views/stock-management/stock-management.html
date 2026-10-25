@@ -1,16 +1,76 @@
-<div class="stock-page-container">
-  @if (successMessage) {
-    <div class="success-message">
-      <span>✓</span>
-      {{ "stock.update.success" | translate }}
+<div class="stock-container">
+  <div class="header">
+    <div>
+      <p class="section-label">Gestión de Almacén</p>
+      <h1>Inventario de Insumos Agrícolas</h1>
+      <p class="description">Controla las existencias disponibles de insumos en tus instalaciones.</p>
+    </div>
+    <div class="action-buttons">
+      <button type="button" class="btn-secondary" (click)="goToCatalog()">Ver Catálogo</button>
+      <button type="button" class="btn-primary" (click)="goToCreateSupply()">+ Registrar Insumo</button>
+    </div>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert-error">
+      {{ errorMessage }}
     </div>
   }
 
-  <div class="form-section">
-    <app-update-stock-form (submitForm)="onUpdateStock($event)"></app-update-stock-form>
-  </div>
+  @if (loading()) {
+    <div class="empty-state">
+      <p>Cargando inventario de insumos...</p>
+    </div>
+  } @else {
+    @if (inventories().length === 0) {
+      <div class="empty-state">
+        <h3>Inventario vacío</h3>
+        <p>No tienes insumos registrados en este momento. Registra un nuevo producto para comenzar.</p>
+      </div>
+    } @else {
+      <div class="inventory-grid">
+        @for (item of inventories(); track item.id) {
+          <div class="inventory-card">
+            <div class="card-header">
+              <!-- Mostramos el nombre del insumo directamente -->
+              <span class="product-id-badge">{{ item.name }}</span>
+              <small>{{ item.updatedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+            </div>
 
-  <div class="list-section">
-    <app-inventory-list [inventories]="inventories()"></app-inventory-list>
-  </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="label">Ubicación Almacén:</span>
+                <strong>{{ item.warehouseLocation }}</strong>
+              </div>
+
+              <div class="stock-row">
+                <span class="label">Cantidad Disponible:</span>
+                @if (editingInventoryId === item.id) {
+                  <div class="edit-inline">
+                    <input
+                      type="number"
+                      min="0"
+                      [(ngModel)]="newStockValue"
+                      class="input-stock"
+                    />
+                    <button type="button" class="btn-icon check" (click)="saveStock(item.id)">✓</button>
+                    <button type="button" class="btn-icon cancel" (click)="cancelEditing()">✕</button>
+                  </div>
+                } @else {
+                  <div class="stock-display">
+                    <span class="stock-badge" [class.low]="item.stockQuantity <= 5">
+                      {{ item.stockQuantity }} unidades
+                    </span>
+                    <button type="button" class="btn-edit" (click)="startEditing(item.id, item.stockQuantity)">
+                      Editar
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
 </div>
