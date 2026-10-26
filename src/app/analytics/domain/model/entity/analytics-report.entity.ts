@@ -1,4 +1,4 @@
-export interface AnalyticsReportEntity {
+export interface AnalyticsReport {
   id: number;
   deviceId: number;
   generatedAt: string;

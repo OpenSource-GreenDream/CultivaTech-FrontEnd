@@ -10,6 +10,7 @@ export const environment = {
   fieldsEndpoint: '/fields',
   devicesEndpoint: '/devices',
   reportsEndpoint: '/reports',
+  harvestProjectionsEndpoint: '/harvest_projections',
 
   productsEndpoint: '/products',
   inventoriesEndpoint: '/inventories',
