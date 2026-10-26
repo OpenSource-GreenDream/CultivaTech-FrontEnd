@@ -1,10 +1,10 @@
 import {AnalyticsReportResource} from './analytics-report-response';
-import {AnalyticsReport} from '../domain/model/entity/analytics-report';
+import {AnalyticsReportEntity} from '../domain/model/entity/analytics-report.entity';
 import {Service} from '@angular/core';
 
 @Service()
 export class AnalyticsReportAssembler {
-  static toEntityFromResource(resource: AnalyticsReportResource): AnalyticsReport {
+  static toEntityFromResource(resource: AnalyticsReportResource): AnalyticsReportEntity {
     return {
       id: resource.id,
       deviceId: resource.device_id,

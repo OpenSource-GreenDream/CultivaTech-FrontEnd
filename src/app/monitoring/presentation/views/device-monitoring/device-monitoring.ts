@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {MonitoringStore} from '../../../application/monitoring.store';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
-import {AnalyticsReport} from '../../../../analytics/domain/model/entity/analytics-report';
+import {AnalyticsReportEntity} from '../../../../analytics/domain/model/entity/analytics-report.entity';
 import {CreateDevice} from '../create-device/create-device';
 
 @Component({
@@ -32,7 +32,7 @@ export class DeviceMonitoring {
     return field ? field.name : `Campo ${fieldId}`;
   }
 
-  getReport(deviceId: number): AnalyticsReport | undefined {
+  getReport(deviceId: number): AnalyticsReportEntity | undefined {
     return this.monitoringStore.reports().find((report) => Number(report.deviceId) === Number(deviceId));
   }
 

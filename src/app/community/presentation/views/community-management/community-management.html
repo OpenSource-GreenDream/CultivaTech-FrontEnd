@@ -1,0 +1,106 @@
+<div class="community-container">
+  <div class="header-section">
+    <h2 class="section-title">{{ "community.title" | translate }}</h2>
+    <p class="section-subtitle">{{ "community.subtitle" | translate }}</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">
+      <p>{{ "community.loading" | translate }}</p>
+    </div>
+  } @else {
+    <div class="community-grid">
+      <div class="card reputation-card">
+        <h3>{{ "community.reputation.title" | translate }}</h3>
+
+        <div class="filter-group">
+          <label>Filtrar por Miembro:</label>
+          <select [ngModel]="selectedTargetProfileId()" (ngModelChange)="onFilterChange($event)" class="form-control">
+            <option [value]="null">Todos los Miembros</option>
+            @for (profile of communityStore.communityProfiles(); track profile.id) {
+              <option [value]="profile.profileId">{{ profile.nickname }} (Score: {{ profile.reputationScore }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="profiles-list">
+          @for (profile of communityStore.communityProfiles(); track profile.id) {
+            <div class="profile-item" [class.selected]="selectedTargetProfileId() === profile.profileId">
+              <p><strong>{{ profile.nickname }}</strong></p>
+              <p>Reputación: {{ profile.reputationScore }} pts</p>
+              <p class="bio">{{ profile.publicBio }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card reviews-card">
+        <h3>{{ "community.reviews.title" | translate }}</h3>
+
+        <div class="form-card">
+          <h4>{{ "community.form.title" | translate }}</h4>
+          <form (ngSubmit)="submitReview()" class="review-form">
+            <div class="form-group">
+              <label>Dirigido a:</label>
+              <select [(ngModel)]="newReview.targetProfileId" name="targetProfileId" required class="form-control">
+                @for (profile of communityStore.communityProfiles(); track profile.id) {
+                  <option [value]="profile.profileId">{{ profile.nickname }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>{{ "community.form.rating-label" | translate }}</label>
+              <select [(ngModel)]="newReview.rating" name="rating" required class="form-control">
+                <option [value]="5">★★★★★ (5)</option>
+                <option [value]="4">★★★★☆ (4)</option>
+                <option [value]="3">★★★☆☆ (3)</option>
+                <option [value]="2">★★☆☆☆ (2)</option>
+                <option [value]="1">★☆☆☆☆ (1)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>{{ "community.form.content-label" | translate }}</label>
+              <textarea [(ngModel)]="newReview.content" name="content" required rows="3" [placeholder]="'community.form.content-placeholder' | translate"></textarea>
+            </div>
+
+            <div class="form-buttons">
+              <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+                {{ (isSubmitting ? 'community.form.submitting' : 'community.form.submit') | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        @if (communityStore.reviews().length === 0) {
+          <p>{{ "community.reviews.empty" | translate }}</p>
+        } @else {
+          <div class="reviews-list">
+            @for (review of paginatedReviews(); track review.id) {
+              <div class="review-item">
+                <div class="review-header">
+                  <span class="rating">★ {{ review.rating }}/5</span>
+                  <span class="target-info">Para Perfil #{{ review.targetProfileId }}</span>
+                </div>
+                <p class="content">{{ review.content }}</p>
+              </div>
+            }
+          </div>
+
+          <div class="pagination-controls">
+            <button class="btn-page" (click)="prevPage()" [disabled]="currentPage() === 1">
+              &laquo; {{ "community.pagination.prev" | translate }}
+            </button>
+            <span class="page-info">
+              {{ currentPage() }} / {{ totalPages() }}
+            </span>
+            <button class="btn-page" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+              {{ "community.pagination.next" | translate }} &raquo;
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
