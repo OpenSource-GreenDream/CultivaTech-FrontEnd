@@ -1,5 +1,5 @@
 import {computed, inject, Service, signal} from '@angular/core';
-import {AnalyticsReport} from '../domain/model/entity/analytics-report';
+import {AnalyticsReportEntity} from '../domain/model/entity/analytics-report.entity';
 import {KeyIndicators} from '../domain/model/valueobjects/key-indicators';
 import {catchError, map, Observable, tap, throwError} from 'rxjs';
 import {DeviceAssembler} from '../../monitoring/infrastructure/device.assembler';
@@ -15,7 +15,7 @@ export class AnalyticsStore {
   private readonly authService = inject(AuthService);
 
   private readonly _devices = signal<Device[]>([]);
-  readonly reports = signal<AnalyticsReport[]>([]);
+  readonly reports = signal<AnalyticsReportEntity[]>([]);
   readonly selectedDeviceId = signal<number | null>(null);
   readonly loading = signal<boolean>(false);
 

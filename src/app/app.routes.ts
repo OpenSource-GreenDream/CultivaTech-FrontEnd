@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authenticationGuard } from './iam/infrastructure/authentication.guard';
-import {MONITORING_ROUTES} from './monitoring/monitoring-routes';
 
 export const routes: Routes = [
   {
@@ -57,12 +56,17 @@ export const routes: Routes = [
       {
         path: 'monitoring',
         loadChildren: () => import('./monitoring/monitoring-routes')
-          .then((routes) => MONITORING_ROUTES),
+          .then((routes) => routes.MONITORING_ROUTES),
       },
       {
         path: 'analytics',
         loadComponent: () => import('./analytics/presentation/views/analytics-dashboard/analytics-dashboard')
           .then((m) => m.AnalyticsDashboardComponent),
+      },
+      {
+        path: 'community',
+        loadChildren: () => import('./community/community-routes')
+          .then((routes) => routes.COMMUNITY_ROUTES),
       }
     ],
   },
