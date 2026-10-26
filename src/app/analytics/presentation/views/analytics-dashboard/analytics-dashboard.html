@@ -58,5 +58,136 @@
         </div>
       </div>
     }
+
+    <div class="section-container">
+      <div class="section-header">
+        <h3>Evolución de Tendencia de Humedad (US36)</h3>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-color line-color"></span> Lectura Real</span>
+          <span class="legend-item"><span class="legend-color threshold-color"></span> Umbral Mínimo ({{ criticalThreshold }}%)</span>
+        </div>
+      </div>
+
+      @if (reports().length > 0) {
+        <div class="chart-wrapper">
+          <svg viewBox="0 0 600 180" class="native-chart">
+            <line x1="30" y1="30" x2="570" y2="30" stroke="#edf2f7" stroke-dasharray="4" />
+            <line x1="30" y1="105" x2="570" y2="105" stroke="#edf2f7" stroke-dasharray="4" />
+            <line x1="30" y1="150" x2="570" y2="150" stroke="#cbd5e0" />
+
+            <line
+              x1="30"
+              [attr.y1]="thresholdY()"
+              x2="570"
+              [attr.y2]="thresholdY()"
+              stroke="#e53e3e"
+              stroke-width="2"
+              stroke-dasharray="5"
+            />
+            <text x="35" [attr.y]="thresholdY() - 6" fill="#e53e3e" font-size="10" font-weight="700">
+              Umbral Crítico ({{ criticalThreshold }}%)
+            </text>
+
+            <polyline
+              [attr.points]="chartPoints()"
+              fill="none"
+              stroke="#3182ce"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            @for (rep of reports(); track rep.id; let i = $index) {
+              <g class="chart-node">
+                <circle
+                  [attr.cx]="30 + (i / (reports().length - 1 || 1)) * 540"
+                  [attr.cy]="180 - 30 - ((rep.meanValue - chartValues().minVal) / chartValues().rangeVal) * 120"
+                  [attr.r]="5"
+                  [attr.fill]="rep.meanValue < criticalThreshold ? '#e53e3e' : '#2b6cb0'"
+                  stroke="#fff"
+                  stroke-width="2"
+                />
+              </g>
+            }
+          </svg>
+        </div>
+      } @else {
+        <p class="no-data-msg">No hay reportes registrados para graficar.</p>
+      }
+    </div>
+
+    <div class="section-container">
+      <h3>Proyección de Cosechas vs. Rendimiento Histórico (US37)</h3>
+      @if (projections().length > 0) {
+        <div class="dual-comparison-grid">
+          @for (proj of projections(); track proj.id) {
+            <div class="comparison-card">
+              <div class="crop-header">
+                <span class="crop-title">{{ proj.cropType }}</span>
+                <span class="period-badge">{{ proj.projectionPeriod }}</span>
+              </div>
+
+              <div class="bars-wrapper">
+                <div class="bar-row">
+                  <span class="bar-label">Histórico: <strong>{{ proj.historicalYieldTons }} t</strong></span>
+                  <div class="bar-track">
+                    <div class="bar-fill historical" [style.width.%]="(proj.historicalYieldTons / 50) * 100"></div>
+                  </div>
+                </div>
+
+                <div class="bar-row">
+                  <span class="bar-label">Proyectado: <strong>{{ proj.projectedYieldTons }} t</strong></span>
+                  <div class="bar-track">
+                    <div class="bar-fill projected" [style.width.%]="(proj.projectedYieldTons / 50) * 100"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <span class="confidence-tag">Confianza del modelo: {{ proj.confidenceScore }}%</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="no-data-msg">No hay proyecciones registradas para este dispositivo.</p>
+      }
+    </div>
+
+    <div class="section-container">
+      <h3>Historial Detallado de Reportes</h3>
+      @if (reports().length > 0) {
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th>Fecha Generación</th>
+              <th>Valor Medio</th>
+              <th>Varianza</th>
+              <th>Desviación Estándar</th>
+              <th>Interpretación Técnica</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (rep of reports(); track rep.id) {
+                <tr>
+                  <td>{{ rep.generatedAt | date:'medium' }}</td>
+                  <td>
+                    <span [class.value-alert]="rep.meanValue < criticalThreshold">
+                      {{ rep.meanValue }}
+                    </span>
+                  </td>
+                  <td>{{ rep.variance }}</td>
+                  <td>{{ rep.standardDeviation }}</td>
+                  <td>{{ rep.technicalInterpretation }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="no-data-msg">No hay reportes históricos disponibles.</p>
+      }
+    </div>
   }
 </div>
