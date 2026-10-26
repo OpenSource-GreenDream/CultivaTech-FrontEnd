@@ -8,7 +8,7 @@ import {catchError, forkJoin, map, Observable, tap, throwError} from 'rxjs';
 import {DeviceAssembler} from '../infrastructure/device.assembler';
 import {FieldAssembler} from '../../profile/infrastructure/field.assembler';
 import {AnalyticsApi} from '../../analytics/infrastructure/analytics-api';
-import {AnalyticsReportEntity} from '../../analytics/domain/model/entity/analytics-report.entity';
+import {AnalyticsReport} from '../../analytics/domain/model/entity/analytics-report.entity';
 import {CreateDeviceRequest} from '../domain/model/create-device.request';
 
 @Service()
@@ -20,7 +20,7 @@ export class MonitoringStore{
 
   private readonly _devices = signal<Device[]>([]);
   readonly fields = signal<Field[]>([]);
-  readonly reports = signal<AnalyticsReportEntity[]>([]);
+  readonly reports = signal<AnalyticsReport[]>([]);
   readonly loading = signal<boolean>(false);
   readonly selectedFieldId = signal<number | null>(null);
 
@@ -55,7 +55,7 @@ export class MonitoringStore{
         this.fields.set(fieldsRaw.map(FieldAssembler.toEntityFromResource));
         this._devices.set(devicesRaw.map(DeviceAssembler.toEntityFromResource));
 
-        const monitoringReports: AnalyticsReportEntity[] = reportsRaw.map((resource) => ({
+        const monitoringReports: AnalyticsReport[] = reportsRaw.map((resource) => ({
           id: resource.id,
           deviceId: resource.device_id,
           generatedAt: resource.generated_at,

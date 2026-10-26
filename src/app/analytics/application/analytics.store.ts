@@ -1,5 +1,4 @@
 import {computed, inject, Service, signal} from '@angular/core';
-import {AnalyticsReportEntity} from '../domain/model/entity/analytics-report.entity';
 import {KeyIndicators} from '../domain/model/valueobjects/key-indicators';
 import {catchError, map, Observable, tap, throwError} from 'rxjs';
 import {DeviceAssembler} from '../../monitoring/infrastructure/device.assembler';
@@ -7,15 +6,21 @@ import {DeviceApi} from '../../monitoring/infrastructure/device-api';
 import {AuthService} from '../../iam/application/auth.service';
 import {Device} from '../../monitoring/domain/model/device.entity';
 import {AnalyticsContext} from './analytics-context.store';
+import {HarvestProjectionAssembler} from '../infrastructure/harvest-projection.assembler';
+import {AnalyticsApi} from '../infrastructure/analytics-api';
+import {AnalyticsReport} from '../domain/model/entity/analytics-report.entity';
+import {HarvestProjection} from '../domain/model/entity/harvest-projection.entity';
 
 @Service()
 export class AnalyticsStore {
   private readonly analyticsContext = inject(AnalyticsContext);
+  private readonly analyticsApi = inject(AnalyticsApi);
   private readonly deviceApi = inject(DeviceApi);
   private readonly authService = inject(AuthService);
 
   private readonly _devices = signal<Device[]>([]);
-  readonly reports = signal<AnalyticsReportEntity[]>([]);
+  readonly reports = signal<AnalyticsReport[]>([]);
+  readonly projections = signal<HarvestProjection[]>([]);
   readonly selectedDeviceId = signal<number | null>(null);
   readonly loading = signal<boolean>(false);
 
@@ -65,7 +70,7 @@ export class AnalyticsStore {
         if (devices.length > 0) {
           const firstDeviceId = devices[0].id;
           this.selectedDeviceId.set(firstDeviceId);
-          this.loadReportsForDevice(firstDeviceId);
+          this.loadDataForDevice(firstDeviceId);
         } else {
           this.loading.set(false);
         }
@@ -81,21 +86,36 @@ export class AnalyticsStore {
   selectDevice(deviceId: number): void {
     if (this.selectedDeviceId() === deviceId) return;
     this.selectedDeviceId.set(deviceId);
-    this.loadReportsForDevice(deviceId);
+    this.loadDataForDevice(deviceId);
   }
 
-  private loadReportsForDevice(deviceId: number): void {
+  private loadDataForDevice(deviceId: number): void {
     this.loading.set(true);
+
     this.analyticsContext.getReportByDeviceId(deviceId).subscribe({
       next: (reports) => {
         this.reports.set(reports);
-        this.loading.set(false);
+        this.loadProjectionsForDevice(deviceId);
       },
-      error: (err) => {
-        console.error('Error al cargar analítica:', err);
+      error: () => {
         this.reports.set([]);
+        this.loadProjectionsForDevice(deviceId);
+      }
+    });
+  }
+
+  private loadProjectionsForDevice(deviceId: number): void {
+    this.analyticsApi.getProjectionsByDeviceId(deviceId).pipe(
+      map(resources => resources.map(HarvestProjectionAssembler.toEntityFromResource))
+    ).subscribe({
+      next: (projections) => {
+        this.projections.set(projections);
         this.loading.set(false);
       },
+      error: () => {
+        this.projections.set([]);
+        this.loading.set(false);
+      }
     });
   }
 }

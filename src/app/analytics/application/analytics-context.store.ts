@@ -2,7 +2,7 @@ import {inject, OnDestroy, Service} from '@angular/core';
 import {AnalyticsApi} from '../infrastructure/analytics-api';
 import {map, Observable} from 'rxjs';
 import {AnalyticsReportAssembler} from '../infrastructure/analytics-report.assembler';
-import {AnalyticsReportEntity} from '../domain/model/entity/analytics-report.entity';
+import {AnalyticsReport} from '../domain/model/entity/analytics-report.entity';
 
 /**
  * This is Anti Corruption Layer for Analytics Context
@@ -13,13 +13,13 @@ import {AnalyticsReportEntity} from '../domain/model/entity/analytics-report.ent
 export class AnalyticsContext {
   private readonly reportApi = inject(AnalyticsApi);
 
-  getReportByDeviceId(deviceId: number): Observable<AnalyticsReportEntity[]> {
+  getReportByDeviceId(deviceId: number): Observable<AnalyticsReport[]> {
     return this.reportApi.getReportsByDeviceId(deviceId).pipe(
       map((resources) => resources.map(AnalyticsReportAssembler.toEntityFromResource))
     );
   }
 
-  getAllReportsForAnalytics(): Observable<AnalyticsReportEntity[]> {
+  getAllReportsForAnalytics(): Observable<AnalyticsReport[]> {
     return this.reportApi.getAllReports().pipe(
       map((resources) => resources.map(AnalyticsReportAssembler.toEntityFromResource))
     );
