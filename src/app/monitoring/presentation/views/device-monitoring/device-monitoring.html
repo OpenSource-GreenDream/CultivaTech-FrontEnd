@@ -6,7 +6,7 @@
       <p class="description">{{ "monitoring.description" | translate }}</p>
     </div>
     <button type="button" class="btn-primary" (click)="goToCreateDevice()">
-      + Registrar Sensor
+      {{ "monitoring.register-device-btn" | translate }}
     </button>
   </div>
 
@@ -19,10 +19,47 @@
     </button>
   </div>
 
+  @if (moistureThreshold() !== null || tempThreshold() !== null) {
+    <div class="thresholds-banner">
+      <span class="thresholds-title">{{ "monitoring.thresholds.active-label" | translate }}</span>
+      @if (moistureThreshold() !== null) {
+        <span class="threshold-pill moisture">
+          {{ "monitoring.thresholds.moisture" | translate }}: <strong>{{ moistureThreshold() }}%</strong>
+        </span>
+      }
+      @if (tempThreshold() !== null) {
+        <span class="threshold-pill temp">
+          {{ "monitoring.thresholds.temperature" | translate }}: <strong>{{ tempThreshold() }}°C</strong>
+        </span>
+      }
+    </div>
+  }
+
+  @if (!loading() && activeAlerts().length > 0) {
+    <div class="alerts-banner">
+      @for (alert of activeAlerts(); track alert.deviceId + '-' + alert.parameter) {
+        <div class="alert-item" [class.low-moisture]="alert.status === 'LOW_MOISTURE'" [class.out-of-range]="alert.status === 'OUT_OF_RANGE'">
+          <strong>
+            {{ (alert.status === 'LOW_MOISTURE' ? 'monitoring.alerts.low-moisture-title' : 'monitoring.alerts.anomaly-title') | translate }}
+          </strong>
+          <span>
+            {{ "monitoring.alerts.zone-detail" | translate:{
+              zone: alert.fieldName,
+              mac: alert.macAddress,
+              parameter: (getParameterKey(alert.parameter) | translate),
+              value: alert.meanValue + alert.unit,
+              threshold: alert.thresholdValue + alert.unit
+            } }}
+          </span>
+        </div>
+      }
+    </div>
+  }
+
   @if (!loading() && fields().length > 0) {
     <div class="field-filter">
       <label for="fieldSelect">{{ "monitoring.filter.field-label" | translate }}</label>
-      <select id="fieldSelect" (change)="onFieldChange($event)">
+      <select id="fieldSelect" [value]="selectedFieldId() ?? ''" (change)="onFieldChange($event)">
         <option value="">{{ "monitoring.filter.all-fields" | translate }}</option>
         @for (field of fields(); track field.id) {
           <option [value]="field.id">{{ field.name }}</option>
@@ -44,7 +81,9 @@
     } @else {
       <div class="device-grid">
         @for (device of filteredDevices(); track device.id) {
-          <div class="device-card">
+          @let report = getReport(device.id);
+          @let reportStatus = getReportStatus(report);
+          <div class="device-card" [class.card-alert]="reportStatus !== 'OPTIMAL'">
             <div class="card-header">
               <div>
                 <p class="device-label">MAC: {{ device.macAddress }}</p>
@@ -55,7 +94,7 @@
                 [class.active]="device.status === 'ACTIVE'"
                 [class.warning]="device.status === 'WARNING_BATTERY'"
                 [class.offline]="device.status === 'OFFLINE'">
-                {{ device.status }}
+                {{ ('monitoring.status.' + device.status) | translate }}
               </span>
             </div>
 
@@ -69,10 +108,39 @@
               <small>{{ device.lastSync | date:'dd/MM/yyyy HH:mm' }}</small>
             </div>
 
-            @if (getReport(device.id); as report) {
-              <div class="value-section">
-                <p class="value-label">{{ "monitoring.card.registered-value" | translate }}</p>
-                <div class="main-value">{{ report.meanValue }}%</div>
+            @if (getReadings(device.id).length > 0) {
+              <div class="readings-section">
+                <p class="value-label">{{ "monitoring.card.current-readings" | translate }}</p>
+                <ul class="readings-list">
+                  @for (reading of getReadings(device.id); track reading.id) {
+                    <li>
+                      <span>{{ getParameterKey(reading.parameter) | translate }}</span>
+                      <strong>{{ reading.value }}{{ reading.unit }}</strong>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (report) {
+              <div class="value-section" [class.value-alert]="reportStatus !== 'OPTIMAL'">
+                <p class="value-label">{{ getParameterKey(report.parameter) | translate }}</p>
+                <div class="main-value" [class.critical-value]="reportStatus !== 'OPTIMAL'">
+                  {{ report.meanValue }}{{ report.unit }}
+                </div>
+                <span
+                  class="telemetry-badge"
+                  [class.badge-critical]="reportStatus === 'LOW_MOISTURE'"
+                  [class.badge-warning]="reportStatus === 'OUT_OF_RANGE'"
+                  [class.badge-optimal]="reportStatus === 'OPTIMAL'">
+                  @if (reportStatus === 'LOW_MOISTURE') {
+                    {{ "monitoring.card.alert-low-moisture" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                  } @else if (reportStatus === 'OUT_OF_RANGE') {
+                    {{ "monitoring.card.alert-out-of-range" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                  } @else {
+                    {{ "monitoring.card.status-optimal" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                  }
+                </span>
               </div>
 
               <div class="report-details">
@@ -87,7 +155,7 @@
               </div>
 
               @if (report.technicalInterpretation) {
-                <div class="interpretation">
+                <div class="interpretation" [class.interpretation-alert]="reportStatus !== 'OPTIMAL'">
                   <p class="interpretation-title">{{ "monitoring.card.interpretation" | translate }}</p>
                   <p>{{ report.technicalInterpretation }}</p>
                 </div>
