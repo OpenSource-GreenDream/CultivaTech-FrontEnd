@@ -4,7 +4,7 @@
     <p class="section-subtitle">{{ "community.subtitle" | translate }}</p>
   </div>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="loading-state">
       <p>{{ "community.loading" | translate }}</p>
     </div>
@@ -14,21 +14,59 @@
         <h3>{{ "community.reputation.title" | translate }}</h3>
 
         <div class="filter-group">
-          <label>Filtrar por Miembro:</label>
-          <select [ngModel]="selectedTargetProfileId()" (ngModelChange)="onFilterChange($event)" class="form-control">
-            <option [value]="null">Todos los Miembros</option>
-            @for (profile of communityStore.communityProfiles(); track profile.id) {
-              <option [value]="profile.profileId">{{ profile.nickname }} (Score: {{ profile.reputationScore }})</option>
+          <label>{{ "community.filters.target-type-label" | translate }}</label>
+          <select
+            [ngModel]="filterTargetType()"
+            (ngModelChange)="onTargetTypeFilterChange($event)"
+            class="form-control">
+            <option value="ALL">{{ "community.filters.all-targets" | translate }}</option>
+            <option value="FIELD">{{ "community.filters.lots-only" | translate }}</option>
+            <option value="PRODUCT">{{ "community.filters.products-only" | translate }}</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>{{ "community.filters.lot-label" | translate }}</label>
+          <select
+            [ngModel]="selectedFieldFilterId() ?? ''"
+            (ngModelChange)="onFieldFilterChange($event)"
+            class="form-control">
+            <option value="">{{ "community.filters.all-lots" | translate }}</option>
+            @for (field of communityStore.fields(); track field.id) {
+              <option [value]="field.id">{{ field.name }}</option>
             }
           </select>
         </div>
 
+        <div class="filter-group">
+          <label>{{ "community.filters.product-label" | translate }}</label>
+          <select
+            [ngModel]="selectedProductFilterId() ?? ''"
+            (ngModelChange)="onProductFilterChange($event)"
+            class="form-control">
+            <option value="">{{ "community.filters.all-products" | translate }}</option>
+            @for (product of communityStore.products(); track product.id) {
+              <option [value]="product.id">{{ product.name }}</option>
+            }
+          </select>
+        </div>
+
+        <h4 class="sub-section-title">{{ "community.reputation.lots-heading" | translate }}</h4>
         <div class="profiles-list">
-          @for (profile of communityStore.communityProfiles(); track profile.id) {
-            <div class="profile-item" [class.selected]="selectedTargetProfileId() === profile.profileId">
-              <p><strong>{{ profile.nickname }}</strong></p>
-              <p>Reputación: {{ profile.reputationScore }} pts</p>
-              <p class="bio">{{ profile.publicBio }}</p>
+          @for (summary of communityStore.fieldReputationSummaries(); track summary.id) {
+            <div class="profile-item" [class.selected]="selectedFieldFilterId() === summary.id">
+              <p><strong>{{ summary.name }}</strong></p>
+              <p>{{ "community.reputation.rating-summary" | translate:{ avg: summary.averageRating, count: summary.reviewCount } }}</p>
+            </div>
+          }
+        </div>
+
+        <h4 class="sub-section-title">{{ "community.reputation.products-heading" | translate }}</h4>
+        <div class="profiles-list">
+          @for (summary of communityStore.productReputationSummaries(); track summary.id) {
+            <div class="profile-item" [class.selected]="selectedProductFilterId() === summary.id">
+              <p><strong>{{ summary.name }}</strong></p>
+              <p>{{ "community.reputation.rating-summary" | translate:{ avg: summary.averageRating, count: summary.reviewCount } }}</p>
             </div>
           }
         </div>
@@ -39,19 +77,54 @@
 
         <div class="form-card">
           <h4>{{ "community.form.title" | translate }}</h4>
+
+          @if (errorMessage(); as errKey) {
+            <div class="alert alert-error">
+              {{ errKey | translate }}
+            </div>
+          }
+
+          @if (successMessage(); as okKey) {
+            <div class="alert alert-success">
+              {{ okKey | translate }}
+            </div>
+          }
+
           <form (ngSubmit)="submitReview()" class="review-form">
-            <div class="form-group">
-              <label>Dirigido a:</label>
-              <select [(ngModel)]="newReview.targetProfileId" name="targetProfileId" required class="form-control">
-                @for (profile of communityStore.communityProfiles(); track profile.id) {
-                  <option [value]="profile.profileId">{{ profile.nickname }}</option>
-                }
-              </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label>{{ "community.form.target-type-label" | translate }}</label>
+                <select [(ngModel)]="newReview.targetType" name="targetType" required class="form-control">
+                  <option value="FIELD">{{ "community.form.target-field" | translate }}</option>
+                  <option value="PRODUCT">{{ "community.form.target-product" | translate }}</option>
+                </select>
+              </div>
+
+              @if (newReview.targetType === 'FIELD') {
+                <div class="form-group">
+                  <label>{{ "community.form.select-field-label" | translate }}</label>
+                  <select [(ngModel)]="newReview.fieldId" name="fieldId" required class="form-control">
+                    @for (field of reviewableFields(); track field.id) {
+                      <option [value]="field.id">{{ field.name }}</option>
+                    }
+                  </select>
+                </div>
+              } @else {
+                <div class="form-group">
+                  <label>{{ "community.form.select-product-label" | translate }}</label>
+                  <select [(ngModel)]="newReview.productId" name="productId" required class="form-control">
+                    @for (product of reviewableProducts(); track product.id) {
+                      <option [value]="product.id">{{ product.name }}</option>
+                    }
+                  </select>
+                </div>
+              }
             </div>
 
             <div class="form-group">
               <label>{{ "community.form.rating-label" | translate }}</label>
               <select [(ngModel)]="newReview.rating" name="rating" required class="form-control">
+                <option [value]="0">{{ "community.form.rating-placeholder" | translate }}</option>
                 <option [value]="5">★★★★★ (5)</option>
                 <option [value]="4">★★★★☆ (4)</option>
                 <option [value]="3">★★★☆☆ (3)</option>
@@ -62,18 +135,24 @@
 
             <div class="form-group">
               <label>{{ "community.form.content-label" | translate }}</label>
-              <textarea [(ngModel)]="newReview.content" name="content" required rows="3" [placeholder]="'community.form.content-placeholder' | translate"></textarea>
+              <textarea
+                [(ngModel)]="newReview.content"
+                name="content"
+                required
+                rows="3"
+                [placeholder]="'community.form.content-placeholder' | translate">
+              </textarea>
             </div>
 
             <div class="form-buttons">
-              <button type="submit" class="btn-submit" [disabled]="isSubmitting">
-                {{ (isSubmitting ? 'community.form.submitting' : 'community.form.submit') | translate }}
+              <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+                {{ (isSubmitting() ? 'community.form.submitting' : 'community.form.submit') | translate }}
               </button>
             </div>
           </form>
         </div>
 
-        @if (communityStore.reviews().length === 0) {
+        @if (filteredReviews().length === 0) {
           <p>{{ "community.reviews.empty" | translate }}</p>
         } @else {
           <div class="reviews-list">
@@ -81,7 +160,11 @@
               <div class="review-item">
                 <div class="review-header">
                   <span class="rating">★ {{ review.rating }}/5</span>
-                  <span class="target-info">Para Perfil #{{ review.targetProfileId }}</span>
+                  <span class="target-info">
+                    {{ (review.targetType === 'PRODUCT' ? 'community.reviews.product-badge' : 'community.reviews.field-badge') | translate }}:
+                    <strong>{{ getReviewTargetLabel(review) }}</strong>
+                    — {{ getAuthorLabel(review.authorProfileId) }}
+                  </span>
                 </div>
                 <p class="content">{{ review.content }}</p>
               </div>
@@ -89,13 +172,13 @@
           </div>
 
           <div class="pagination-controls">
-            <button class="btn-page" (click)="prevPage()" [disabled]="currentPage() === 1">
+            <button type="button" class="btn-page" (click)="prevPage()" [disabled]="currentPage() === 1">
               &laquo; {{ "community.pagination.prev" | translate }}
             </button>
             <span class="page-info">
               {{ currentPage() }} / {{ totalPages() }}
             </span>
-            <button class="btn-page" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+            <button type="button" class="btn-page" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
               {{ "community.pagination.next" | translate }} &raquo;
             </button>
           </div>

@@ -1,5 +1,5 @@
 import {inject, Service} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {ReviewResource} from './review.response';
@@ -13,15 +13,16 @@ import {CommunityProfileResource} from './community-profile.response';
 @Service()
 export class CommunityApi {
   private http = inject(HttpClient);
-  private commentsUrl = `${environment.cultivatechBaseApi}/comments`;
-  private communityProfilesUrl = `${environment.cultivatechBaseApi}/community_profiles`;
+  private commentsUrl = `${environment.cultivatechBaseApi}${environment.commentsEndpoint}`;
+  private communityProfilesUrl = `${environment.cultivatechBaseApi}${environment.communityProfilesEndpoint}`;
 
   getAllCommunityProfiles(): Observable<CommunityProfileResource[]> {
     return this.http.get<CommunityProfileResource[]>(this.communityProfilesUrl);
   }
 
   getCommunityProfileByProfileId(profileId: number): Observable<CommunityProfileResource[]> {
-    return this.http.get<CommunityProfileResource[]>(`${this.communityProfilesUrl}?profile_id=${profileId}`);
+    const params = new HttpParams().set('profile_id', profileId.toString());
+    return this.http.get<CommunityProfileResource[]>(this.communityProfilesUrl, { params });
   }
 
   getAllReviews(): Observable<ReviewResource[]> {
@@ -29,7 +30,18 @@ export class CommunityApi {
   }
 
   getReviewsByTargetProfileId(targetProfileId: number): Observable<ReviewResource[]> {
-    return this.http.get<ReviewResource[]>(`${this.commentsUrl}?target_profile_id=${targetProfileId}`);
+    const params = new HttpParams().set('target_profile_id', targetProfileId.toString());
+    return this.http.get<ReviewResource[]>(this.commentsUrl, { params });
+  }
+
+  getReviewsByFieldId(fieldId: number): Observable<ReviewResource[]> {
+    const params = new HttpParams().set('field_id', fieldId.toString());
+    return this.http.get<ReviewResource[]>(this.commentsUrl, { params });
+  }
+
+  getReviewsByProductId(productId: number): Observable<ReviewResource[]> {
+    const params = new HttpParams().set('product_id', productId.toString());
+    return this.http.get<ReviewResource[]>(this.commentsUrl, { params });
   }
 
   createReview(request: CreateReviewRequest): Observable<ReviewResource> {
