@@ -12,15 +12,19 @@ export class NotificationAssembler {
         ? NotificationType.SENSOR_ALERT
         : NotificationType.SYSTEM_INFO;
 
+    const fieldId = resource.field_id === null || resource.field_id === undefined
+      ? null
+      : Number(resource.field_id);
+
     return new Notification(
       resource.id,
       resource.profile_id,
       resource.title,
       resource.message,
       resource.is_read,
-      resource.is_alert,
+      resource.is_alert || validType === NotificationType.SENSOR_ALERT,
       validType,
-      resource.field_id,
+      fieldId,
       resource.created_at,
       resource.updated_at,
     );
