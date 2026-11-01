@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {IamStore} from '../../../application/iam.store';
 import {Router} from '@angular/router';
 import {SignInRequest} from '../../../infrastructure/sign-in.request';
@@ -18,13 +18,16 @@ export class SignIn {
   private iamStore = inject(IamStore);
   private router = inject(Router);
 
+  readonly errorMessage = signal<string | null>(null);
+
   onSignIn(request: SignInRequest) {
+    this.errorMessage.set(null);
     this.iamStore.signIn(request).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => {
-        console.error('Error durante el inicio de sesión', err);
+      error: () => {
+        this.errorMessage.set('sign-in.form.error-credentials');
       }
     });
   }
