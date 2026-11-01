@@ -1,3 +1,5 @@
+import {AnalyticsStatus} from '../analytics.constants';
+
 /**
  * This is a value not persisted in the database
  * It just represents the key indicators of the reports
@@ -8,5 +10,5 @@ export interface KeyIndicators {
   averageVariance: number;
   averageDeviation: number;
   totalReports: number;
-  status: 'Optimal' | 'Alert' | 'No Data';
+  status: AnalyticsStatus;
 }
