@@ -8,9 +8,9 @@ export class InventoryAssembler {
     return {
       id: resource.id,
       productId: resource.product_id,
-      name: resource.name,
+      profileId: resource.profile_id,
+      fieldId: resource.field_id,
       stockQuantity: resource.stock_quantity,
-      warehouseLocation: resource.warehouse_location,
       createdAt: resource.created_at,
       updatedAt: resource.updated_at,
     };
@@ -20,9 +20,9 @@ export class InventoryAssembler {
     return {
       id: entity.id,
       product_id: entity.productId,
-      name: entity.name,
+      profile_id: entity.profileId,
+      field_id: entity.fieldId,
       stock_quantity: entity.stockQuantity,
-      warehouse_location: entity.warehouseLocation,
       created_at: entity.createdAt,
       updated_at: entity.updatedAt,
     };
