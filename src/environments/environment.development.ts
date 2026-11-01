@@ -2,13 +2,17 @@ export const environment = {
   production: false,
   cultivatechBaseApi: 'https://cultivatech-fakeapi.onrender.com',
 
-  signInEndpoint: '/sign-in',
-  signUpEndpoint: '/sign-up',
+  signInEndpoint: '/auth/login',
+  signUpEndpoint: '/auth/register',
+  sessionStorageKey: 'cultivatech_active_session',
 
   usersEndpoint: '/users',
+  rolesEndpoint: '/roles',
+  userRolesEndpoint: '/user_roles',
   profilesEndpoint: '/profiles',
   fieldsEndpoint: '/fields',
   devicesEndpoint: '/devices',
+  sensorReadingsEndpoint: '/sensor_readings',
   reportsEndpoint: '/reports',
   harvestProjectionsEndpoint: '/harvest_projections',
 
