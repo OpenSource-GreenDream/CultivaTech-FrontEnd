@@ -12,8 +12,10 @@
     "form": {
       "error-1": "Email address is required",
       "error-2": "Enter a valid email address",
-      "error-3": "Password is required",
-      "error-4": "Passwords do not match"
+      "error-3": "Password is required (min 6 characters)",
+      "error-4": "Passwords do not match",
+      "error-submit": "Could not register account. Please verify your details and try again.",
+      "success": "Account created successfully."
     },
     "submit": {
       "click-1": "Create account",
@@ -21,7 +23,13 @@
       "click-2": "Log in",
       "click-3": "Sign In"
     },
-    "roles": "User Role"
+    "roles": "User Role",
+    "role-options": {
+      "agricultor": "Farmer",
+      "proveedor": "Supplier",
+      "clienteb2b": "B2B Client",
+      "administrador": "Administrator"
+    }
   },
   "sign-in": {
     "container": {
@@ -35,7 +43,8 @@
     "form": {
       "error-1": "Email is required",
       "error-2": "Enter a valid email address",
-      "error-3": "Password is required"
+      "error-3": "Password is required",
+      "error-credentials": "Invalid email or password. Please verify your credentials."
     },
     "submit": {
       "click-1": "Log in",
@@ -55,7 +64,8 @@
       "products": "Products",
       "notifications": "Notifications",
       "profile": "My Profile",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "community": "Community"
     },
     "logout": "Sign Out"
   },
@@ -74,14 +84,42 @@
     },
     "list": {
       "title": "Notifications",
+      "recent-btn": "Recent",
+      "history-btn": "History",
       "filters-label": "Notification filters",
       "filter-all": "All notifications",
-      "filter-alerts": "Sensor alerts",
-      "loading": "Loading notifications",
+      "filter-alerts": "Critical Alerts",
+      "loading": "Loading notifications...",
       "load-error": "Notifications could not be loaded. Please try again.",
       "empty": "There are no notifications to show.",
       "mark-as-read": "Mark as read",
-      "mark-as-read-for": "Mark {{title}} as read"
+      "mark-as-read-for": "Mark {{title}} as read",
+      "view-alert": "View Alert",
+      "view-details": "View Details",
+      "sensor-prefix": "Sensor",
+      "sector-prefix": "Sector",
+      "system": "System",
+      "general": "General",
+      "status-critical": "Critical Alert",
+      "status-normal": "Normal",
+      "table": {
+        "sensor": "Sensor / Device",
+        "zone": "Zone / Sector",
+        "type": "Type",
+        "reading": "Reading / Parameter",
+        "status": "Status",
+        "date": "Date & Time",
+        "actions": "Actions"
+      }
+    },
+    "modal": {
+      "close": "Close",
+      "current-level": "Current level:",
+      "min-threshold": "Minimum threshold:",
+      "temp-threshold": "Temperature threshold:",
+      "go-to-sensor": "Go to sensor",
+      "activate-irrigation": "Activate irrigation",
+      "accept": "Accept"
     },
     "preferences": {
       "title": "Notification preferences",
@@ -91,7 +129,9 @@
       "load-error": "Notification preferences could not be loaded or saved.",
       "field-label": "Crop zone",
       "all-fields": "All zones",
-      "toggle-label": "Enable or disable {{type}} notifications"
+      "toggle-label": "Enable or disable {{type}} notifications",
+      "configure-for": "Configure notifications for {{type}}",
+      "save": "Save preferences"
     }
   },
   "analytics": {
@@ -99,6 +139,32 @@
     "device-label": "IoT Device:",
     "device-option": "Device #{{id}} ({{mac}})",
     "loading": "Loading key metrics...",
+    "moisture-trend-title": "Moisture Trend Evolution (US36)",
+    "trend-title": "Trend Evolution (US36)",
+    "real-reading": "Real Reading",
+    "min-threshold": "Minimum Threshold",
+    "critical-threshold": "Critical Threshold",
+    "no-chart-reports": "No reports registered to plot.",
+    "projections-title": "Harvest Projections vs. Historical Yield (US37)",
+    "historical-label": "Historical",
+    "projected-label": "Projected",
+    "confidence-label": "Model confidence",
+    "no-projections": "No harvest projections registered for this device.",
+    "history-title": "Detailed Report History",
+    "no-history": "No historical reports available.",
+    "table": {
+      "date": "Generation Date",
+      "parameter": "Parameter",
+      "mean": "Mean Value",
+      "variance": "Variance",
+      "std-dev": "Standard Deviation",
+      "interpretation": "Technical Interpretation"
+    },
+    "status": {
+      "OPTIMAL": "Optimal",
+      "ALERT": "Alert",
+      "NO_DATA": "No Data"
+    },
     "cards": {
       "average-mean": "Average Mean",
       "average-variance": "Average Variance",
@@ -113,6 +179,7 @@
     "cancel-btn": "Cancel",
     "form": {
       "title": "Register New Lot",
+      "edit-title": "Edit Crop Lot",
       "name-label": "Lot Name",
       "name-placeholder": "e.g. Yellow Potato Lot A1",
       "size-label": "Size (m²)",
@@ -121,21 +188,35 @@
       "latitude-label": "Latitude",
       "longitude-label": "Longitude",
       "submit": "Save Lot",
-      "submitting": "Saving..."
+      "update-submit": "Update Lot",
+      "submitting": "Saving...",
+      "error-name": "Lot name is required.",
+      "error-size": "Surface area in m² is required and must be greater than 0.",
+      "error-soil": "Soil type is required.",
+      "error-latitude": "Latitude is required and must be between -90 and 90.",
+      "error-longitude": "Longitude is required and must be between -180 and 180.",
+      "error-validation": "Please correct the highlighted fields before saving the lot.",
+      "error-no-profile": "An active farm profile is required to register a lot.",
+      "error-submit": "Could not save the lot. Please try again.",
+      "create-success": "Crop lot registered successfully.",
+      "update-success": "Crop lot updated successfully."
     },
     "empty": "You have no registered lots in this farm. Click on + Register Lot to add one.",
+    "load-error": "Crop lots could not be loaded. Please try again.",
     "card": {
       "lot-id": "LOT #{{id}}",
       "soil": "Soil",
       "area": "Area",
-      "coordinates": "Coordinates"
+      "coordinates": "Coordinates",
+      "edit-btn": "Edit"
     }
   },
   "profile": {
     "management": {
       "title": "Farm & Land Management",
       "subtitle": "Manage your farm information and monitor each of your agricultural lots.",
-      "loading": "Loading farm information..."
+      "loading": "Loading farm information...",
+      "load-error": "Farm information could not be loaded. Please try again."
     },
     "info": {
       "title": "Farm Information",
@@ -145,25 +226,71 @@
       "moisture-threshold": "Moisture Threshold",
       "temp-threshold": "Temp. Threshold",
       "empty": "No farm profile associated with this account was found."
+    },
+    "create": {
+      "badge": "Onboarding",
+      "title": "Create Farmer Profile",
+      "subtitle": "Complete your farm profile details and sensor thresholds to access lot and inventory management.",
+      "fundo-name-label": "Farm / Fundo Name",
+      "fundo-name-placeholder": "e.g. Fundo El Sol",
+      "phone-label": "Contact Phone",
+      "phone-placeholder": "e.g. +51987654321",
+      "moisture-label": "Moisture Threshold (%)",
+      "moisture-placeholder": "e.g. 25.5",
+      "temp-label": "Temperature Threshold (°C)",
+      "temp-placeholder": "e.g. 32.0",
+      "error-fundo-name": "Farm name is required (at least 2 characters).",
+      "error-phone": "Enter a valid contact phone number.",
+      "error-moisture": "Enter a valid moisture threshold between 1% and 100%.",
+      "error-temp": "Enter a valid temperature threshold between -10°C and 60°C.",
+      "error-submit": "Could not create your farmer profile. Please try again.",
+      "error-load": "Could not verify your current profile. Please try again.",
+      "success": "Profile created successfully.",
+      "submit": "Create Profile",
+      "submitting": "Creating profile..."
     }
   },
   "stock": {
     "inventory": {
+      "section-label": "Batch Inventory Management",
       "title": "Inventory Management",
-      "description": "Overview of available stock in registered locations",
+      "description": "Overview of available stock by batch in your farm",
+      "catalog-btn": "View Catalog",
+      "register-btn": "+ Register Product",
+      "loading": "Loading agricultural product inventory...",
       "empty-title": "No Inventory Items Found",
-      "empty-description": "There are no stock items registered at this time.",
+      "empty-description": "There are no stock items registered for your farm batches at this time.",
+      "units": "units",
+      "no-image": "No image",
+      "no-batch": "No batch",
       "table": {
         "product-id": "Product ID",
         "quantity": "Stock Quantity",
-        "location": "Warehouse Location",
+        "batch": "Batch",
+        "price": "Price",
         "updated-at": "Last Updated"
       }
+    },
+    "filters": {
+      "search-label": "Search product or batch",
+      "search-placeholder": "Search by name, description, or batch...",
+      "batch-label": "Batch",
+      "all-batches": "All batches",
+      "criteria-label": "Stock Status",
+      "criteria-all": "All levels",
+      "criteria-in-stock": "Optimal Stock (> 5)",
+      "criteria-low-stock": "Low Stock (1 - 5)",
+      "criteria-out-of-stock": "Out of Stock (0)",
+      "clear-btn": "Clear Filters",
+      "no-results-title": "No Matching Products",
+      "no-results-description": "No inventory items match the selected search or filter criteria."
     },
     "update": {
       "title": "Update Inventory Stock",
       "description": "Adjust the quantity of stock for a specific inventory record",
-      "success": "Stock updated successfully"
+      "success": "Stock updated successfully",
+      "error-invalid-quantity": "Stock quantity must be a valid non-negative number.",
+      "error-submit": "Error updating stock quantity."
     },
     "form": {
       "inventory-id": "Inventory ID",
@@ -175,35 +302,54 @@
       "submit": "Update Stock"
     },
     "supply": {
-      "title": "Register agricultural input",
-      "description": "Add a new agricultural input to your inventory"
+      "back-btn": "← Back to Inventory",
+      "section-label": "Product Registration",
+      "title": "Register agricultural product",
+      "description": "Add a new product to the catalog and its initial stock to a batch",
+      "field-label": "Batch",
+      "field-placeholder": "Select a batch...",
+      "error-field": "You must select a batch.",
+      "name-label": "Product Name",
+      "name-placeholder": "e.g. CultivaTech IoT Sensor Node V1",
+      "error-name-required": "Product name is required.",
+      "error-name-min": "Name must be at least 3 characters.",
+      "price-label": "Price (USD)",
+      "price-placeholder": "e.g. 120.50",
+      "error-price": "Price must be a valid non-negative number.",
+      "description-label": "Description",
+      "description-placeholder": "Describe the product features and usage",
+      "error-description-required": "Description is required.",
+      "error-description-min": "Description must be at least 5 characters.",
+      "image-label": "Image URL",
+      "image-placeholder": "https://example.com/product.png",
+      "error-image": "Enter a valid image URL starting with http:// or https://.",
+      "quantity-label": "Initial Stock Quantity",
+      "quantity-placeholder": "e.g. 50",
+      "error-quantity-min": "Quantity cannot be negative.",
+      "error-submit": "Could not register the product. Please try again."
+    },
+    "catalog": {
+      "back-btn": "← Back to Inventory",
+      "section-label": "Agricultural Catalog",
+      "title": "Product Catalog",
+      "description": "Browse the agricultural products registered for your farm batches.",
+      "loading": "Loading product catalog...",
+      "empty-title": "No Catalog Products",
+      "empty-description": "There are no products registered in the catalog at this time.",
+      "batch-label": "Batch",
+      "global-batch": "General catalog",
+      "no-image": "No image",
+      "available": "Available",
+      "out-of-stock": "Out of Stock",
+      "detail-available": "Product available for purchase",
+      "detail-unavailable": "Product currently unavailable",
+      "close-btn": "Close"
     },
     "submit": {
-      "register": "Register input"
+      "register": "Register product"
     },
     "success": {
-      "registered": "Input registered successfully"
-    },
-    "movement": {
-      "title": "Register stock movement",
-      "description": "Register an entry or exit of an agricultural input",
-      "form": {
-        "supply": "Input ID",
-        "supply-placeholder": "e.g. supply-001",
-        "type": "Movement type",
-        "type-in": "Stock entry",
-        "type-out": "Stock exit",
-        "quantity": "Quantity",
-        "quantity-placeholder": "e.g. 10",
-        "error-supply-required": "Input ID is required",
-        "error-type-required": "Movement type is required",
-        "error-quantity-required": "Quantity is required",
-        "error-quantity-min": "Quantity must be greater than zero"
-      },
-      "submit": {
-        "register": "Register movement"
-      },
-      "registered": "Stock movement registered successfully"
+      "registered": "Product registered successfully"
     },
     "history": {
       "title": "Stock movement history",
@@ -224,9 +370,31 @@
     "management.label": "Monitoring Management",
     "title": "Device Monitoring",
     "description": "Real-time supervision and sensor readings across field lots.",
+    "register-device-btn": "+ Register Sensor",
     "tabs": {
       "summary": "Summary",
       "history": "History"
+    },
+    "thresholds": {
+      "active-label": "Active Profile Thresholds:",
+      "moisture": "Moisture Min",
+      "temperature": "Temp. Max"
+    },
+    "parameters": {
+      "moisture": "Moisture",
+      "temperature": "Temperature",
+      "nutrients": "Nutrients",
+      "ph": "pH"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "WARNING_BATTERY": "Low Battery",
+      "OFFLINE": "Offline"
+    },
+    "alerts": {
+      "low-moisture-title": "Low Moisture Alert (US16)",
+      "anomaly-title": "Parameter / Nutrient Out of Range Alert (US17)",
+      "zone-detail": "Zone: {{zone}} (Sensor {{mac}}) — {{parameter}}: {{value}} (Threshold: {{threshold}})"
     },
     "filter": {
       "field-label": "Filter by lot:",
@@ -242,10 +410,91 @@
       "field-zone": "Zone / Lot:",
       "last-sync": "Last sync:",
       "registered-value": "Registered Value",
+      "current-readings": "Current Readings",
       "variance": "Variance:",
       "std-dev": "Std. Deviation:",
       "interpretation": "Interpretation:",
-      "no-data": "No reports available"
+      "no-data": "No reports available",
+      "alert-low-moisture": "Low Moisture (< {{threshold}})",
+      "alert-out-of-range": "Out of Range (Threshold: {{threshold}})",
+      "status-optimal": "Optimal (Threshold: {{threshold}})"
+    },
+    "history": {
+      "back-btn": "← Back to Monitoring",
+      "section-label": "Telemetry History",
+      "title": "Moisture & Sensor History",
+      "description": "Review chronological sensor readings for your crop zones.",
+      "empty-title": "No data available",
+      "empty-description": "There are no moisture or telemetry records to display for the selected zone.",
+      "avg-moisture": "Average Moisture",
+      "average-value": "Average Value"
+    },
+    "create-device": {
+      "title": "Register New IoT Sensor",
+      "subtitle": "Enter the MAC address and select the corresponding crop zone.",
+      "field-label": "Zone / Field Lot",
+      "field-placeholder": "Select a zone...",
+      "error-field": "You must select a crop zone.",
+      "mac-label": "Sensor MAC Address",
+      "error-mac-required": "MAC address is required.",
+      "error-mac-pattern": "Invalid MAC format (e.g. A4:CF:12:89:56:01).",
+      "error-duplicate": "A sensor with this MAC address is already registered in your farm.",
+      "error-submit": "Could not register the sensor. Please try again.",
+      "success": "Sensor registered successfully.",
+      "cancel-btn": "Cancel",
+      "submit-btn": "Register Sensor"
+    }
+  },
+  "community": {
+    "title": "Community, Reviews & Reputation",
+    "subtitle": "Evaluate crop lots and agricultural products and consult community reputation.",
+    "loading": "Loading community reviews and reputation...",
+    "filters": {
+      "target-type-label": "Filter by Category:",
+      "all-targets": "All (Lots & Products)",
+      "lots-only": "Crop Lots Only",
+      "products-only": "Products Only",
+      "lot-label": "Filter by Crop Lot:",
+      "all-lots": "All Crop Lots",
+      "product-label": "Filter by Product:",
+      "all-products": "All Products"
+    },
+    "reputation": {
+      "title": "Reputation Summary",
+      "lots-heading": "Crop Lots Reputation",
+      "products-heading": "Products Reputation",
+      "rating-summary": "★ {{avg}} / 5 ({{count}} reviews)"
+    },
+    "reviews": {
+      "title": "Published Reviews & Ratings",
+      "empty": "No reviews have been published for the selected criteria yet.",
+      "field-badge": "Crop Lot",
+      "product-badge": "Product"
+    },
+    "form": {
+      "title": "Publish Review & Rating",
+      "target-type-label": "Evaluate:",
+      "target-field": "Crop Lot (Field)",
+      "target-product": "Catalog Product",
+      "select-field-label": "Select Crop Lot:",
+      "select-product-label": "Select Product:",
+      "rating-label": "Rating (1 to 5 stars):",
+      "rating-placeholder": "Select a valid rating (1 - 5)...",
+      "content-label": "Review Comment:",
+      "content-placeholder": "Write your experience with this crop lot or agricultural product...",
+      "submit": "Publish Review",
+      "submitting": "Publishing...",
+      "error-rating": "Please provide a valid rating between 1 and 5 stars.",
+      "error-content": "Review comment is required.",
+      "error-target": "Please select a valid crop lot or product to review.",
+      "error-self-review": "You cannot review your own crop lots or products.",
+      "error-no-profile": "An active profile is required to publish reviews.",
+      "error-submit": "Could not publish the review. Please try again.",
+      "success": "Review published successfully."
+    },
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next"
     }
   }
 }

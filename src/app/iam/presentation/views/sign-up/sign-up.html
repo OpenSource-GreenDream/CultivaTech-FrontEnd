@@ -10,9 +10,21 @@
   </header>
 
   <main class="content-wrapper">
-    <app-sign-up-form
-      (submitForm)="onSignUp($event)"
-      (navigateToSignIn)="onNavigateToSignIn()">
-    </app-sign-up-form>
+    <div class="auth-stack">
+      @if (errorMessage(); as errorKey) {
+        <div class="alert alert-error" role="alert">
+          {{ errorKey | translate }}
+        </div>
+      }
+      @if (successMessage(); as okKey) {
+        <div class="alert alert-success" role="status">
+          {{ okKey | translate }}
+        </div>
+      }
+      <app-sign-up-form
+        (submitForm)="onSignUp($event)"
+        (navigateToSignIn)="onNavigateToSignIn()">
+      </app-sign-up-form>
+    </div>
   </main>
 </div>

@@ -3,16 +3,16 @@
     <h3 class="card-title">{{ "profile.info.title" | translate }}</h3>
   </div>
 
-  @if (profile) {
+  @if (profile(); as activeProfile) {
     <div class="card-body">
       <div class="info-group">
         <span class="info-label">{{ "profile.info.farm-name" | translate }}</span>
-        <span class="info-value name-value">{{ profile.fundoName }}</span>
+        <span class="info-value name-value">{{ activeProfile.fundoName }}</span>
       </div>
 
       <div class="info-group">
         <span class="info-label">{{ "profile.info.contact-phone" | translate }}</span>
-        <span class="info-value">{{ profile.contactPhone }}</span>
+        <span class="info-value">{{ activeProfile.contactPhone }}</span>
       </div>
 
       <div class="divider"></div>
@@ -22,12 +22,12 @@
       <div class="threshold-grid">
         <div class="threshold-badge moisture">
           <span class="badge-label">{{ "profile.info.moisture-threshold" | translate }}</span>
-          <span class="badge-value">{{ profile.moistureThreshold }}%</span>
+          <span class="badge-value">{{ activeProfile.moistureThreshold }}%</span>
         </div>
 
         <div class="threshold-badge temp">
           <span class="badge-label">{{ "profile.info.temp-threshold" | translate }}</span>
-          <span class="badge-value">{{ profile.tempThreshold }}°C</span>
+          <span class="badge-value">{{ activeProfile.tempThreshold }}°C</span>
         </div>
       </div>
     </div>

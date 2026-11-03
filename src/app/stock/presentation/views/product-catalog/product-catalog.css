@@ -89,6 +89,14 @@ h1 {
   object-fit: cover;
 }
 
+.image-placeholder {
+  padding: 1rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 .product-info {
   padding: 1.25rem;
   display: flex;
@@ -96,7 +104,7 @@ h1 {
   gap: 0.4rem;
 }
 
-.category-tag {
+.batch-tag {
   font-size: 0.75rem;
   font-weight: 600;
   color: #2e7d32;
@@ -109,6 +117,17 @@ h1 {
   color: #1e293b;
   font-size: 1.1rem;
   font-weight: 700;
+}
+
+.product-description {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .price {
@@ -185,6 +204,20 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.modal-image-box {
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.modal-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .category {

@@ -1,0 +1,91 @@
+<div class="profile-create-container">
+  <div class="card create-card">
+    <div class="card-header">
+      <span class="onboarding-badge">{{ "profile.create.badge" | translate }}</span>
+      <h2 class="title">{{ "profile.create.title" | translate }}</h2>
+      <p class="subtitle">{{ "profile.create.subtitle" | translate }}</p>
+    </div>
+
+    @if (errorMessage(); as errorKey) {
+      <div class="alert alert-error">
+        {{ errorKey | translate }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ "profile.create.success" | translate }}
+      </div>
+    }
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+      <div class="form-group">
+        <label for="fundoName">{{ "profile.create.fundo-name-label" | translate }}</label>
+        <input
+          id="fundoName"
+          type="text"
+          formControlName="fundoName"
+          [placeholder]="'profile.create.fundo-name-placeholder' | translate"
+          [class.is-invalid]="profileForm.get('fundoName')?.invalid && profileForm.get('fundoName')?.touched"
+        />
+        @if (profileForm.get('fundoName')?.touched && profileForm.get('fundoName')?.invalid) {
+          <span class="error-text">{{ "profile.create.error-fundo-name" | translate }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="contactPhone">{{ "profile.create.phone-label" | translate }}</label>
+        <input
+          id="contactPhone"
+          type="tel"
+          formControlName="contactPhone"
+          [placeholder]="'profile.create.phone-placeholder' | translate"
+          [class.is-invalid]="profileForm.get('contactPhone')?.invalid && profileForm.get('contactPhone')?.touched"
+        />
+        @if (profileForm.get('contactPhone')?.touched && profileForm.get('contactPhone')?.invalid) {
+          <span class="error-text">{{ "profile.create.error-phone" | translate }}</span>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="moistureThreshold">{{ "profile.create.moisture-label" | translate }}</label>
+          <input
+            id="moistureThreshold"
+            type="number"
+            step="0.1"
+            min="1"
+            max="100"
+            formControlName="moistureThreshold"
+            [placeholder]="'profile.create.moisture-placeholder' | translate"
+            [class.is-invalid]="profileForm.get('moistureThreshold')?.invalid && profileForm.get('moistureThreshold')?.touched"
+          />
+          @if (profileForm.get('moistureThreshold')?.touched && profileForm.get('moistureThreshold')?.invalid) {
+            <span class="error-text">{{ "profile.create.error-moisture" | translate }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="tempThreshold">{{ "profile.create.temp-label" | translate }}</label>
+          <input
+            id="tempThreshold"
+            type="number"
+            step="0.1"
+            min="-10"
+            max="60"
+            formControlName="tempThreshold"
+            [placeholder]="'profile.create.temp-placeholder' | translate"
+            [class.is-invalid]="profileForm.get('tempThreshold')?.invalid && profileForm.get('tempThreshold')?.touched"
+          />
+          @if (profileForm.get('tempThreshold')?.touched && profileForm.get('tempThreshold')?.invalid) {
+            <span class="error-text">{{ "profile.create.error-temp" | translate }}</span>
+          }
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+        {{ (isSubmitting() ? 'profile.create.submitting' : 'profile.create.submit') | translate }}
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,6 +1,6 @@
-import {inject, OnDestroy, Service} from '@angular/core';
+import {inject, Service} from '@angular/core';
+import {Observable, map} from 'rxjs';
 import {AnalyticsApi} from '../infrastructure/analytics-api';
-import {map, Observable} from 'rxjs';
 import {AnalyticsReportAssembler} from '../infrastructure/analytics-report.assembler';
 import {AnalyticsReport} from '../domain/model/entity/analytics-report.entity';
 
@@ -15,6 +15,12 @@ export class AnalyticsContext {
 
   getReportByDeviceId(deviceId: number): Observable<AnalyticsReport[]> {
     return this.reportApi.getReportsByDeviceId(deviceId).pipe(
+      map((resources) => resources.map(AnalyticsReportAssembler.toEntityFromResource))
+    );
+  }
+
+  getReportsByDeviceIds(deviceIds: number[]): Observable<AnalyticsReport[]> {
+    return this.reportApi.getReportsByDeviceIds(deviceIds).pipe(
       map((resources) => resources.map(AnalyticsReportAssembler.toEntityFromResource))
     );
   }

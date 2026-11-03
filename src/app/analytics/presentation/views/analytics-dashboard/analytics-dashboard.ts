@@ -2,6 +2,8 @@ import {Component, computed, inject, OnInit} from '@angular/core';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
 import {AnalyticsStore} from '../../../application/analytics.store';
+import {AnalyticsReport} from '../../../domain/model/entity/analytics-report.entity';
+import {PROJECTION_BAR_MAX_PERCENT, PROJECTION_BAR_MAX_TONS} from '../../../domain/model/analytics.constants';
 
 @Component({
   imports: [
@@ -19,10 +21,14 @@ export class AnalyticsDashboardComponent implements OnInit {
   readonly selectedDeviceId = this.analyticsStore.selectedDeviceId;
   readonly indicators = this.analyticsStore.indicators;
   readonly reports = this.analyticsStore.reports;
+  readonly chartReports = this.analyticsStore.chartReports;
   readonly projections = this.analyticsStore.projections;
   readonly loading = this.analyticsStore.loading;
+  readonly parameterKey = this.analyticsStore.activeParameterKey;
+  readonly activeUnit = this.analyticsStore.activeUnit;
+  readonly criticalThreshold = this.analyticsStore.activeThreshold;
 
-  readonly criticalThreshold = 25.5;
+  readonly statusKey = computed(() => `analytics.status.${this.indicators().status}`);
 
   ngOnInit(): void {
     this.analyticsStore.initAnalyticsData().subscribe();
@@ -36,12 +42,25 @@ export class AnalyticsDashboardComponent implements OnInit {
     }
   }
 
+  isAlert(report: AnalyticsReport): boolean {
+    return this.analyticsStore.isAlert(report);
+  }
+
+  /**
+   * Converts a yield in tons into the width percentage of the comparison bar.
+   */
+  barWidth(tons: number): number {
+    if (!Number.isFinite(tons) || tons <= 0) return 0;
+    return Math.min(PROJECTION_BAR_MAX_PERCENT, (tons / PROJECTION_BAR_MAX_TONS) * PROJECTION_BAR_MAX_PERCENT);
+  }
+
   readonly chartValues = computed(() => {
-    const reps = this.reports();
+    const reps = this.chartReports();
+    const threshold = this.criticalThreshold();
     if (reps.length === 0) return { minVal: 0, rangeVal: 1 };
     const values = reps.map(r => r.meanValue);
-    const minVal = Math.min(...values, this.criticalThreshold - 2);
-    const maxVal = Math.max(...values, this.criticalThreshold + 2);
+    const minVal = Math.min(...values, threshold - 2);
+    const maxVal = Math.max(...values, threshold + 2);
     const rangeVal = maxVal - minVal || 1;
     return { minVal, rangeVal };
   });
@@ -51,12 +70,13 @@ export class AnalyticsDashboardComponent implements OnInit {
     const padding = 30;
     const innerHeight = height - padding * 2;
     const { minVal, rangeVal } = this.chartValues();
+    const threshold = this.criticalThreshold();
 
-    return height - padding - ((this.criticalThreshold - minVal) / rangeVal) * innerHeight;
+    return height - padding - ((threshold - minVal) / rangeVal) * innerHeight;
   });
 
   readonly chartPoints = computed(() => {
-    const reps = this.reports();
+    const reps = this.chartReports();
     if (reps.length === 0) return '';
 
     const width = 600;

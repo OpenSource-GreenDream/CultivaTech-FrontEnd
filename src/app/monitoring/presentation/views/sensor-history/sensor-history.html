@@ -1,12 +1,26 @@
 <div class="monitoring-container">
   <div class="header">
-    <button type="button" class="btn-back" (click)="goBack()">← Volver al Monitoreo</button>
+    <button type="button" class="btn-back" (click)="goBack()">
+      {{ "monitoring.history.back-btn" | translate }}
+    </button>
     <div>
-      <p class="section-label">Historial de Telemetría</p>
-      <h1>Historial de Humedad y Sensores</h1>
-      <p class="description">Consulta los registros ordenados cronológicamente por sensor.</p>
+      <p class="section-label">{{ "monitoring.history.section-label" | translate }}</p>
+      <h1>{{ "monitoring.history.title" | translate }}</h1>
+      <p class="description">{{ "monitoring.history.description" | translate }}</p>
     </div>
   </div>
+
+  @if (!loading() && fields().length > 0) {
+    <div class="field-filter">
+      <label for="historyFieldSelect">{{ "monitoring.filter.field-label" | translate }}</label>
+      <select id="historyFieldSelect" [value]="selectedFieldId() ?? ''" (change)="onFieldChange($event)">
+        <option value="">{{ "monitoring.filter.all-fields" | translate }}</option>
+        @for (field of fields(); track field.id) {
+          <option [value]="field.id">{{ field.name }}</option>
+        }
+      </select>
+    </div>
+  }
 
   @if (loading()) {
     <div class="empty-state">
@@ -15,29 +29,47 @@
   } @else {
     @if (reports().length === 0) {
       <div class="empty-state">
-        <h3>No hay datos disponibles</h3>
-        <p>No existen registros de humedad o telemetría para mostrar en este momento.</p>
+        <h3>{{ "monitoring.history.empty-title" | translate }}</h3>
+        <p>{{ "monitoring.history.empty-description" | translate }}</p>
       </div>
     } @else {
       <div class="history-list">
         @for (report of reports(); track report.id) {
-          <div class="history-card">
+          @let status = getReportStatus(report);
+          <div class="history-card" [class.history-alert]="status !== 'OPTIMAL'">
             <div class="history-header">
-              <span class="device-badge">Sensor ID: #{{ report.deviceId }}</span>
+              <div class="history-badges">
+                <span class="device-badge">{{ "monitoring.card.device-title" | translate }} #{{ report.deviceId }}</span>
+                <span class="zone-badge">{{ getDeviceZoneName(report.deviceId) }}</span>
+                <span class="parameter-badge">{{ getParameterKey(report.parameter) | translate }}</span>
+                <span
+                  class="status-pill"
+                  [class.pill-critical]="status === 'LOW_MOISTURE'"
+                  [class.pill-warning]="status === 'OUT_OF_RANGE'"
+                  [class.pill-optimal]="status === 'OPTIMAL'">
+                  @if (status === 'LOW_MOISTURE') {
+                    {{ "monitoring.card.alert-low-moisture" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                  } @else if (status === 'OUT_OF_RANGE') {
+                    {{ "monitoring.card.alert-out-of-range" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                  } @else {
+                    {{ "monitoring.card.status-optimal" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                  }
+                </span>
+              </div>
               <small>{{ report.generatedAt | date:'dd/MM/yyyy HH:mm' }}</small>
             </div>
             <div class="history-body">
-              <div class="metric-box">
-                <span>Humedad Promedio</span>
-                <strong>{{ report.meanValue }}%</strong>
+              <div class="metric-box" [class.metric-alert]="status !== 'OPTIMAL'">
+                <span>{{ "monitoring.history.average-value" | translate }}</span>
+                <strong>{{ report.meanValue }}{{ report.unit }}</strong>
               </div>
               <div class="metric-details">
-                <p><strong>Varianza:</strong> {{ report.variance }}</p>
-                <p><strong>Desviación Estándar:</strong> {{ report.standardDeviation }}</p>
+                <p><strong>{{ "monitoring.card.variance" | translate }}</strong> {{ report.variance }}</p>
+                <p><strong>{{ "monitoring.card.std-dev" | translate }}</strong> {{ report.standardDeviation }}</p>
               </div>
             </div>
             @if (report.technicalInterpretation) {
-              <div class="history-footer">
+              <div class="history-footer" [class.footer-alert]="status !== 'OPTIMAL'">
                 <p><em>{{ report.technicalInterpretation }}</em></p>
               </div>
             }

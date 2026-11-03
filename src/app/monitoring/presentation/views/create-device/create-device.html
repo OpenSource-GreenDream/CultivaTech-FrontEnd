@@ -1,42 +1,58 @@
 <div class="modal-container">
   <div class="card-header">
-    <h2>Registrar Nuevo Sensor IoT</h2>
-    <p>Ingresa la dirección MAC y selecciona la zona correspondiente del cultivo.</p>
+    <h2>{{ "monitoring.create-device.title" | translate }}</h2>
+    <p>{{ "monitoring.create-device.subtitle" | translate }}</p>
   </div>
+
+  @if (errorMessage(); as errKey) {
+    <div class="alert alert-error">
+      {{ errKey | translate }}
+    </div>
+  }
+
+  @if (successMessage(); as okKey) {
+    <div class="alert alert-success">
+      {{ okKey | translate }}
+    </div>
+  }
 
   <form [formGroup]="deviceForm" (ngSubmit)="onSubmit()" class="form-content">
     <div class="form-group">
-      <label for="fieldId">Zona / Campo</label>
+      <label for="fieldId">{{ "monitoring.create-device.field-label" | translate }}</label>
       <select id="fieldId" formControlName="fieldId" class="form-control">
-        <option value="">Seleccione una zona...</option>
+        <option value="">{{ "monitoring.create-device.field-placeholder" | translate }}</option>
         @for (field of fields(); track field.id) {
           <option [value]="field.id">{{ field.name }}</option>
         }
       </select>
       @if (deviceForm.get('fieldId')?.touched && deviceForm.get('fieldId')?.hasError('required')) {
-        <span class="error-text">Debe seleccionar una zona obligatoriamente.</span>
+        <span class="error-text">{{ "monitoring.create-device.error-field" | translate }}</span>
       }
     </div>
 
     <div class="form-group">
-      <label for="macAddress">Dirección MAC del Sensor</label>
+      <label for="macAddress">{{ "monitoring.create-device.mac-label" | translate }}</label>
       <input
         id="macAddress"
         type="text"
         formControlName="macAddress"
-        placeholder="Ej. A4:CF:12:89:56:01"
+        placeholder="A4:CF:12:89:56:01"
       />
       @if (deviceForm.get('macAddress')?.touched && deviceForm.get('macAddress')?.hasError('required')) {
-        <span class="error-text">La dirección MAC es obligatoria.</span>
+        <span class="error-text">{{ "monitoring.create-device.error-mac-required" | translate }}</span>
       }
       @if (deviceForm.get('macAddress')?.touched && deviceForm.get('macAddress')?.hasError('pattern')) {
-        <span class="error-text">Formato MAC inválido (Ej. A4:CF:12:89:56:01).</span>
+        <span class="error-text">{{ "monitoring.create-device.error-mac-pattern" | translate }}</span>
       }
     </div>
 
     <div class="button-group">
-      <button type="button" class="btn-secondary" (click)="onCancel()">Cancelar</button>
-      <button type="submit" class="btn-primary" [disabled]="deviceForm.invalid">Registrar Sensor</button>
+      <button type="button" class="btn-secondary" (click)="onCancel()">
+        {{ "monitoring.create-device.cancel-btn" | translate }}
+      </button>
+      <button type="submit" class="btn-primary">
+        {{ "monitoring.create-device.submit-btn" | translate }}
+      </button>
     </div>
   </form>
 </div>

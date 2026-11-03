@@ -2,7 +2,6 @@ import {Component, inject} from '@angular/core';
 import {AuthService} from '../../../../iam/application/auth.service';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {SIGNAL} from '@angular/core/primitives/signals';
 import {LanguageSwitcher} from '../language-switcher/language-switcher';
 
 @Component({

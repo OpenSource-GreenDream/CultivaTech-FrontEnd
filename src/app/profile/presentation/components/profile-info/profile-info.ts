@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, input} from '@angular/core';
 import {Profile} from '../../../domain/model/profile.entity';
 import {TranslatePipe} from '@ngx-translate/core';
 
@@ -11,5 +11,5 @@ import {TranslatePipe} from '@ngx-translate/core';
   templateUrl: './profile-info.html',
 })
 export class ProfileInfo {
-  @Input() profile: Profile | null = null;
+  readonly profile = input<Profile | null>(null);
 }
