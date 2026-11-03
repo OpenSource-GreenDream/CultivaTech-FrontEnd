@@ -3,10 +3,12 @@ import {StockStore} from '../../../application/stock.store';
 import {Router} from '@angular/router';
 import {Product} from '../../../domain/model/product.entity';
 import {CurrencyPipe} from '@angular/common';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   imports: [
-    CurrencyPipe
+    CurrencyPipe,
+    TranslatePipe
   ],
   selector: 'app-product-catalog',
   styleUrl: './product-catalog.css',
@@ -23,6 +25,14 @@ export class ProductCatalog implements OnInit {
 
   ngOnInit(): void {
     this.stockStore.loadProducts().subscribe();
+  }
+
+  isAvailable(productId: number): boolean {
+    return this.stockStore.isProductAvailable(productId);
+  }
+
+  getFieldName(fieldId: number | null | undefined): string {
+    return this.stockStore.getFieldName(fieldId);
   }
 
   viewDetail(product: Product): void {

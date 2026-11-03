@@ -1,63 +1,139 @@
 <div class="fields-section">
   <div class="section-actions">
     <h3 class="title">{{ "fields.title" | translate }}</h3>
-    <button class="btn-primary" (click)="showForm = !showForm">
-      {{ (showForm ? 'fields.cancel-btn' : 'fields.register-btn') | translate }}
+    <button type="button" class="btn-primary" (click)="toggleForm()">
+      {{ (showForm() ? 'fields.cancel-btn' : 'fields.register-btn') | translate }}
     </button>
   </div>
 
-  @if (showForm) {
+  @if (feedbackMessage(); as msgKey) {
+    <div class="alert alert-success">
+      {{ msgKey | translate }}
+    </div>
+  }
+
+  @if (showForm()) {
     <div class="card form-card">
-      <h4 class="form-title">{{ "fields.form.title" | translate }}</h4>
-      <form (ngSubmit)="submitField()" class="field-form">
+      <h4 class="form-title">
+        {{ (isEditing() ? 'fields.form.edit-title' : 'fields.form.title') | translate }}
+      </h4>
+
+      @if (errorMessage(); as errKey) {
+        <div class="alert alert-error">
+          {{ errKey | translate }}
+        </div>
+      }
+
+      <form [formGroup]="fieldForm" (ngSubmit)="submitField()" class="field-form">
         <div class="form-group">
-          <label>{{ "fields.form.name-label" | translate }}</label>
-          <input type="text" [(ngModel)]="newField.name" name="name" required [placeholder]="'fields.form.name-placeholder' | translate" />
+          <label for="fieldName">{{ "fields.form.name-label" | translate }}</label>
+          <input
+            id="fieldName"
+            type="text"
+            formControlName="name"
+            [placeholder]="'fields.form.name-placeholder' | translate"
+            [class.is-invalid]="fieldForm.get('name')?.invalid && fieldForm.get('name')?.touched"
+          />
+          @if (fieldForm.get('name')?.touched && fieldForm.get('name')?.invalid) {
+            <span class="error-text">{{ "fields.form.error-name" | translate }}</span>
+          }
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>{{ "fields.form.size-label" | translate }}</label>
-            <input type="number" [(ngModel)]="newField.sizeM2" name="sizeM2" required placeholder="15000" />
+            <label for="fieldSizeM2">{{ "fields.form.size-label" | translate }}</label>
+            <input
+              id="fieldSizeM2"
+              type="number"
+              step="any"
+              min="0.01"
+              formControlName="sizeM2"
+              placeholder="15000"
+              [class.is-invalid]="fieldForm.get('sizeM2')?.invalid && fieldForm.get('sizeM2')?.touched"
+            />
+            @if (fieldForm.get('sizeM2')?.touched && fieldForm.get('sizeM2')?.invalid) {
+              <span class="error-text">{{ "fields.form.error-size" | translate }}</span>
+            }
           </div>
 
           <div class="form-group">
-            <label>{{ "fields.form.soil-label" | translate }}</label>
-            <input type="text" [(ngModel)]="newField.soilType" name="soilType" required [placeholder]="'fields.form.soil-placeholder' | translate" />
+            <label for="fieldSoilType">{{ "fields.form.soil-label" | translate }}</label>
+            <input
+              id="fieldSoilType"
+              type="text"
+              formControlName="soilType"
+              [placeholder]="'fields.form.soil-placeholder' | translate"
+              [class.is-invalid]="fieldForm.get('soilType')?.invalid && fieldForm.get('soilType')?.touched"
+            />
+            @if (fieldForm.get('soilType')?.touched && fieldForm.get('soilType')?.invalid) {
+              <span class="error-text">{{ "fields.form.error-soil" | translate }}</span>
+            }
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>{{ "fields.form.latitude-label" | translate }}</label>
-            <input type="number" step="any" [(ngModel)]="newField.latitude" name="latitude" required placeholder="-12.046374" />
+            <label for="fieldLatitude">{{ "fields.form.latitude-label" | translate }}</label>
+            <input
+              id="fieldLatitude"
+              type="number"
+              step="any"
+              min="-90"
+              max="90"
+              formControlName="latitude"
+              placeholder="-12.046374"
+              [class.is-invalid]="fieldForm.get('latitude')?.invalid && fieldForm.get('latitude')?.touched"
+            />
+            @if (fieldForm.get('latitude')?.touched && fieldForm.get('latitude')?.invalid) {
+              <span class="error-text">{{ "fields.form.error-latitude" | translate }}</span>
+            }
           </div>
 
           <div class="form-group">
-            <label>{{ "fields.form.longitude-label" | translate }}</label>
-            <input type="number" step="any" [(ngModel)]="newField.longitude" name="longitude" required placeholder="-77.042793" />
+            <label for="fieldLongitude">{{ "fields.form.longitude-label" | translate }}</label>
+            <input
+              id="fieldLongitude"
+              type="number"
+              step="any"
+              min="-180"
+              max="180"
+              formControlName="longitude"
+              placeholder="-77.042793"
+              [class.is-invalid]="fieldForm.get('longitude')?.invalid && fieldForm.get('longitude')?.touched"
+            />
+            @if (fieldForm.get('longitude')?.touched && fieldForm.get('longitude')?.invalid) {
+              <span class="error-text">{{ "fields.form.error-longitude" | translate }}</span>
+            }
           </div>
         </div>
 
         <div class="form-buttons">
-          <button type="submit" class="btn-submit" [disabled]="isSubmitting">
-            {{ (isSubmitting ? 'fields.form.submitting' : 'fields.form.submit') | translate }}
+          <button type="button" class="btn-cancel" (click)="cancelForm()">
+            {{ "fields.cancel-btn" | translate }}
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+            {{ (isSubmitting() ? 'fields.form.submitting' : (isEditing() ? 'fields.form.update-submit' : 'fields.form.submit')) | translate }}
           </button>
         </div>
       </form>
     </div>
   }
 
-  @if (fields.length === 0) {
+  @if (fields().length === 0) {
     <div class="card empty-fields">
       <p>{{ "fields.empty" | translate }}</p>
     </div>
   } @else {
     <div class="fields-grid">
-      @for (field of fields; track field.id) {
+      @for (field of fields(); track field.id) {
         <div class="card field-card">
           <div class="field-header">
-            <span class="field-id">{{ "fields.card.lot-id" | translate:{ id: field.id } }}</span>
+            <div class="field-header-top">
+              <span class="field-id">{{ "fields.card.lot-id" | translate:{ id: field.id } }}</span>
+              <button type="button" class="btn-edit" (click)="startEdit(field)">
+                {{ "fields.card.edit-btn" | translate }}
+              </button>
+            </div>
             <h4 class="field-name">{{ field.name }}</h4>
           </div>
 

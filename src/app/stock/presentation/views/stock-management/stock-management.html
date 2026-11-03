@@ -1,56 +1,135 @@
 <div class="stock-container">
   <div class="header">
     <div>
-      <p class="section-label">Gestión de Almacén</p>
-      <h1>Inventario de Insumos Agrícolas</h1>
-      <p class="description">Controla las existencias disponibles de insumos en tus instalaciones.</p>
+      <p class="section-label">{{ "stock.inventory.section-label" | translate }}</p>
+      <h1>{{ "stock.inventory.title" | translate }}</h1>
+      <p class="description">{{ "stock.inventory.description" | translate }}</p>
     </div>
     <div class="action-buttons">
-      <button type="button" class="btn-secondary" (click)="goToCatalog()">Ver Catálogo</button>
-      <button type="button" class="btn-primary" (click)="goToCreateSupply()">+ Registrar Insumo</button>
+      <button type="button" class="btn-secondary" (click)="goToCatalog()">
+        {{ "stock.inventory.catalog-btn" | translate }}
+      </button>
+      <button type="button" class="btn-primary" (click)="goToCreateSupply()">
+        {{ "stock.inventory.register-btn" | translate }}
+      </button>
     </div>
   </div>
 
-  @if (errorMessage) {
+  @if (!loading() && inventories().length > 0) {
+    <div class="filter-bar">
+      <div class="filter-item search-box">
+        <label for="inventorySearch">{{ "stock.filters.search-label" | translate }}</label>
+        <input
+          id="inventorySearch"
+          type="text"
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)"
+          [placeholder]="'stock.filters.search-placeholder' | translate"
+        />
+      </div>
+
+      <div class="filter-item">
+        <label for="fieldFilter">{{ "stock.filters.batch-label" | translate }}</label>
+        <select id="fieldFilter" [value]="selectedFieldId() ?? ''" (change)="onFieldChange($event)">
+          <option value="">{{ "stock.filters.all-batches" | translate }}</option>
+          @for (field of fields(); track field.id) {
+            <option [value]="field.id">{{ field.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-item">
+        <label for="criteriaFilter">{{ "stock.filters.criteria-label" | translate }}</label>
+        <select id="criteriaFilter" [value]="stockCriteria()" (change)="onCriteriaChange($event)">
+          <option value="ALL">{{ "stock.filters.criteria-all" | translate }}</option>
+          <option value="IN_STOCK">{{ "stock.filters.criteria-in-stock" | translate }}</option>
+          <option value="LOW_STOCK">{{ "stock.filters.criteria-low-stock" | translate }}</option>
+          <option value="OUT_OF_STOCK">{{ "stock.filters.criteria-out-of-stock" | translate }}</option>
+        </select>
+      </div>
+
+      @if (searchTerm() || selectedFieldId() !== null || stockCriteria() !== 'ALL') {
+        <button type="button" class="btn-clear" (click)="clearFilters()">
+          {{ "stock.filters.clear-btn" | translate }}
+        </button>
+      }
+    </div>
+  }
+
+  @if (errorMessage(); as errKey) {
     <div class="alert-error">
-      {{ errorMessage }}
+      {{ errKey | translate }}
+    </div>
+  }
+
+  @if (successMessage(); as okKey) {
+    <div class="alert-success">
+      {{ okKey | translate }}
     </div>
   }
 
   @if (loading()) {
     <div class="empty-state">
-      <p>Cargando inventario de insumos...</p>
+      <p>{{ "stock.inventory.loading" | translate }}</p>
     </div>
   } @else {
     @if (inventories().length === 0) {
       <div class="empty-state">
-        <h3>Inventario vacío</h3>
-        <p>No tienes insumos registrados en este momento. Registra un nuevo producto para comenzar.</p>
+        <h3>{{ "stock.inventory.empty-title" | translate }}</h3>
+        <p>{{ "stock.inventory.empty-description" | translate }}</p>
+      </div>
+    } @else if (filteredInventories().length === 0) {
+      <div class="empty-state">
+        <h3>{{ "stock.filters.no-results-title" | translate }}</h3>
+        <p>{{ "stock.filters.no-results-description" | translate }}</p>
       </div>
     } @else {
       <div class="inventory-grid">
-        @for (item of inventories(); track item.id) {
+        @for (item of filteredInventories(); track item.id) {
+          @let product = getProduct(item.productId);
+          @let batchName = getFieldName(item.fieldId) || getFieldName(product?.fieldId);
           <div class="inventory-card">
             <div class="card-header">
-              <!-- Mostramos el nombre del insumo directamente -->
-              <span class="product-id-badge">{{ item.name }}</span>
+              <div class="product-overview">
+                <div class="inventory-thumb">
+                  @if (product?.imageUrl) {
+                    <img [src]="product?.imageUrl" [alt]="product?.name || ''" />
+                  } @else {
+                    <span>{{ "stock.inventory.no-image" | translate }}</span>
+                  }
+                </div>
+                <div class="card-badges">
+                  <span class="product-name">{{ product?.name || getProductName(item.productId) }}</span>
+                  <span class="batch-badge">
+                    {{ batchName || ("stock.inventory.no-batch" | translate) }}
+                  </span>
+                </div>
+              </div>
               <small>{{ item.updatedAt | date:'dd/MM/yyyy HH:mm' }}</small>
             </div>
 
             <div class="card-body">
+              <p class="product-description">{{ product?.description }}</p>
+
               <div class="info-row">
-                <span class="label">Ubicación Almacén:</span>
-                <strong>{{ item.warehouseLocation }}</strong>
+                <span class="label">{{ "stock.inventory.table.batch" | translate }}:</span>
+                <strong>{{ batchName || ("stock.inventory.no-batch" | translate) }}</strong>
+              </div>
+
+              <div class="info-row">
+                <span class="label">{{ "stock.inventory.table.price" | translate }}:</span>
+                <strong>{{ (product?.price ?? 0) | currency:'USD':'symbol':'1.2-2' }}</strong>
               </div>
 
               <div class="stock-row">
-                <span class="label">Cantidad Disponible:</span>
-                @if (editingInventoryId === item.id) {
+                <span class="label">{{ "stock.inventory.table.quantity" | translate }}:</span>
+                @if (editingInventoryId() === item.id) {
                   <div class="edit-inline">
                     <input
                       type="number"
                       min="0"
-                      [(ngModel)]="newStockValue"
+                      [ngModel]="newStockValue()"
+                      (ngModelChange)="onStockInputChange($event)"
                       class="input-stock"
                     />
                     <button type="button" class="btn-icon check" (click)="saveStock(item.id)">✓</button>
@@ -59,10 +138,10 @@
                 } @else {
                   <div class="stock-display">
                     <span class="stock-badge" [class.low]="item.stockQuantity <= 5">
-                      {{ item.stockQuantity }} unidades
+                      {{ item.stockQuantity }} {{ "stock.inventory.units" | translate }}
                     </span>
                     <button type="button" class="btn-edit" (click)="startEditing(item.id, item.stockQuantity)">
-                      Editar
+                      {{ "fields.card.edit-btn" | translate }}
                     </button>
                   </div>
                 }

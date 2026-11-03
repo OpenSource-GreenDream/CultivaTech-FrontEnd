@@ -1,74 +1,116 @@
 <div class="stock-container">
   <div class="header">
-    <button type="button" class="btn-back" (click)="onCancel()">Volver al Inventario</button>
+    <button type="button" class="btn-back" (click)="onCancel()">{{ "stock.supply.back-btn" | translate }}</button>
     <div>
-      <p class="section-label">Registro de Insumos</p>
-      <h1>Agregar Nuevo Insumo al Inventario</h1>
-      <p class="description">Ingresa los datos del insumo agrícola para registrar su disponibilidad inicial.</p>
+      <p class="section-label">{{ "stock.supply.section-label" | translate }}</p>
+      <h1>{{ "stock.supply.title" | translate }}</h1>
+      <p class="description">{{ "stock.supply.description" | translate }}</p>
     </div>
   </div>
 
   <div class="form-card">
+    @if (successMessage(); as successKey) {
+      <p class="success-text" role="status">{{ successKey | translate }}</p>
+    }
+    @if (errorMessage(); as errKey) {
+      <p class="error-text" role="alert">{{ errKey | translate }}</p>
+    }
     <form [formGroup]="supplyForm" (ngSubmit)="onSubmit()" class="form-content">
       <div class="form-group">
-        <label for="productId">Insumo del Catálogo</label>
-        <select id="productId" formControlName="productId" class="form-control">
-          <option value="">Seleccione un insumo...</option>
-          @for (product of products(); track product.id) {
-            <option [value]="product.id">{{ product.name }}</option>
+        <label for="fieldId">{{ "stock.supply.field-label" | translate }}</label>
+        <select id="fieldId" formControlName="fieldId" class="form-control">
+          <option value="">{{ "stock.supply.field-placeholder" | translate }}</option>
+          @for (field of fields(); track field.id) {
+            <option [value]="field.id">{{ field.name }}</option>
           }
         </select>
-        @if (supplyForm.get('productId')?.touched && supplyForm.get('productId')?.hasError('required')) {
-          <span class="error-text">Debe seleccionar un insumo obligatoriamente.</span>
+        @if (supplyForm.get('fieldId')?.touched && supplyForm.get('fieldId')?.hasError('required')) {
+          <span class="error-text">{{ "stock.supply.error-field" | translate }}</span>
         }
       </div>
 
       <div class="form-group">
-        <label for="name">Nombre del Insumo</label>
+        <label for="name">{{ "stock.supply.name-label" | translate }}</label>
         <input
           id="name"
           type="text"
           formControlName="name"
-          placeholder="Ej. Nodo Sensor IoT CultivaTech V1"
+          [placeholder]="'stock.supply.name-placeholder' | translate"
         />
         @if (supplyForm.get('name')?.touched && supplyForm.get('name')?.hasError('required')) {
-          <span class="error-text">El nombre del insumo es obligatorio.</span>
+          <span class="error-text">{{ "stock.supply.error-name-required" | translate }}</span>
         }
         @if (supplyForm.get('name')?.touched && supplyForm.get('name')?.hasError('minlength')) {
-          <span class="error-text">El nombre debe tener al menos 3 caracteres.</span>
+          <span class="error-text">{{ "stock.supply.error-name-min" | translate }}</span>
         }
       </div>
 
       <div class="form-group">
-        <label for="stockQuantity">Cantidad Inicial Disponible</label>
+        <label for="price">{{ "stock.supply.price-label" | translate }}</label>
+        <input
+          id="price"
+          type="number"
+          min="0"
+          step="0.01"
+          formControlName="price"
+          [placeholder]="'stock.supply.price-placeholder' | translate"
+        />
+        @if (supplyForm.get('price')?.touched && supplyForm.get('price')?.invalid) {
+          <span class="error-text">{{ "stock.supply.error-price" | translate }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="description">{{ "stock.supply.description-label" | translate }}</label>
+        <textarea
+          id="description"
+          rows="4"
+          formControlName="description"
+          [placeholder]="'stock.supply.description-placeholder' | translate"
+        ></textarea>
+        @if (supplyForm.get('description')?.touched && supplyForm.get('description')?.hasError('required')) {
+          <span class="error-text">{{ "stock.supply.error-description-required" | translate }}</span>
+        }
+        @if (supplyForm.get('description')?.touched && supplyForm.get('description')?.hasError('minlength')) {
+          <span class="error-text">{{ "stock.supply.error-description-min" | translate }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="imageUrl">{{ "stock.supply.image-label" | translate }}</label>
+        <input
+          id="imageUrl"
+          type="url"
+          formControlName="imageUrl"
+          [placeholder]="'stock.supply.image-placeholder' | translate"
+        />
+        @if (supplyForm.get('imageUrl')?.touched && supplyForm.get('imageUrl')?.invalid) {
+          <span class="error-text">{{ "stock.supply.error-image" | translate }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="stockQuantity">{{ "stock.supply.quantity-label" | translate }}</label>
         <input
           id="stockQuantity"
           type="number"
           min="0"
           formControlName="stockQuantity"
-          placeholder="Ej. 50"
+          [placeholder]="'stock.supply.quantity-placeholder' | translate"
         />
-        @if (supplyForm.get('stockQuantity')?.touched && supplyForm.get('stockQuantity')?.hasError('min')) {
-          <span class="error-text">La cantidad no puede ser negativa.</span>
+        @if (supplyForm.get('stockQuantity')?.touched && supplyForm.get('stockQuantity')?.hasError('required')) {
+          <span class="error-text">{{ "stock.form.error-quantity-required" | translate }}</span>
         }
-      </div>
-
-      <div class="form-group">
-        <label for="warehouseLocation">Ubicación en Almacén</label>
-        <input
-          id="warehouseLocation"
-          type="text"
-          formControlName="warehouseLocation"
-          placeholder="Ej. Almacén Central - Sector B2"
-        />
-        @if (supplyForm.get('warehouseLocation')?.touched && supplyForm.get('warehouseLocation')?.hasError('required')) {
-          <span class="error-text">La ubicación del almacén es requerida.</span>
+        @if (supplyForm.get('stockQuantity')?.touched && supplyForm.get('stockQuantity')?.hasError('min')) {
+          <span class="error-text">{{ "stock.supply.error-quantity-min" | translate }}</span>
         }
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn-secondary" (click)="onCancel()">Cancelar</button>
-        <button type="submit" class="btn-primary" [disabled]="supplyForm.invalid">Registrar Insumo</button>
+        <button type="button" class="btn-secondary" (click)="onCancel()">{{ "fields.cancel-btn" | translate }}</button>
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+          {{ "stock.submit.register" | translate }}
+        </button>
       </div>
     </form>
   </div>

@@ -1,6 +1,6 @@
 export interface CreateInventoryRequest {
   productId: number;
-  name: string;
+  profileId?: number;
+  fieldId: number;
   stockQuantity: number;
-  warehouseLocation: string;
 }

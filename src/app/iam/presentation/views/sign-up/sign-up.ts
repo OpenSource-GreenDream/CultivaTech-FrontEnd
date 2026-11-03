@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {IamStore} from '../../../application/iam.store';
 import {Router} from '@angular/router';
 import {SignUpRequest} from '../../../infrastructure/sign-up.request';
@@ -18,13 +18,20 @@ export class SignUp {
   private iamStore = inject(IamStore);
   private router = inject(Router);
 
+  readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
+
   onSignUp(request: SignUpRequest) {
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
     this.iamStore.signUp(request).subscribe({
       next: () => {
-        this.router.navigate(['/sign-in']);
+        this.successMessage.set('sign-up.form.success');
+        this.router.navigate(['/profile/create']);
       },
-      error: (err) => {
-        console.error('Error durante el registro', err);
+      error: () => {
+        this.errorMessage.set('sign-up.form.error-submit');
       }
     });
   }

@@ -4,11 +4,23 @@
     <p class="section-subtitle">{{ "profile.management.subtitle" | translate }}</p>
   </div>
 
-  @if (isLoading) {
+  @if (profileStore.feedbackMessage(); as feedbackKey) {
+    <div class="alert alert-success" role="status">
+      {{ feedbackKey | translate }}
+    </div>
+  }
+
+  @if (errorMessage(); as errorKey) {
+    <div class="alert alert-error" role="alert">
+      {{ errorKey | translate }}
+    </div>
+  }
+
+  @if (isLoading()) {
     <div class="loading-state">
       <p>{{ "profile.management.loading" | translate }}</p>
     </div>
-  } @else {
+  } @else if (!errorMessage()) {
     <div class="profile-grid">
       <app-profile-info [profile]="profileStore.currentProfile()"></app-profile-info>
 

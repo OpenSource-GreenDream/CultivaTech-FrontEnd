@@ -27,11 +27,11 @@
       <input
         id="password"
         type="password"
-        formControlName="password_hash"
+        formControlName="password"
         placeholder="••••••••"
-        [class.is-invalid]="signInForm.get('password_hash')?.invalid && signInForm.get('password_hash')?.touched"
+        [class.is-invalid]="signInForm.get('password')?.invalid && signInForm.get('password')?.touched"
       />
-      @if (signInForm.get('password_hash')?.touched && signInForm.get('password_hash')?.hasError('required')) {
+      @if (signInForm.get('password')?.touched && signInForm.get('password')?.hasError('required')) {
         <span class="error-text">{{"sign-in.form.error-3" | translate}}</span>
       }
     </div>

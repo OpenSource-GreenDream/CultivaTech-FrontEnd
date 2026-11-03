@@ -12,8 +12,11 @@ export interface UserResponse{
 export interface UserResource{
   id: number,
   email_address: string,
-  password_hash: string,
-  roles?: RoleResource[];
+  /**
+   * The mock API returns either embedded role objects (preferred) or
+   * plain role names. The assembler normalizes both shapes.
+   */
+  roles?: Array<RoleResource | string>;
   created_at: string,
   updated_at: string
 }

@@ -1,12 +1,12 @@
 import {inject, Service} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {ProfileResource} from './profile.response';
 import {CreateProfileRequest} from './create-profile.request';
 import {FieldResource} from './field-response';
 import {CreateFieldRequest} from './create-field.request';
-import {FieldAssembler} from './field.assembler';
+import {UpdateFieldRequest} from './update-field.request';
 
 /**
  * Service to consume Fake API for Profile and Field operations.
@@ -15,11 +15,12 @@ import {FieldAssembler} from './field.assembler';
 @Service()
 export class ProfileApi {
   private http = inject(HttpClient);
-  private profilesUrl = `${environment.cultivatechBaseApi}/profiles`;
-  private fieldsUrl = `${environment.cultivatechBaseApi}/fields`;
+  private profilesUrl = `${environment.cultivatechBaseApi}${environment.profilesEndpoint}`;
+  private fieldsUrl = `${environment.cultivatechBaseApi}${environment.fieldsEndpoint}`;
 
   getProfileByUserId(userId: number): Observable<ProfileResource[]> {
-    return this.http.get<ProfileResource[]>(`${this.profilesUrl}?user_id=${userId}`);
+    const params = new HttpParams().set('user_id', userId.toString());
+    return this.http.get<ProfileResource[]>(this.profilesUrl, { params });
   }
 
   createProfile(request: CreateProfileRequest): Observable<ProfileResource> {
@@ -32,7 +33,8 @@ export class ProfileApi {
   }
 
   getFieldsByProfileId(profileId: number): Observable<FieldResource[]> {
-    return this.http.get<FieldResource[]>(`${this.fieldsUrl}?profile_id=${profileId}`);
+    const params = new HttpParams().set('profile_id', profileId.toString());
+    return this.http.get<FieldResource[]>(this.fieldsUrl, { params });
   }
 
   createField(request: CreateFieldRequest): Observable<FieldResource> {
@@ -42,5 +44,13 @@ export class ProfileApi {
       updated_at: new Date().toISOString()
     };
     return this.http.post<FieldResource>(this.fieldsUrl, payload);
+  }
+
+  updateField(fieldId: number, request: UpdateFieldRequest): Observable<FieldResource> {
+    const payload = {
+      ...request,
+      updated_at: new Date().toISOString()
+    };
+    return this.http.patch<FieldResource>(`${this.fieldsUrl}/${fieldId}`, payload);
   }
 }

@@ -12,8 +12,10 @@
     "form": {
       "error-1": "Se requiere una dirección de correo electrónico",
       "error-2": "Ingrese una dirección de correo electrónico válida",
-      "error-3": "La contraseña es obligatoria",
-      "error-4": "Las contraseñas no coinciden"
+      "error-3": "La contraseña es obligatoria (mínimo 6 caracteres)",
+      "error-4": "Las contraseñas no coinciden",
+      "error-submit": "No se pudo registrar la cuenta. Verifique sus datos e inténtelo nuevamente.",
+      "success": "Cuenta creada exitosamente."
     },
     "submit": {
       "click-1": "Crear cuenta",
@@ -21,7 +23,13 @@
       "click-2": "Iniciar sesión",
       "click-3": "Iniciar sesión"
     },
-    "roles": "Rol de Usuario"
+    "roles": "Rol de Usuario",
+    "role-options": {
+      "agricultor": "Agricultor",
+      "proveedor": "Proveedor",
+      "clienteb2b": "Cliente B2B",
+      "administrador": "Administrador"
+    }
   },
   "sign-in": {
     "container": {
@@ -35,7 +43,8 @@
     "form": {
       "error-1": "El correo es obligatorio",
       "error-2": "Ingrese un correo electrónico válido",
-      "error-3": "La contraseña es obligatoria"
+      "error-3": "La contraseña es obligatoria",
+      "error-credentials": "Correo o contraseña incorrectos. Verifique sus credenciales."
     },
     "submit": {
       "click-1": "Iniciar sesión",
@@ -55,7 +64,8 @@
       "products": "Productos",
       "notifications": "Notificaciones",
       "profile": "Mi perfil",
-      "analytics": "Reportes e indicadores"
+      "analytics": "Reportes e indicadores",
+      "community": "Comunidad"
     },
     "logout": "Cerrar sesión"
   },
@@ -74,14 +84,42 @@
     },
     "list": {
       "title": "Notificaciones",
+      "recent-btn": "Recientes",
+      "history-btn": "Historial",
       "filters-label": "Filtros de notificaciones",
       "filter-all": "Todas las notificaciones",
-      "filter-alerts": "Alertas de sensores",
-      "loading": "Cargando notificaciones",
+      "filter-alerts": "Alertas Críticas",
+      "loading": "Cargando notificaciones...",
       "load-error": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
       "empty": "No hay notificaciones para mostrar.",
       "mark-as-read": "Marcar como leída",
-      "mark-as-read-for": "Marcar {{title}} como leída"
+      "mark-as-read-for": "Marcar {{title}} como leída",
+      "view-alert": "Ver Alerta",
+      "view-details": "Ver detalles",
+      "sensor-prefix": "Sensor",
+      "sector-prefix": "Sector",
+      "system": "Sistema",
+      "general": "General",
+      "status-critical": "Alerta crítica",
+      "status-normal": "Normal",
+      "table": {
+        "sensor": "Sensor / Dispositivo",
+        "zone": "Zona / Sector",
+        "type": "Tipo",
+        "reading": "Lectura / Parámetro",
+        "status": "Estado",
+        "date": "Fecha y Hora",
+        "actions": "Acciones"
+      }
+    },
+    "modal": {
+      "close": "Cerrar",
+      "current-level": "Nivel actual:",
+      "min-threshold": "Umbral mínimo:",
+      "temp-threshold": "Umbral temperatura:",
+      "go-to-sensor": "Ir a sensor",
+      "activate-irrigation": "Activar riego",
+      "accept": "Aceptar"
     },
     "preferences": {
       "title": "Preferencias de notificación",
@@ -91,7 +129,9 @@
       "load-error": "No se pudieron cargar o guardar las preferencias de notificación.",
       "field-label": "Zona de cultivo",
       "all-fields": "Todas las zonas",
-      "toggle-label": "Activar o desactivar las notificaciones de {{type}}"
+      "toggle-label": "Activar o desactivar las notificaciones de {{type}}",
+      "configure-for": "Configurar notificaciones para {{type}}",
+      "save": "Guardar preferencias"
     }
   },
   "analytics": {
@@ -99,6 +139,32 @@
     "device-label": "Dispositivo IoT:",
     "device-option": "Dispositivo #{{id}} ({{mac}})",
     "loading": "Cargando indicadores clave...",
+    "moisture-trend-title": "Evolución de Tendencia de Humedad (US36)",
+    "trend-title": "Evolución de Tendencia (US36)",
+    "real-reading": "Lectura Real",
+    "min-threshold": "Umbral Mínimo",
+    "critical-threshold": "Umbral Crítico",
+    "no-chart-reports": "No hay reportes registrados para graficar.",
+    "projections-title": "Proyección de Cosechas vs. Rendimiento Histórico (US37)",
+    "historical-label": "Histórico",
+    "projected-label": "Proyectado",
+    "confidence-label": "Confianza del modelo",
+    "no-projections": "No hay proyecciones registradas para este dispositivo.",
+    "history-title": "Historial Detallado de Reportes",
+    "no-history": "No hay reportes históricos disponibles.",
+    "table": {
+      "date": "Fecha Generación",
+      "parameter": "Parámetro",
+      "mean": "Valor Medio",
+      "variance": "Varianza",
+      "std-dev": "Desviación Estándar",
+      "interpretation": "Interpretación Técnica"
+    },
+    "status": {
+      "OPTIMAL": "Óptimo",
+      "ALERT": "Alerta",
+      "NO_DATA": "Sin Datos"
+    },
     "cards": {
       "average-mean": "Promedio de Media",
       "average-variance": "Promedio de Varianza",
@@ -113,6 +179,7 @@
     "cancel-btn": "Cancelar",
     "form": {
       "title": "Registrar Nuevo Lote",
+      "edit-title": "Editar Lote de Cultivo",
       "name-label": "Nombre del Lote",
       "name-placeholder": "Ej. Lote Papa Amarilla A1",
       "size-label": "Tamaño (m²)",
@@ -121,21 +188,35 @@
       "latitude-label": "Latitud",
       "longitude-label": "Longitud",
       "submit": "Guardar Lote",
-      "submitting": "Guardando..."
+      "update-submit": "Actualizar Lote",
+      "submitting": "Guardando...",
+      "error-name": "El nombre del lote es obligatorio.",
+      "error-size": "El área en m² es obligatoria y debe ser mayor a 0.",
+      "error-soil": "El tipo de suelo es obligatorio.",
+      "error-latitude": "La latitud es obligatoria y debe estar entre -90 y 90.",
+      "error-longitude": "La longitud es obligatoria y debe estar entre -180 y 180.",
+      "error-validation": "Por favor corrige los campos con errores antes de guardar el lote.",
+      "error-no-profile": "Se requiere un perfil de fundo activo para registrar un lote.",
+      "error-submit": "No se pudo guardar el lote. Inténtalo de nuevo.",
+      "create-success": "Lote registrado exitosamente.",
+      "update-success": "Lote actualizado exitosamente."
     },
     "empty": "No tienes lotes registrados en este fundo. Haz clic en + Registrar Lote para agregar uno.",
+    "load-error": "No se pudieron cargar los lotes. Inténtalo de nuevo.",
     "card": {
       "lot-id": "LOTE #{{id}}",
       "soil": "Suelo",
       "area": "Área",
-      "coordinates": "Coordenadas"
+      "coordinates": "Coordenadas",
+      "edit-btn": "Editar"
     }
   },
   "profile": {
     "management": {
       "title": "Gestión de Fundo y Terrenos",
       "subtitle": "Administra la información de tu fundo y supervisa cada uno de tus lotes agrícolas.",
-      "loading": "Cargando información del fundo..."
+      "loading": "Cargando información del fundo...",
+      "load-error": "No se pudo cargar la información del fundo. Inténtalo de nuevo."
     },
     "info": {
       "title": "Información del Fundo",
@@ -145,25 +226,71 @@
       "moisture-threshold": "Umbral de Humedad",
       "temp-threshold": "Umbral de Temp.",
       "empty": "No se encontró un perfil de fundo asociado a esta cuenta."
+    },
+    "create": {
+      "badge": "Configuración Inicial",
+      "title": "Crear Perfil de Agricultor",
+      "subtitle": "Completa los datos obligatorios de tu fundo y umbrales de sensores para acceder a la gestión de lotes e inventario.",
+      "fundo-name-label": "Nombre del Fundo",
+      "fundo-name-placeholder": "Ej. Fundo El Sol",
+      "phone-label": "Teléfono de Contacto",
+      "phone-placeholder": "Ej. +51987654321",
+      "moisture-label": "Umbral de Humedad (%)",
+      "moisture-placeholder": "Ej. 25.5",
+      "temp-label": "Umbral de Temperatura (°C)",
+      "temp-placeholder": "Ej. 32.0",
+      "error-fundo-name": "El nombre del fundo es obligatorio (mínimo 2 caracteres).",
+      "error-phone": "Ingrese un número de teléfono de contacto válido.",
+      "error-moisture": "Ingrese un umbral de humedad válido entre 1% y 100%.",
+      "error-temp": "Ingrese un umbral de temperatura válido entre -10°C y 60°C.",
+      "error-submit": "No se pudo crear el perfil de agricultor. Inténtalo de nuevo.",
+      "error-load": "No se pudo verificar tu perfil actual. Inténtalo de nuevo.",
+      "success": "Perfil creado exitosamente.",
+      "submit": "Crear Perfil",
+      "submitting": "Creando perfil..."
     }
   },
   "stock": {
     "inventory": {
+      "section-label": "Gestión de Inventario por Lote",
       "title": "Gestión de Inventario",
-      "description": "Vista general del stock disponible en las ubicaciones registradas",
+      "description": "Vista general del stock disponible por lote en tu fundo",
+      "catalog-btn": "Ver Catálogo",
+      "register-btn": "+ Registrar Producto",
+      "loading": "Cargando inventario de productos agrícolas...",
       "empty-title": "Sin ítems en el inventario",
-      "empty-description": "No hay productos de stock registrados en este momento.",
+      "empty-description": "No tienes productos registrados en los lotes de tu fundo en este momento.",
+      "units": "unidades",
+      "no-image": "Sin imagen",
+      "no-batch": "Sin lote",
       "table": {
         "product-id": "ID de Producto",
-        "quantity": "Cantidad en Stock",
-        "location": "Ubicación en Almacén",
+        "quantity": "Cantidad Disponible",
+        "batch": "Lote",
+        "price": "Precio",
         "updated-at": "Última Actualización"
       }
+    },
+    "filters": {
+      "search-label": "Buscar producto o lote",
+      "search-placeholder": "Buscar por nombre, descripción o lote...",
+      "batch-label": "Lote",
+      "all-batches": "Todos los lotes",
+      "criteria-label": "Estado de Stock",
+      "criteria-all": "Todos los niveles",
+      "criteria-in-stock": "Stock Óptimo (> 5)",
+      "criteria-low-stock": "Stock Bajo (1 - 5)",
+      "criteria-out-of-stock": "Agotado (0)",
+      "clear-btn": "Limpiar Filtros",
+      "no-results-title": "Sin resultados",
+      "no-results-description": "Ningún producto del inventario coincide con los criterios de búsqueda o filtrado seleccionados."
     },
     "update": {
       "title": "Actualizar Stock de Inventario",
       "description": "Ajusta la cantidad de stock para un registro de inventario específico",
-      "success": "Stock actualizado correctamente"
+      "success": "Stock actualizado correctamente",
+      "error-invalid-quantity": "La cantidad de stock debe ser un número válido no negativo.",
+      "error-submit": "Error al actualizar el stock."
     },
     "form": {
       "inventory-id": "ID de Inventario",
@@ -175,37 +302,54 @@
       "submit": "Actualizar Stock"
     },
     "supply": {
-      "title": "Registrar insumo agrícola",
-      "description": "Agrega un nuevo insumo agrícola a tu inventario"
+      "back-btn": "← Volver al Inventario",
+      "section-label": "Registro de Productos",
+      "title": "Registrar producto agrícola",
+      "description": "Agrega un nuevo producto al catálogo y su stock inicial a un lote",
+      "field-label": "Lote",
+      "field-placeholder": "Seleccione un lote...",
+      "error-field": "Debe seleccionar un lote obligatoriamente.",
+      "name-label": "Nombre del Producto",
+      "name-placeholder": "Ej. Nodo Sensor IoT CultivaTech V1",
+      "error-name-required": "El nombre del producto es obligatorio.",
+      "error-name-min": "El nombre debe tener al menos 3 caracteres.",
+      "price-label": "Precio (USD)",
+      "price-placeholder": "Ej. 120.50",
+      "error-price": "El precio debe ser un número válido no negativo.",
+      "description-label": "Descripción",
+      "description-placeholder": "Describe las características y el uso del producto",
+      "error-description-required": "La descripción es obligatoria.",
+      "error-description-min": "La descripción debe tener al menos 5 caracteres.",
+      "image-label": "URL de Imagen",
+      "image-placeholder": "https://ejemplo.com/producto.png",
+      "error-image": "Ingrese una URL de imagen válida que comience con http:// o https://.",
+      "quantity-label": "Cantidad Inicial Disponible",
+      "quantity-placeholder": "Ej. 50",
+      "error-quantity-min": "La cantidad no puede ser negativa.",
+      "error-submit": "No se pudo registrar el producto. Inténtelo de nuevo."
+    },
+    "catalog": {
+      "back-btn": "← Volver al Inventario",
+      "section-label": "Catálogo Agrícola",
+      "title": "Catálogo de Productos",
+      "description": "Consulta los productos agrícolas registrados en los lotes de tu fundo.",
+      "loading": "Cargando catálogo...",
+      "empty-title": "Catálogo sin productos",
+      "empty-description": "No existen productos registrados en este momento.",
+      "batch-label": "Lote",
+      "global-batch": "Catálogo general",
+      "no-image": "Sin imagen",
+      "available": "Disponible",
+      "out-of-stock": "Agotado",
+      "detail-available": "Producto disponible para compra",
+      "detail-unavailable": "Producto no disponible actualmente",
+      "close-btn": "Cerrar"
     },
     "submit": {
-      "register": "Registrar insumo"
+      "register": "Registrar producto"
     },
     "success": {
-      "registered": "Insumo registrado correctamente"
-    },
-    "movement": {
-      "title": "Registrar movimiento de stock",
-      "description": "Registra una entrada o salida de un insumo agrícola",
-      "form": {
-        "supply": "ID del insumo",
-        "supply-placeholder": "Ej. supply-001",
-        "type": "Tipo de movimiento",
-        "type-in": "Entrada de stock",
-        "type-out": "Salida de stock",
-        "quantity": "Cantidad",
-        "quantity-placeholder": "Ej. 10",
-        "error-supply-required": "El ID del insumo es obligatorio",
-        "error-type-required": "El tipo de movimiento es obligatorio",
-        "error-quantity-required": "La cantidad es obligatoria",
-        "error-quantity-min": "La cantidad debe ser mayor que cero"
-      },
-      "submit": {
-        "register": "Registrar movimiento"
-      },
-      "success": {
-        "registered": "Movimiento de stock registrado correctamente"
-      }
+      "registered": "Producto registrado correctamente"
     },
     "history": {
       "title": "Historial de movimientos",
@@ -226,9 +370,31 @@
     "management.label": "Gestión de Monitoreo",
     "title": "Monitoreo de Dispositivos",
     "description": "Supervisión y lecturas en tiempo real de los sensores e indicadores de campo.",
+    "register-device-btn": "+ Registrar Sensor",
     "tabs": {
       "summary": "Resumen",
       "history": "Historial"
+    },
+    "thresholds": {
+      "active-label": "Umbrales Activos del Perfil:",
+      "moisture": "Humedad Mín.",
+      "temperature": "Temp. Máx."
+    },
+    "alerts": {
+      "low-moisture-title": "Alerta por Baja Humedad (US16)",
+      "anomaly-title": "Alerta de Parámetro / Nutrientes Fuera de Rango (US17)",
+      "zone-detail": "Zona: {{zone}} (Sensor {{mac}}) — {{parameter}}: {{value}} (Umbral: {{threshold}})"
+    },
+    "parameters": {
+      "moisture": "Humedad",
+      "temperature": "Temperatura",
+      "nutrients": "Nutrientes",
+      "ph": "pH"
+    },
+    "status": {
+      "ACTIVE": "Activo",
+      "WARNING_BATTERY": "Batería Baja",
+      "OFFLINE": "Desconectado"
     },
     "filter": {
       "field-label": "Filtrar por lote:",
@@ -244,10 +410,91 @@
       "field-zone": "Zona / Lote:",
       "last-sync": "Última sinc.:",
       "registered-value": "Valor Registrado",
+      "current-readings": "Lecturas Actuales",
       "variance": "Varianza:",
       "std-dev": "Desv. Estándar:",
       "interpretation": "Interpretación:",
-      "no-data": "Sin reportes disponibles"
+      "no-data": "Sin reportes disponibles",
+      "alert-low-moisture": "Baja Humedad (< {{threshold}})",
+      "alert-out-of-range": "Fuera de Rango (Umbral: {{threshold}})",
+      "status-optimal": "En Rango (Umbral: {{threshold}})"
+    },
+    "history": {
+      "back-btn": "← Volver al Monitoreo",
+      "section-label": "Historial de Telemetría",
+      "title": "Historial de Humedad y Sensores",
+      "description": "Consulta los registros ordenados cronológicamente por zona y sensor.",
+      "empty-title": "No hay datos disponibles",
+      "empty-description": "No existen registros de humedad o telemetría para mostrar en la zona seleccionada.",
+      "avg-moisture": "Humedad Promedio",
+      "average-value": "Valor Promedio"
+    },
+    "create-device": {
+      "title": "Registrar Nuevo Sensor IoT",
+      "subtitle": "Ingresa la dirección MAC y selecciona la zona correspondiente del cultivo.",
+      "field-label": "Zona / Campo",
+      "field-placeholder": "Seleccione una zona...",
+      "error-field": "Debe seleccionar una zona obligatoriamente.",
+      "mac-label": "Dirección MAC del Sensor",
+      "error-mac-required": "La dirección MAC es obligatoria.",
+      "error-mac-pattern": "Formato MAC inválido (Ej. A4:CF:12:89:56:01).",
+      "error-duplicate": "Ya existe un sensor registrado con esta dirección MAC en su fundo.",
+      "error-submit": "No se pudo registrar el sensor. Inténtelo de nuevo.",
+      "success": "Sensor registrado correctamente.",
+      "cancel-btn": "Cancelar",
+      "submit-btn": "Registrar Sensor"
+    }
+  },
+  "community": {
+    "title": "Comunidad, Reseñas y Reputación",
+    "subtitle": "Califica lotes de cultivo y productos agrícolas y consulta la reputación en la comunidad.",
+    "loading": "Cargando reseñas y reputación de la comunidad...",
+    "filters": {
+      "target-type-label": "Filtrar por Categoría:",
+      "all-targets": "Todos (Lotes y Productos)",
+      "lots-only": "Solo Lotes de Cultivo",
+      "products-only": "Solo Productos",
+      "lot-label": "Filtrar por Lote:",
+      "all-lots": "Todos los Lotes",
+      "product-label": "Filtrar por Producto:",
+      "all-products": "Todos los Productos"
+    },
+    "reputation": {
+      "title": "Resumen de Reputación",
+      "lots-heading": "Reputación por Lote de Cultivo",
+      "products-heading": "Reputación por Producto",
+      "rating-summary": "★ {{avg}} / 5 ({{count}} reseñas)"
+    },
+    "reviews": {
+      "title": "Reseñas y Calificaciones Publicadas",
+      "empty": "Aún no existen reseñas publicadas para el criterio seleccionado.",
+      "field-badge": "Lote",
+      "product-badge": "Producto"
+    },
+    "form": {
+      "title": "Publicar Reseña y Calificación",
+      "target-type-label": "Calificar:",
+      "target-field": "Lote de Cultivo (Field)",
+      "target-product": "Producto del Catálogo",
+      "select-field-label": "Seleccionar Lote:",
+      "select-product-label": "Seleccionar Producto:",
+      "rating-label": "Calificación (1 a 5 estrellas):",
+      "rating-placeholder": "Seleccione una calificación válida (1 - 5)...",
+      "content-label": "Comentario de la Reseña:",
+      "content-placeholder": "Escribe tu experiencia con este lote de cultivo o producto agrícola...",
+      "submit": "Publicar Reseña",
+      "submitting": "Publicando...",
+      "error-rating": "Debe proporcionar una calificación válida entre 1 y 5 estrellas.",
+      "error-content": "El comentario de la reseña es obligatorio.",
+      "error-target": "Seleccione un lote o producto válido para calificar.",
+      "error-self-review": "No puedes calificar tus propios lotes o productos.",
+      "error-no-profile": "Se requiere un perfil activo para publicar reseñas.",
+      "error-submit": "No se pudo publicar la reseña. Inténtalo de nuevo.",
+      "success": "Reseña publicada exitosamente."
+    },
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Siguiente"
     }
   }
 }

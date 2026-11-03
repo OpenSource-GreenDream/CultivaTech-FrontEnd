@@ -34,20 +34,12 @@ export class NotificationApiService {
   private readonly profilesUrl = `${environment.cultivatechBaseApi}${PROFILES_ENDPOINT}`;
 
   getProfileIdByUser(userId: number): Observable<number | null> {
-    // If userId is not in the valid range (1-5), use user_id 1
-    const effectiveUserId = (userId < 1 || userId > 5) ? 1 : userId;
-
-    const params = new HttpParams().set('user_id', effectiveUserId);
+    const params = new HttpParams().set('user_id', userId);
 
     return this.http.get<ProfileResource[] | CollectionResource<ProfileResource>>(this.profilesUrl, { params }).pipe(
       map((response) => {
-        const existingProfile = unwrapCollection(response)[0];
-        if (existingProfile) {
-          return existingProfile.id;
-        }
-        // If no profile exists, return profile_id 1 as fallback
-        console.warn(`No profile found for user_id ${effectiveUserId}, using profile_id 1`);
-        return 1;
+        const existingProfile = unwrapCollection(response).find(p => Number(p.user_id) === Number(userId)) ?? unwrapCollection(response)[0];
+        return existingProfile ? existingProfile.id : null;
       }),
     );
   }

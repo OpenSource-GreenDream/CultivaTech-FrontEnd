@@ -1,17 +1,36 @@
 import {inject, Service} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {DeviceResource} from './device-response';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {CreateDeviceRequest} from '../domain/model/create-device.request';
 
 @Service()
 export class DeviceApi{
   private readonly http = inject(HttpClient);
-  private readonly resourceUrl = `${environment.cultivatechBaseApi}/devices`;
+  private readonly resourceUrl = `${environment.cultivatechBaseApi}${environment.devicesEndpoint}`;
 
   getDevices(): Observable<DeviceResource[]> {
     return this.http.get<DeviceResource[]>(this.resourceUrl);
+  }
+
+  getDevicesByFieldId(fieldId: number): Observable<DeviceResource[]> {
+    const params = new HttpParams().set('field_id', fieldId.toString());
+    return this.http.get<DeviceResource[]>(this.resourceUrl, { params });
+  }
+
+  /**
+   * Retrieves the devices of several fields in a single scoped request.
+   */
+  getDevicesByFieldIds(fieldIds: number[]): Observable<DeviceResource[]> {
+    if (fieldIds.length === 0) {
+      return of([]);
+    }
+    let params = new HttpParams();
+    for (const fieldId of fieldIds) {
+      params = params.append('field_id', fieldId.toString());
+    }
+    return this.http.get<DeviceResource[]>(this.resourceUrl, { params });
   }
 
   getDeviceById(id: number): Observable<DeviceResource> {

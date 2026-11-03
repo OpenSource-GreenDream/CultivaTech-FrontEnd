@@ -78,7 +78,9 @@ h1 {
   font-weight: 600;
 }
 
-.form-group input {
+.form-group input,
+.form-group select,
+.form-group textarea {
   width: 100%;
   padding: 0.75rem 1rem;
   background-color: #ffffff;
@@ -92,7 +94,14 @@ h1 {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form-group input:focus {
+.form-group textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
   border-color: #2e7d32;
   box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
 }
@@ -102,6 +111,13 @@ h1 {
   font-size: 0.775rem;
   font-weight: 500;
   margin-top: 0.1rem;
+}
+
+.success-text {
+  color: #15803d;
+  font-size: 0.825rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
 }
 
 .button-group {

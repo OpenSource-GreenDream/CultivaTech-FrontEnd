@@ -1,7 +1,7 @@
 <main class="notification-preferences" aria-labelledby="notification-preferences-heading">
   <div class="preferences-header">
-    <h1 id="notification-preferences-heading">Preferencias de notificaciones</h1>
-    <a mat-button routerLink="/notifications" class="back-link">← Volver a notificaciones</a>
+    <h1 id="notification-preferences-heading">{{ 'notification.preferences.title' | translate }}</h1>
+    <a mat-button routerLink="/notifications" class="back-link">← {{ 'notification.preferences.back' | translate }}</a>
   </div>
 
   @if (isLoading()) {
@@ -30,7 +30,7 @@
           <div class="preference-item">
             <div class="preference-info">
               <h3 class="preference-title">{{ ('notification.types.' + type) | translate }}</h3>
-              <p class="preference-description">Configurar notificaciones para {{ ('notification.types.' + type) | translate }}</p>
+              <p class="preference-description">{{ 'notification.preferences.configure-for' | translate:{ type: ('notification.types.' + type | translate) } }}</p>
             </div>
             <mat-slide-toggle
               [checked]="isEnabled(type)"
@@ -43,7 +43,7 @@
       </div>
 
       <button mat-button class="save-button" type="button" disabled>
-        Guardar preferencias
+        {{ 'notification.preferences.save' | translate }}
       </button>
     </div>
   }

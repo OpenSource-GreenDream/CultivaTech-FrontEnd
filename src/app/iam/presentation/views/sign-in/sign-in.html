@@ -10,9 +10,16 @@
   </header>
 
   <main class="content-wrapper">
-    <app-sign-in-form
-      (submitForm)="onSignIn($event)"
-      (navigateToSignUp)="onNavigateToSignUp()">
-    </app-sign-in-form>
+    <div class="auth-stack">
+      @if (errorMessage(); as errorKey) {
+        <div class="alert alert-error" role="alert">
+          {{ errorKey | translate }}
+        </div>
+      }
+      <app-sign-in-form
+        (submitForm)="onSignIn($event)"
+        (navigateToSignUp)="onNavigateToSignUp()">
+      </app-sign-in-form>
+    </div>
   </main>
 </div>

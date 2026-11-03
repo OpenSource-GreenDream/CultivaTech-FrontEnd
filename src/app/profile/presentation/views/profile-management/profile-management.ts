@@ -1,4 +1,5 @@
-import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {Router} from '@angular/router';
 import {ProfileStore} from '../../../application/profile.store';
 import {ProfileContextService} from '../../../application/profile-context.service';
 import {ProfileInfo} from '../../components/profile-info/profile-info';
@@ -15,43 +16,49 @@ import {TranslatePipe} from '@ngx-translate/core';
   styleUrl: './profile-management.css',
   templateUrl: './profile-management.html',
 })
-export class ProfileManagementComponent implements OnInit {
+export class ProfileManagementComponent implements OnInit, OnDestroy {
   protected profileStore = inject(ProfileStore);
   private profileContext = inject(ProfileContextService);
-  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
-  isLoading = true;
+  readonly isLoading = signal(true);
+  readonly errorMessage = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.isLoading = true;
+    this.loadProfile();
+  }
+
+  ngOnDestroy(): void {
+    this.profileStore.clearFeedback();
+  }
+
+  private loadProfile(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
     this.profileContext.fetchCurrentProfile().subscribe({
       next: (profile) => {
         if (profile) {
-          this.profileStore.currentProfile.set(profile);
           this.loadFields();
         } else {
-          this.isLoading = false;
-          this.cdr.detectChanges();
+          this.isLoading.set(false);
+          this.router.navigate(['/profile/create']);
         }
       },
-      error: (err) => {
-        console.error('Error fetching profile context:', err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+      error: () => {
+        this.isLoading.set(false);
+        this.errorMessage.set('profile.management.load-error');
       }
     });
   }
 
   private loadFields(): void {
     this.profileStore.loadFieldsForCurrentProfile().subscribe({
-      next: (fields) => {
-        this.isLoading = false;
-        this.cdr.detectChanges();
+      next: () => {
+        this.isLoading.set(false);
       },
-      error: (err) => {
-        console.error('Error loading fields:', err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+      error: () => {
+        this.isLoading.set(false);
+        this.errorMessage.set('fields.load-error');
       }
     });
   }
