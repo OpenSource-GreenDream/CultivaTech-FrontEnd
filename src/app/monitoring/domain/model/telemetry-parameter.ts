@@ -1,6 +1,3 @@
-/**
- * Telemetry parameters registered by the IoT sensors (see `docs/database.md`).
- */
 export enum TelemetryParameter {
   MOISTURE = 'MOISTURE',
   TEMPERATURE = 'TEMPERATURE',

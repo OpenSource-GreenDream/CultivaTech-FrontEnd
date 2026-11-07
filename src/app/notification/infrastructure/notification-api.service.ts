@@ -65,7 +65,7 @@ export class NotificationApiService {
       is_alert: request.type === NotificationType.SENSOR_ALERT,
       type: request.type as string,
       field_id: request.fieldId,
-      created_at: now,
+      created_at: request.createdAt ?? now,
       updated_at: now,
     };
 

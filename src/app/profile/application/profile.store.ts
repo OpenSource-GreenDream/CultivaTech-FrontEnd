@@ -10,6 +10,7 @@ import {Profile} from '../domain/model/profile.entity';
 import {ProfileAssembler} from '../infrastructure/profile.assembler';
 import {CreateProfileRequest} from '../infrastructure/create-profile.request';
 import {ProfileContextService} from './profile-context.service';
+import {NotificationEventService} from '../../notification/application/notification-event.service';
 
 /**
  * Application service store for the Profile Bounded Context.
@@ -21,6 +22,7 @@ export class ProfileStore {
   private profileApi = inject(ProfileApi);
   private authService = inject(AuthService);
   private profileContext = inject(ProfileContextService);
+  private notificationEvents = inject(NotificationEventService);
 
   readonly currentProfile = this.profileContext.currentProfile;
   readonly fields = signal<Field[]>([]);
@@ -79,6 +81,7 @@ export class ProfileStore {
       map(resource => ProfileAssembler.toEntityFromResource(resource)),
       tap(profile => {
         this.profileContext.setProfile(profile);
+        this.notificationEvents.profileCreated(profile);
       })
     );
   }
@@ -124,6 +127,7 @@ export class ProfileStore {
       map(resource => FieldAssembler.toEntityFromResource(resource)),
       tap(newField => {
         this.fields.update(currentFields => [...currentFields, newField]);
+        this.notificationEvents.fieldCreated(newField);
       })
     );
   }
@@ -148,6 +152,7 @@ export class ProfileStore {
         this.fields.update(currentFields =>
           currentFields.map(field => (field.id === updatedField.id ? updatedField : field))
         );
+        this.notificationEvents.fieldUpdated(updatedField);
       })
     );
   }

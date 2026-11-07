@@ -6,4 +6,6 @@ export interface NotificationCreateRequest {
   message: string;
   type: NotificationType;
   fieldId: number | null;
+  /** Original occurrence time, used to preserve the event trail when queued. */
+  createdAt?: string;
 }

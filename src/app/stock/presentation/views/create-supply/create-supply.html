@@ -18,7 +18,12 @@
     <form [formGroup]="supplyForm" (ngSubmit)="onSubmit()" class="form-content">
       <div class="form-group">
         <label for="fieldId">{{ "stock.supply.field-label" | translate }}</label>
-        <select id="fieldId" formControlName="fieldId" class="form-control">
+        <select
+          id="fieldId"
+          formControlName="fieldId"
+          class="form-control"
+          [class.is-invalid]="supplyForm.get('fieldId')?.invalid && supplyForm.get('fieldId')?.touched"
+        >
           <option value="">{{ "stock.supply.field-placeholder" | translate }}</option>
           @for (field of fields(); track field.id) {
             <option [value]="field.id">{{ field.name }}</option>
@@ -36,6 +41,7 @@
           type="text"
           formControlName="name"
           [placeholder]="'stock.supply.name-placeholder' | translate"
+          [class.is-invalid]="supplyForm.get('name')?.invalid && supplyForm.get('name')?.touched"
         />
         @if (supplyForm.get('name')?.touched && supplyForm.get('name')?.hasError('required')) {
           <span class="error-text">{{ "stock.supply.error-name-required" | translate }}</span>
@@ -54,6 +60,7 @@
           step="0.01"
           formControlName="price"
           [placeholder]="'stock.supply.price-placeholder' | translate"
+          [class.is-invalid]="supplyForm.get('price')?.invalid && supplyForm.get('price')?.touched"
         />
         @if (supplyForm.get('price')?.touched && supplyForm.get('price')?.invalid) {
           <span class="error-text">{{ "stock.supply.error-price" | translate }}</span>
@@ -67,12 +74,16 @@
           rows="4"
           formControlName="description"
           [placeholder]="'stock.supply.description-placeholder' | translate"
+          [class.is-invalid]="supplyForm.get('description')?.invalid && supplyForm.get('description')?.touched"
         ></textarea>
         @if (supplyForm.get('description')?.touched && supplyForm.get('description')?.hasError('required')) {
           <span class="error-text">{{ "stock.supply.error-description-required" | translate }}</span>
         }
         @if (supplyForm.get('description')?.touched && supplyForm.get('description')?.hasError('minlength')) {
           <span class="error-text">{{ "stock.supply.error-description-min" | translate }}</span>
+        }
+        @if (supplyForm.get('description')?.touched && supplyForm.get('description')?.hasError('maxlength')) {
+          <span class="error-text">{{ "stock.supply.error-description-max" | translate }}</span>
         }
       </div>
 
@@ -83,6 +94,7 @@
           type="url"
           formControlName="imageUrl"
           [placeholder]="'stock.supply.image-placeholder' | translate"
+          [class.is-invalid]="supplyForm.get('imageUrl')?.invalid && supplyForm.get('imageUrl')?.touched"
         />
         @if (supplyForm.get('imageUrl')?.touched && supplyForm.get('imageUrl')?.invalid) {
           <span class="error-text">{{ "stock.supply.error-image" | translate }}</span>
@@ -97,6 +109,7 @@
           min="0"
           formControlName="stockQuantity"
           [placeholder]="'stock.supply.quantity-placeholder' | translate"
+          [class.is-invalid]="supplyForm.get('stockQuantity')?.invalid && supplyForm.get('stockQuantity')?.touched"
         />
         @if (supplyForm.get('stockQuantity')?.touched && supplyForm.get('stockQuantity')?.hasError('required')) {
           <span class="error-text">{{ "stock.form.error-quantity-required" | translate }}</span>

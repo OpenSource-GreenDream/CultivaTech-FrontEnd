@@ -17,6 +17,7 @@
         </div>
       }
       <app-sign-in-form
+        [isSubmitting]="isSubmitting()"
         (submitForm)="onSignIn($event)"
         (navigateToSignUp)="onNavigateToSignUp()">
       </app-sign-in-form>

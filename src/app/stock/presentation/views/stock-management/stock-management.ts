@@ -30,7 +30,7 @@ export class StockManagement implements OnInit {
   readonly loading = this.stockStore.loading;
 
   readonly editingInventoryId = signal<number | null>(null);
-  readonly newStockValue = signal<number>(0);
+  readonly newStockValue = signal<number | null>(0);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
 
@@ -81,8 +81,18 @@ export class StockManagement implements OnInit {
     this.errorMessage.set(null);
   }
 
-  onStockInputChange(value: number): void {
-    this.newStockValue.set(Number(value));
+  onStockInputChange(value: number | string | null): void {
+    if (value === null || value === undefined || String(value).trim() === '') {
+      this.newStockValue.set(null);
+      return;
+    }
+    const numericValue = Number(value);
+    this.newStockValue.set(Number.isFinite(numericValue) ? numericValue : null);
+  }
+
+  isStockValueInvalid(): boolean {
+    const quantity = this.newStockValue();
+    return quantity === null || Number.isNaN(Number(quantity)) || Number(quantity) < 0;
   }
 
   saveStock(inventoryId: number): void {

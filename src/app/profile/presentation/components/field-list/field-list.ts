@@ -3,29 +3,13 @@ import {Field} from '../../../domain/model/field.entity';
 import {ProfileStore} from '../../../application/profile.store';
 import {ProfileContextService} from '../../../application/profile-context.service';
 import {CreateFieldRequest} from '../../../infrastructure/create-field.request';
-import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors} from '@angular/forms';
 import {DecimalPipe} from '@angular/common';
 import {TranslatePipe} from '@ngx-translate/core';
-
-function nonEmptyTextValidator(control: AbstractControl): ValidationErrors | null {
-  const value = control.value;
-  if (value === null || value === undefined || String(value).trim().length === 0) {
-    return { required: true };
-  }
-  return null;
-}
-
-function positiveAreaValidator(control: AbstractControl): ValidationErrors | null {
-  const raw = control.value;
-  if (raw === null || raw === undefined || String(raw).trim() === '') {
-    return { required: true };
-  }
-  const num = Number(raw);
-  if (Number.isNaN(num) || num <= 0) {
-    return { positiveArea: true };
-  }
-  return null;
-}
+import {
+  nonBlankValidator,
+  positiveNumberValidator,
+} from '../../../../shared/domain/validators/form.validators';
 
 function coordinateValidator(min: number, max: number) {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -67,9 +51,9 @@ export class FieldList {
   readonly errorMessage = signal<string | null>(null);
 
   readonly fieldForm: FormGroup = this.fb.group({
-    name: ['', [nonEmptyTextValidator]],
-    sizeM2: [null, [positiveAreaValidator]],
-    soilType: ['', [nonEmptyTextValidator]],
+    name: ['', [nonBlankValidator]],
+    sizeM2: [null, [positiveNumberValidator]],
+    soilType: ['', [nonBlankValidator]],
     latitude: [null, [coordinateValidator(-90, 90)]],
     longitude: [null, [coordinateValidator(-180, 180)]]
   });

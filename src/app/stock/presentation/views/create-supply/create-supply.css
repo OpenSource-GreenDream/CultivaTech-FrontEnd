@@ -106,6 +106,14 @@ h1 {
   box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
 }
 
+.form-group input.is-invalid,
+.form-group select.is-invalid,
+.form-group textarea.is-invalid {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+}
+
 .error-text {
   color: #dc2626;
   font-size: 0.775rem;

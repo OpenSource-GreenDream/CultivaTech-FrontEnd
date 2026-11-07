@@ -14,6 +14,10 @@
       "error-2": "Enter a valid email address",
       "error-3": "Password is required (min 6 characters)",
       "error-4": "Passwords do not match",
+      "error-confirm-required": "Please confirm your password",
+      "loading-roles": "Loading roles...",
+      "error-roles": "Roles could not be loaded. Please try again.",
+      "error-role-required": "Please select a user role",
       "error-submit": "Could not register account. Please verify your details and try again.",
       "success": "Account created successfully."
     },
@@ -81,6 +85,40 @@
       "NEW_REVIEW": "New reviews",
       "PRODUCT_OF_INTEREST": "Products of interest",
       "OFFER_OR_STOCK_CHANGE": "Offers and stock changes"
+    },
+    "events": {
+      "account-created": {
+        "title": "Account created successfully",
+        "message": "The account {{email}} was created successfully."
+      },
+      "profile-created": {
+        "title": "Farm profile registered",
+        "message": "The farm profile {{name}} was registered successfully."
+      },
+      "field-created": {
+        "title": "New field registered",
+        "message": "A new field was added: {{name}} ({{area}} m²)."
+      },
+      "field-updated": {
+        "title": "Field updated",
+        "message": "The field {{name}} was updated successfully."
+      },
+      "device-created": {
+        "title": "Sensor registered",
+        "message": "The sensor {{mac}} was registered successfully."
+      },
+      "product-created": {
+        "title": "Product registered",
+        "message": "The product {{name}} was created with a price of {{price}}."
+      },
+      "stock-initialized": {
+        "title": "Initial stock registered",
+        "message": "Initial stock for {{product}} was registered with {{quantity}} units."
+      },
+      "stock-updated": {
+        "title": "Stock updated",
+        "message": "Stock for {{product}} changed from {{previous}} to {{quantity}} units."
+      }
     },
     "list": {
       "title": "Notifications",
@@ -320,6 +358,7 @@
       "description-placeholder": "Describe the product features and usage",
       "error-description-required": "Description is required.",
       "error-description-min": "Description must be at least 5 characters.",
+      "error-description-max": "Description cannot exceed 1000 characters.",
       "image-label": "Image URL",
       "image-placeholder": "https://example.com/product.png",
       "error-image": "Enter a valid image URL starting with http:// or https://.",

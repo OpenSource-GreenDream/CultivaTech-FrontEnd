@@ -36,6 +36,8 @@ h1 { margin: 0; color: #1e293b; font-size: 1.8rem; font-weight: 700; }
 .stock-badge.low { background: #fef3c7; color: #92400e; }
 .btn-edit { background: none; border: none; color: #2e7d32; font-size: 0.825rem; font-weight: 600; cursor: pointer; }
 .input-stock { width: 80px; padding: 0.35rem 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; }
+.input-stock.is-invalid { border-color: #ef4444; background: #fef2f2; }
+.inline-error { color: #dc2626; font-size: 0.72rem; font-weight: 600; max-width: 160px; }
 .btn-icon { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; }
 .btn-icon.check { background: #2e7d32; color: #fff; border-color: #2e7d32; }
 .empty-state { margin-top: 1.25rem; padding: 2.5rem 1.5rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; text-align: center; color: #64748b; }

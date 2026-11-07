@@ -131,7 +131,12 @@
                       [ngModel]="newStockValue()"
                       (ngModelChange)="onStockInputChange($event)"
                       class="input-stock"
+                      [class.is-invalid]="isStockValueInvalid()"
+                      [attr.aria-invalid]="isStockValueInvalid()"
                     />
+                    @if (isStockValueInvalid()) {
+                      <span class="inline-error">{{ "stock.update.error-invalid-quantity" | translate }}</span>
+                    }
                     <button type="button" class="btn-icon check" (click)="saveStock(item.id)">✓</button>
                     <button type="button" class="btn-icon cancel" (click)="cancelEditing()">✕</button>
                   </div>
