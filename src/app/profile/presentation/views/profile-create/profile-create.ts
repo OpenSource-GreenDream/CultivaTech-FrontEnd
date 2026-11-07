@@ -4,6 +4,10 @@ import {Router} from '@angular/router';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ProfileStore} from '../../../application/profile.store';
 import {ProfileContextService} from '../../../application/profile-context.service';
+import {
+  nonBlankValidator,
+  trimmedMinLengthValidator,
+} from '../../../../shared/domain/validators/form.validators';
 
 @Component({
   selector: 'app-profile-create',
@@ -25,8 +29,8 @@ export class ProfileCreateComponent implements OnInit {
   readonly successMessage = signal(false);
 
   readonly profileForm: FormGroup = this.fb.group({
-    fundoName: ['', [Validators.required, Validators.minLength(2)]],
-    contactPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s-]{7,15}$/)]],
+    fundoName: ['', [nonBlankValidator, trimmedMinLengthValidator(2)]],
+    contactPhone: ['', [nonBlankValidator, Validators.pattern(/^\+?[0-9\s-]{7,15}$/)]],
     moistureThreshold: [null, [Validators.required, Validators.min(1), Validators.max(100)]],
     tempThreshold: [null, [Validators.required, Validators.min(-10), Validators.max(60)]]
   });

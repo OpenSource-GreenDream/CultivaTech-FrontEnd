@@ -19,14 +19,18 @@ export class SignIn {
   private router = inject(Router);
 
   readonly errorMessage = signal<string | null>(null);
+  readonly isSubmitting = signal(false);
 
   onSignIn(request: SignInRequest) {
     this.errorMessage.set(null);
+    this.isSubmitting.set(true);
     this.iamStore.signIn(request).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         this.router.navigate(['/dashboard']);
       },
       error: () => {
+        this.isSubmitting.set(false);
         this.errorMessage.set('sign-in.form.error-credentials');
       }
     });

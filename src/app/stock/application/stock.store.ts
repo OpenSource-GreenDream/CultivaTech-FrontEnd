@@ -17,6 +17,7 @@ import {Field} from '../../profile/domain/model/field.entity';
 import {FieldAssembler} from '../../profile/infrastructure/field.assembler';
 import {CreateProductRequest} from '../infrastructure/create-product.request';
 import {LOW_STOCK_THRESHOLD} from '../domain/model/stock.constants';
+import {NotificationEventService} from '../../notification/application/notification-event.service';
 
 export type StockCriteriaFilter = 'ALL' | 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
 
@@ -33,6 +34,7 @@ export class StockStore {
   private fieldApi = inject(FieldApi);
   private authService = inject(AuthService);
   private profileContext = inject(ProfileContextService);
+  private notificationEvents = inject(NotificationEventService);
 
   private readonly _inventories = signal<Inventory[]>([]);
   private readonly _allInventories = signal<Inventory[]>([]);
@@ -286,6 +288,7 @@ export class StockStore {
       map((resource) => ProductAssembler.toEntityFromResource(resource)),
       tap((newProduct) => {
         this._products.update((current) => [...current, newProduct]);
+        this.notificationEvents.productCreated(newProduct);
       })
     );
   }
@@ -333,6 +336,10 @@ export class StockStore {
       tap((newInventory) => {
         this._inventories.update((current) => [...current, newInventory]);
         this._allInventories.update((current) => [...current, newInventory]);
+        this.notificationEvents.stockInitialized(
+          newInventory,
+          this.getProductName(newInventory.productId),
+        );
       })
     );
   }
@@ -342,6 +349,10 @@ export class StockStore {
       return throwError(() => new Error('La cantidad de stock no puede ser negativa'));
     }
 
+    const previousInventory =
+      this._inventories().find((item) => Number(item.id) === Number(request.inventoryId)) ??
+      this._allInventories().find((item) => Number(item.id) === Number(request.inventoryId));
+
     return this.inventoryApi.updateStockQuantity(request.inventoryId, request.stockQuantity).pipe(
       map((resource) => InventoryAssembler.toEntityFromResource(resource)),
       tap((updatedInventory) => {
@@ -350,6 +361,11 @@ export class StockStore {
         );
         this._allInventories.update((current) =>
           current.map((item) => (item.id === updatedInventory.id ? updatedInventory : item))
+        );
+        this.notificationEvents.stockUpdated(
+          updatedInventory,
+          this.getProductName(updatedInventory.productId),
+          previousInventory?.stockQuantity ?? null,
         );
       })
     );

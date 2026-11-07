@@ -1,7 +1,11 @@
-import {Component, inject, output} from '@angular/core';
+import {Component, inject, input, output} from '@angular/core';
 import {SignInRequest} from '../../../infrastructure/sign-in.request';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
+import {
+  nonBlankEmailValidator,
+  nonBlankValidator,
+} from '../../../../shared/domain/validators/form.validators';
 
 @Component({
   imports: [
@@ -17,16 +21,17 @@ export class SignInForm {
 
   submitForm = output<SignInRequest>();
   navigateToSignUp = output<void>();
+  readonly isSubmitting = input(false);
 
   signInForm: FormGroup = this.fb.group({
-    emailAddress: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    emailAddress: ['', [nonBlankEmailValidator]],
+    password: ['', [nonBlankValidator]]
   });
 
   onSubmit() {
     if (this.signInForm.valid) {
       const { emailAddress, password } = this.signInForm.value;
-      this.submitForm.emit({ email: emailAddress, password });
+      this.submitForm.emit({ email: String(emailAddress).trim(), password });
     } else {
       this.signInForm.markAllAsTouched();
     }

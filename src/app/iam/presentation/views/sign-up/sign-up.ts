@@ -20,17 +20,21 @@ export class SignUp {
 
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly isSubmitting = signal(false);
 
   onSignUp(request: SignUpRequest) {
     this.errorMessage.set(null);
     this.successMessage.set(null);
+    this.isSubmitting.set(true);
 
     this.iamStore.signUp(request).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         this.successMessage.set('sign-up.form.success');
         this.router.navigate(['/profile/create']);
       },
       error: () => {
+        this.isSubmitting.set(false);
         this.errorMessage.set('sign-up.form.error-submit');
       }
     });

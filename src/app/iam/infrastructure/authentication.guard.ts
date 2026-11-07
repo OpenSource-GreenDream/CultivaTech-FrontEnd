@@ -3,8 +3,7 @@ import {inject} from '@angular/core';
 import {AuthService} from '../application/auth.service';
 
 /**
- * Guard to block application access to anonymous users and enforce role-based route metadata.
- * @param route target route.
+ * Guard to block application access to anonymous users and enforce role-based route metadata..
  * @author Jorge Manuel Retuerto Rodriguez - U202318612
  */
 export const authenticationGuard: CanActivateFn = (route) => {
