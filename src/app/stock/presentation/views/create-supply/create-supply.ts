@@ -4,6 +4,10 @@ import {StockStore} from '../../../application/stock.store';
 import {Router} from '@angular/router';
 import {TranslatePipe} from '@ngx-translate/core';
 import {STOCK_SUCCESS_NAVIGATION_DELAY_MS} from '../../../domain/model/stock.constants';
+import {
+  nonBlankValidator,
+  trimmedMinLengthValidator,
+} from '../../../../shared/domain/validators/form.validators';
 
 @Component({
   imports: [
@@ -27,10 +31,10 @@ export class CreateSupply implements OnInit, OnDestroy {
 
   supplyForm: FormGroup = this.fb.group({
     fieldId: ['', [Validators.required]],
-    name: ['', [Validators.required, Validators.minLength(3)]],
+    name: ['', [nonBlankValidator, trimmedMinLengthValidator(3)]],
     price: [null, [Validators.required, Validators.min(0)]],
-    description: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(1000)]],
-    imageUrl: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/i)]],
+    description: ['', [nonBlankValidator, trimmedMinLengthValidator(5), Validators.maxLength(1000)]],
+    imageUrl: ['', [nonBlankValidator, Validators.pattern(/^https?:\/\/.+/i)]],
     stockQuantity: [null, [Validators.required, Validators.min(0)]],
   });
 
@@ -56,8 +60,16 @@ export class CreateSupply implements OnInit, OnDestroy {
     const {fieldId, name, price, description, imageUrl, stockQuantity} = this.supplyForm.value;
     const selectedField = this.fields().find(field => Number(field.id) === Number(fieldId));
 
-    if (!selectedField || Number(price) < 0 || Number(stockQuantity) < 0) {
+    if (!selectedField) {
+      this.supplyForm.get('fieldId')?.markAsTouched();
+      this.errorMessage.set('stock.supply.error-field');
+      return;
+    }
+
+    if (!Number.isFinite(Number(price)) || Number(price) < 0
+      || !Number.isFinite(Number(stockQuantity)) || Number(stockQuantity) < 0) {
       this.supplyForm.markAllAsTouched();
+      this.errorMessage.set('stock.supply.error-price');
       return;
     }
 

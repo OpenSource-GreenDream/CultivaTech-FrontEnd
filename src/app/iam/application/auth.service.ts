@@ -3,22 +3,20 @@ import {User} from '../domain/model/user.entity';
 import {Role} from '../domain/model/role.entity';
 import {IamStore} from './iam.store';
 import {environment} from '../../../environments/environment';
-import {
-  IAM_SESSION_STORAGE_KEY,
-  ROLE_DEFINITIONS,
-  USER_ROLES,
-  UserRoleType,
-} from '../domain/model/iam.constants';
+import {IAM_SESSION_STORAGE_KEY} from '../domain/model/iam.constants';
 
 export interface PersistedSessionState {
   user_id: number;
   email_address: string;
-  role: UserRoleType;
+  role?: string;
   roles: Array<{ id: number; name: string; description: string }>;
 }
 
 /**
- * Application service for IAM session management across Bounded Contexts
+ * Application service for IAM session management across Bounded Contexts.
+ * Roles are treated as dynamic backend data: any role name returned by the
+ * API is preserved and compared case-insensitively instead of being restricted
+ * to a hardcoded union.
  * @author Jorge Manuel Retuerto Rodriguez - U202318612
  */
 @Service()
@@ -32,20 +30,21 @@ export class AuthService {
   readonly isSignedIn = computed(() => this.currentUser() !== null);
 
   /**
-   * Get normalized role names of current user (AGRICULTOR, PROVEEDOR, CLIENTEB2B)
+   * Normalized role names of the current user. No fixed role catalog is
+   * assumed, so roles created in the backend are automatically supported.
    */
-  readonly currentUserRoles = computed<UserRoleType[]>(() => {
+  readonly currentUserRoles = computed<string[]>(() => {
     const user = this.currentUser();
     if (!user || !user.roles) return [];
     return user.roles
       .map((role) => this.normalizeRoleName(role.name))
-      .filter((role): role is UserRoleType => role !== null);
+      .filter((role): role is string => role !== null);
   });
 
   /**
-   * Get principal role assigned to current user
+   * Principal role assigned to the current user, when one is available.
    */
-  readonly currentRole = computed<UserRoleType | null>(() => {
+  readonly currentRole = computed<string | null>(() => {
     const roles = this.currentUserRoles();
     return roles.length > 0 ? roles[0] : null;
   });
@@ -55,7 +54,7 @@ export class AuthService {
   }
 
   /**
-   * Verify if current user has a specific role
+   * Verify if current user has a specific role (case-insensitive).
    */
   hasRole(roleName: string): boolean {
     const expected = this.normalizeRoleName(roleName);
@@ -64,7 +63,7 @@ export class AuthService {
   }
 
   /**
-   * Verify if current user has at least one of the allowed roles
+   * Verify if current user has at least one of the allowed roles.
    */
   hasAnyRole(allowedRoles: readonly string[]): boolean {
     if (!allowedRoles || allowedRoles.length === 0) return true;
@@ -72,7 +71,7 @@ export class AuthService {
   }
 
   /**
-   * Set active user session in memory and persist in localStorage
+   * Set active user session in memory and persist in localStorage.
    */
   setSession(user: User): void {
     this.currentUser.set(user);
@@ -113,11 +112,15 @@ export class AuthService {
 
       const roles: Role[] = Array.isArray(parsed.roles) && parsed.roles.length > 0
         ? parsed.roles.map(
-            (r) => new Role(Number(r.id) || 0, String(r.name || ''), String(r.description || '')),
+            (role) => new Role(
+              Number(role.id) || 0,
+              String(role.name || ''),
+              String(role.description || ''),
+            ),
           )
         : parsed.role
-          ? [this.roleFromKey(parsed.role)]
-          : [this.roleFromKey(USER_ROLES.AGRICULTOR)];
+          ? [new Role(0, String(parsed.role), '')]
+          : [];
 
       this.currentUser.set(new User(userId, email, roles));
     } catch {
@@ -131,17 +134,16 @@ export class AuthService {
     }
 
     try {
-      const normalizedRole =
-        this.normalizeRoleName(user.roles?.[0]?.name) ?? USER_ROLES.AGRICULTOR;
+      const roles = (user.roles ?? []).map((role) => ({
+        id: role.id,
+        name: role.name,
+        description: role.description,
+      }));
       const sessionPayload: PersistedSessionState = {
         user_id: user.id,
         email_address: user.email_address,
-        role: normalizedRole,
-        roles: (user.roles ?? []).map((r) => ({
-          id: r.id,
-          name: r.name,
-          description: r.description,
-        })),
+        role: this.normalizeRoleName(roles[0]?.name) ?? undefined,
+        roles,
       };
       localStorage.setItem(this.storageKey, JSON.stringify(sessionPayload));
     } catch {
@@ -160,18 +162,9 @@ export class AuthService {
     }
   }
 
-  private normalizeRoleName(rawRole: string | undefined | null): UserRoleType | null {
+  private normalizeRoleName(rawRole: string | undefined | null): string | null {
     if (!rawRole) return null;
-    const upper = rawRole.trim().toUpperCase();
-    if (upper === USER_ROLES.AGRICULTOR) return USER_ROLES.AGRICULTOR;
-    if (upper === USER_ROLES.PROVEEDOR) return USER_ROLES.PROVEEDOR;
-    if (upper === USER_ROLES.CLIENTEB2B) return USER_ROLES.CLIENTEB2B;
-    return null;
-  }
-
-  private roleFromKey(roleKey: string): Role {
-    const normalized = this.normalizeRoleName(roleKey) ?? USER_ROLES.AGRICULTOR;
-    const def = ROLE_DEFINITIONS[normalized];
-    return new Role(def.id, def.name, def.description);
+    const normalized = rawRole.trim();
+    return normalized.length > 0 ? normalized.toUpperCase() : null;
   }
 }

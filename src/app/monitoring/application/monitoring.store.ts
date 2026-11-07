@@ -23,6 +23,7 @@ import {
 import {NotificationApiService} from '../../notification/infrastructure/notification-api.service';
 import {NotificationType} from '../../notification/domain/model/notification-type.enum';
 import {TELEMETRY_ALERT_MESSAGES, TELEMETRY_ALERT_TYPE_KEYS} from '../domain/model/telemetry-alert.constants';
+import {NotificationEventService} from '../../notification/application/notification-event.service';
 
 export type TelemetryAlertStatus = TelemetryStatus;
 
@@ -45,6 +46,7 @@ export class MonitoringStore {
   private readonly fieldApi = inject(FieldApi);
   private readonly analyticsContext = inject(AnalyticsContext);
   private readonly notificationApi = inject(NotificationApiService);
+  private readonly notificationEvents = inject(NotificationEventService);
   private readonly authService = inject(AuthService);
   private readonly profileContext = inject(ProfileContextService);
 
@@ -315,6 +317,7 @@ export class MonitoringStore {
       map(DeviceAssembler.toEntityFromResource),
       tap((newDevice) => {
         this._devices.update((current) => [...current, newDevice]);
+        this.notificationEvents.deviceCreated(newDevice);
       })
     );
   }

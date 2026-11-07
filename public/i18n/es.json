@@ -14,6 +14,10 @@
       "error-2": "Ingrese una dirección de correo electrónico válida",
       "error-3": "La contraseña es obligatoria (mínimo 6 caracteres)",
       "error-4": "Las contraseñas no coinciden",
+      "error-confirm-required": "Confirme su contraseña",
+      "loading-roles": "Cargando roles...",
+      "error-roles": "No se pudieron cargar los roles. Inténtelo de nuevo.",
+      "error-role-required": "Seleccione un rol de usuario",
       "error-submit": "No se pudo registrar la cuenta. Verifique sus datos e inténtelo nuevamente.",
       "success": "Cuenta creada exitosamente."
     },
@@ -81,6 +85,40 @@
       "NEW_REVIEW": "Nuevas reseñas",
       "PRODUCT_OF_INTEREST": "Productos de interés",
       "OFFER_OR_STOCK_CHANGE": "Ofertas y cambios de stock"
+    },
+    "events": {
+      "account-created": {
+        "title": "Cuenta creada con éxito",
+        "message": "La cuenta {{email}} se creó correctamente."
+      },
+      "profile-created": {
+        "title": "Perfil de fundo registrado",
+        "message": "El perfil de fundo {{name}} se registró correctamente."
+      },
+      "field-created": {
+        "title": "Nuevo field registrado",
+        "message": "Se agregó nuevo field: {{name}} ({{area}} m²)."
+      },
+      "field-updated": {
+        "title": "Field actualizado",
+        "message": "El field {{name}} se actualizó correctamente."
+      },
+      "device-created": {
+        "title": "Sensor registrado",
+        "message": "El sensor {{mac}} se registró correctamente."
+      },
+      "product-created": {
+        "title": "Producto registrado",
+        "message": "Se creó el producto {{name}} con un precio de {{price}}."
+      },
+      "stock-initialized": {
+        "title": "Stock inicial registrado",
+        "message": "Se registró el stock inicial de {{product}} con {{quantity}} unidades."
+      },
+      "stock-updated": {
+        "title": "Stock actualizado",
+        "message": "El stock de {{product}} cambió de {{previous}} a {{quantity}} unidades."
+      }
     },
     "list": {
       "title": "Notificaciones",
@@ -320,6 +358,7 @@
       "description-placeholder": "Describe las características y el uso del producto",
       "error-description-required": "La descripción es obligatoria.",
       "error-description-min": "La descripción debe tener al menos 5 caracteres.",
+      "error-description-max": "La descripción no puede superar los 1000 caracteres.",
       "image-label": "URL de Imagen",
       "image-placeholder": "https://ejemplo.com/producto.png",
       "error-image": "Ingrese una URL de imagen válida que comience con http:// o https://.",

@@ -51,6 +51,9 @@
           placeholder="••••••••"
           [class.is-invalid]="signUpForm.get('confirmPassword')?.touched && (signUpForm.get('confirmPassword')?.invalid || signUpForm.hasError('mismatch'))"
         />
+        @if (signUpForm.get('confirmPassword')?.touched && signUpForm.get('confirmPassword')?.hasError('required')) {
+          <span class="error-text">{{"sign-up.form.error-confirm-required" | translate}}</span>
+        }
         @if (signUpForm.hasError('mismatch') && signUpForm.get('confirmPassword')?.touched) {
           <span class="error-text">{{"sign-up.form.error-4" | translate}}</span>
         }
@@ -59,14 +62,29 @@
 
     <div class="form-group">
       <label for="role">{{"sign-up.roles" | translate}}</label>
-      <select id="role" formControlName="role" class="form-control lang-select" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;">
-        @for (r of rolesList; track r.value) {
-          <option [value]="r.value">{{ r.labelKey | translate }}</option>
+      <select
+        id="role"
+        formControlName="role"
+        class="form-control lang-select"
+        [class.is-invalid]="signUpForm.get('role')?.invalid && signUpForm.get('role')?.touched"
+      >
+        @if (rolesLoading()) {
+          <option value="">{{ "sign-up.form.loading-roles" | translate }}</option>
+        } @else {
+          @for (r of rolesList(); track r.value) {
+            <option [value]="r.value">{{ r.label }}</option>
+          }
         }
       </select>
+      @if (rolesError()) {
+        <span class="error-text">{{ "sign-up.form.error-roles" | translate }}</span>
+      }
+      @if (signUpForm.get('role')?.touched && signUpForm.get('role')?.hasError('required')) {
+        <span class="error-text">{{ "sign-up.form.error-role-required" | translate }}</span>
+      }
     </div>
 
-    <button type="submit" class="btn-primary" [disabled]="signUpForm.invalid">
+    <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
       {{"sign-up.submit.click-1" | translate}}
     </button>
 
