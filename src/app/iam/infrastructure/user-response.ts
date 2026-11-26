@@ -1,22 +1,19 @@
-export interface RoleResource{
+export interface RoleResource {
   id: number;
   name: string;
-  description: string;
+  description?: string | null;
 }
 
-export interface UserResponse{
-  id: number,
-  users: UserResource[]
+export interface ProfileRegistrationResource {
+  fundoName: string;
+  contactPhone: string;
+  moistureThreshold: number;
+  temperatureThreshold: number;
 }
 
-export interface UserResource{
-  id: number,
-  email_address: string,
-  /**
-   * The mock API returns either embedded role objects (preferred) or
-   * plain role names. The assembler normalizes both shapes.
-   */
-  roles?: Array<RoleResource | string>;
-  created_at: string,
-  updated_at: string
+export interface UserResponse {
+  id: number;
+  email: string;
+  roles: string[];
+  profile?: ProfileRegistrationResource;
 }

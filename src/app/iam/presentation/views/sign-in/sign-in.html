@@ -16,6 +16,11 @@
           {{ errorKey | translate }}
         </div>
       }
+      @if (successMessage(); as successKey) {
+        <div class="alert alert-success" role="status">
+          {{ successKey | translate }}
+        </div>
+      }
       <app-sign-in-form
         [isSubmitting]="isSubmitting()"
         (submitForm)="onSignIn($event)"

@@ -1,14 +1,17 @@
 export const environment = {
   production: true,
-  cultivatechBaseApi: 'https://cultivatech-fakeapi.onrender.com',
+  // Production backend URL is not defined yet. Configure before deployment.
+  // Do not use the legacy Fake API URL.
+  cultivatechBaseApi: '',
 
-  signInEndpoint: '/auth/login',
-  signUpEndpoint: '/auth/register',
   sessionStorageKey: 'cultivatech_active_session',
 
-  usersEndpoint: '/users',
+  signInEndpoint: '/authentication/sign-in',
+  signUpEndpoint: '/authentication/sign-up',
   rolesEndpoint: '/roles',
-  userRolesEndpoint: '/user_roles',
+  usersEndpoint: '/users',
+  profileEndpoint: '/profile',
+
   profilesEndpoint: '/profiles',
   fieldsEndpoint: '/fields',
   devicesEndpoint: '/devices',

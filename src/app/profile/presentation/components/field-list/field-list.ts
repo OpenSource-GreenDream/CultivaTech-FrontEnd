@@ -49,6 +49,7 @@ export class FieldList {
   readonly isEditing = computed(() => this.editingFieldId() !== null);
   readonly feedbackMessage = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
+  readonly deleteTarget = signal<Field | null>(null);
 
   readonly fieldForm: FormGroup = this.fb.group({
     name: ['', [nonBlankValidator]],
@@ -90,6 +91,37 @@ export class FieldList {
     this.resetForm();
   }
 
+  requestDelete(field: Field): void {
+    this.errorMessage.set(null);
+    this.deleteTarget.set(field);
+  }
+
+  cancelDelete(): void {
+    this.deleteTarget.set(null);
+  }
+
+  confirmDelete(): void {
+    const field = this.deleteTarget();
+    if (!field) {
+      return;
+    }
+
+    this.isSubmitting.set(true);
+    this.errorMessage.set(null);
+
+    this.profileStore.deleteField(field.id).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.deleteTarget.set(null);
+        this.fieldCreated.emit();
+      },
+      error: () => {
+        this.isSubmitting.set(false);
+        this.errorMessage.set('fields.delete.error-submit');
+      }
+    });
+  }
+
   submitField(): void {
     this.feedbackMessage.set(null);
     this.errorMessage.set(null);
@@ -107,10 +139,10 @@ export class FieldList {
     }
 
     const { name, sizeM2, soilType, latitude, longitude } = this.fieldForm.value;
-    const requestPayload: Omit<CreateFieldRequest, 'profile_id'> = {
+    const requestPayload: CreateFieldRequest = {
       name: String(name).trim(),
-      size_m2: Number(sizeM2),
-      soil_type: String(soilType).trim(),
+      sizeM2: Number(sizeM2),
+      soilType: String(soilType).trim(),
       latitude: Number(latitude),
       longitude: Number(longitude)
     };

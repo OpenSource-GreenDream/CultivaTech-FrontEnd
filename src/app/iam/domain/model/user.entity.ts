@@ -1,15 +1,13 @@
 import {BaseEntity} from '../../../shared/domain/model/base.entity';
-import {Role} from './role.entity';
 
 /**
- * User entity to represents users in the project.
- * @author Jorge Manuel Retuerto Rodriguez - U202318612
+ * User entity representing the authenticated identity in IAM.
  */
 export class User implements BaseEntity {
   constructor(
     public id: number,
-    public email_address: string,
-    public roles: Role[] = []
+    public email: string,
+    public roles: readonly string[] = [],
   ) {
   }
 }

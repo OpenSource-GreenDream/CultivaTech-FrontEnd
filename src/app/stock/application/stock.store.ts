@@ -224,7 +224,7 @@ export class StockStore {
           fieldsRaw: this.fieldApi.getFields(profile.id).pipe(catchError(() => of<FieldResource[]>([])))
         }).pipe(
           map(({ inventoriesRaw, productsRaw, fieldsRaw }) => {
-            const fields = fieldsRaw.filter((field) => Number(field.profile_id) === Number(profile.id));
+            const fields = fieldsRaw.filter((field) => Number(field.profileId) === Number(profile.id));
             this._fields.set(fields.map((res) => FieldAssembler.toEntityFromResource(res)));
             this._farmFieldIds.set(fields.map((field) => Number(field.id)));
             this._products.set(productsRaw.map((res) => ProductAssembler.toEntityFromResource(res)));
@@ -262,7 +262,7 @@ export class StockStore {
       }).pipe(
         map(({ productsRaw, inventoriesRaw, fieldsRaw }) => {
           const fields = profile
-            ? fieldsRaw.filter((field) => Number(field.profile_id) === Number(profile.id))
+            ? fieldsRaw.filter((field) => Number(field.profileId) === Number(profile.id))
             : [];
           this._fields.set(fields.map((res) => FieldAssembler.toEntityFromResource(res)));
           this._farmFieldIds.set(fields.map((field) => Number(field.id)));

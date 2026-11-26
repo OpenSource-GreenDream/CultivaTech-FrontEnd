@@ -4,6 +4,8 @@ import {Router} from '@angular/router';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ProfileStore} from '../../../application/profile.store';
 import {ProfileContextService} from '../../../application/profile-context.service';
+import {AuthService} from '../../../../iam/application/auth.service';
+import {isProfileComplete} from '../../../domain/model/profile.entity';
 import {
   nonBlankValidator,
   trimmedMinLengthValidator,
@@ -22,11 +24,14 @@ export class ProfileCreateComponent implements OnInit {
   private fb = inject(FormBuilder);
   private profileStore = inject(ProfileStore);
   private profileContext = inject(ProfileContextService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal(false);
+
+  readonly isFarmer = this.authService.hasRole('FARMER');
 
   readonly profileForm: FormGroup = this.fb.group({
     fundoName: ['', [nonBlankValidator, trimmedMinLengthValidator(2)]],
@@ -36,10 +41,31 @@ export class ProfileCreateComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (!this.isFarmer) {
+      this.profileForm.get('fundoName')?.clearValidators();
+      this.profileForm.get('moistureThreshold')?.clearValidators();
+      this.profileForm.get('tempThreshold')?.clearValidators();
+      this.profileForm.get('fundoName')?.updateValueAndValidity();
+      this.profileForm.get('moistureThreshold')?.updateValueAndValidity();
+      this.profileForm.get('tempThreshold')?.updateValueAndValidity();
+      this.profileForm.patchValue({
+        fundoName: 'non-field',
+        moistureThreshold: 0,
+        tempThreshold: 0,
+      });
+    }
+
     this.profileContext.fetchCurrentProfile().subscribe({
       next: (existingProfile) => {
-        if (existingProfile) {
+        if (existingProfile && isProfileComplete(existingProfile, this.authService.currentUserRoles() as readonly string[])) {
           this.router.navigate(['/profile']);
+        } else if (existingProfile) {
+          this.profileForm.patchValue({
+            fundoName: existingProfile.fundoName === 'Default Fundo' ? '' : existingProfile.fundoName,
+            contactPhone: existingProfile.contactPhone === '+51000000000' ? '' : existingProfile.contactPhone,
+            moistureThreshold: existingProfile.moistureThreshold,
+            tempThreshold: existingProfile.temperatureThreshold,
+          });
         }
       },
       error: () => {
@@ -59,11 +85,10 @@ export class ProfileCreateComponent implements OnInit {
     const { fundoName, contactPhone, moistureThreshold, tempThreshold } = this.profileForm.value;
 
     this.isSubmitting.set(true);
-    this.profileStore.createProfile({
-      fundo_name: String(fundoName).trim(),
-      contact_phone: String(contactPhone).trim(),
-      moisture_threshold: Number(moistureThreshold),
-      temp_threshold: Number(tempThreshold)
+    this.profileStore.completeProfile(String(contactPhone).trim(), {
+      fundoName: String(fundoName).trim(),
+      moistureThreshold: Number(moistureThreshold),
+      temperatureThreshold: Number(tempThreshold),
     }).subscribe({
       next: () => {
         this.isSubmitting.set(false);
