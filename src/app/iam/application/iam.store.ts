@@ -1,26 +1,21 @@
 import {inject, Service, signal} from '@angular/core';
 import {IamApi} from '../infrastructure/iam-api';
 import {User} from '../domain/model/user.entity';
-import {SignUpRequest} from '../infrastructure/sign-up.request';
+import {SignUp} from '../domain/model/sign-up.model';
+import {SignIn} from '../domain/model/sign-in.model';
 import {catchError, map, Observable, of, tap} from 'rxjs';
-import {UserAssembler} from '../infrastructure/user.assembler';
-import {SignInRequest} from '../infrastructure/sign-in.request';
+
+import {SignInResponse} from '../infrastructure/sign-in.response';
 import {AuthService} from './auth.service';
 import {IAM_ERROR_CODES} from '../domain/model/iam.constants';
 import {Role} from '../domain/model/role.entity';
 import {RoleApi} from '../infrastructure/role-api';
-import {NotificationEventService} from '../../notification/application/notification-event.service';
 
-/**
- * Application service store for the IAM Bounded Context
- * @author Jorge Manuel Retuerto Rodriguez - U202318612
- */
 @Service()
 export class IamStore {
   private readonly iamApi = inject(IamApi);
   private readonly roleApi = inject(RoleApi);
   private readonly authService = inject(AuthService);
-  private readonly notificationEvents = inject(NotificationEventService);
 
   readonly user = signal<User | null>(this.authService.currentUser());
   private readonly _roles = signal<Role[]>([]);
@@ -37,10 +32,6 @@ export class IamStore {
     });
   }
 
-  /**
-   * Loads the backend role catalog. Results are cached for the session so the
-   * sign-up form and role resolution share the same dynamic source.
-   */
   loadRoles(): Observable<Role[]> {
     if (this._roles().length > 0) {
       return of(this._roles());
@@ -63,43 +54,20 @@ export class IamStore {
     );
   }
 
-  /**
-   * Register user
-   * @param request credential to register
-   */
-  signUp(request: SignUpRequest): Observable<User> {
+  signUp(request: SignUp): Observable<User> {
     return this.iamApi.signUp(request).pipe(
-      map((resource) => UserAssembler.toEntityFromResource(resource)),
       tap((user) => {
         this.user.set(user);
-        this.authService.setSession(user);
-        this.notificationEvents.accountCreated(user.email_address);
       }),
     );
   }
 
-  /**
-   * Authenticates user via API layer response and updates reactive store state
-   * @param request credential to login
-   */
-  signIn(request: SignInRequest): Observable<User> {
+  signIn(request: SignIn): Observable<SignInResponse> {
     return this.iamApi.signIn(request).pipe(
-      map((resource) => {
-        if (!resource || !resource.id) {
-          throw new Error(IAM_ERROR_CODES.INVALID_CREDENTIALS);
-        }
-        return UserAssembler.toEntityFromResource(resource);
-      }),
-      tap((user) => {
-        this.user.set(user);
-        this.authService.setSession(user);
-      }),
+      tap((response) => this.authService.establishSession(response, request.email)),
     );
   }
 
-  /**
-   * Resets the IAM store user signal and in-memory session state
-   */
   clearSession(): void {
     this.user.set(null);
   }

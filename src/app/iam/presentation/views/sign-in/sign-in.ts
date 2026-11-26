@@ -1,7 +1,8 @@
 import {Component, inject, signal} from '@angular/core';
 import {IamStore} from '../../../application/iam.store';
 import {Router} from '@angular/router';
-import {SignInRequest} from '../../../infrastructure/sign-in.request';
+import {SignIn as SignInModel} from '../../../domain/model/sign-in.model';
+import {AuthService} from '../../../application/auth.service';
 import {SignInForm} from '../../components/sign-in-form/sign-in-form';
 import {TranslatePipe} from '@ngx-translate/core';
 
@@ -16,18 +17,25 @@ import {TranslatePipe} from '@ngx-translate/core';
 })
 export class SignIn {
   private iamStore = inject(IamStore);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
-  onSignIn(request: SignInRequest) {
+  onSignIn(request: SignInModel) {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
     this.isSubmitting.set(true);
     this.iamStore.signIn(request).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        this.router.navigate(['/dashboard']);
+        if (this.authService.isSignedIn()) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.errorMessage.set('sign-in.form.error-credentials');
+        }
       },
       error: () => {
         this.isSubmitting.set(false);

@@ -1,9 +1,8 @@
 /**
- * This is a request to register a new User.
- * @author Jorge Manuel Retuerto Rodriguez - U202318612
+ * HTTP request for user registration.
  */
 export interface SignUpRequest {
-  email_address: string;
+  email: string;
   password: string;
-  role: string;
+  role?: string;
 }

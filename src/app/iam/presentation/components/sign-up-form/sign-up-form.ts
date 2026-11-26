@@ -1,6 +1,6 @@
 import {Component, computed, inject, OnInit, output, input, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {SignUpRequest} from '../../../infrastructure/sign-up.request';
+import {SignUp} from '../../../domain/model/sign-up.model';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {IamStore} from '../../../application/iam.store';
 import {
@@ -11,6 +11,7 @@ import {
 interface RoleOption {
   value: string;
   label: string;
+  disabled: boolean;
 }
 
 @Component({
@@ -28,7 +29,7 @@ export class SignUpForm implements OnInit {
   private translate = inject(TranslateService);
   private readonly languageTick = signal(0);
 
-  submitForm = output<SignUpRequest>();
+  submitForm = output<SignUp>();
   navigateToSignIn = output<void>();
 
   readonly isSubmitting = input(false);
@@ -37,22 +38,24 @@ export class SignUpForm implements OnInit {
 
   readonly rolesList = computed<RoleOption[]>(() => {
     this.languageTick();
-    return this.iamStore.roles().map((role) => {
-      const normalizedName = role.name.trim().toLowerCase();
-      const translationKey = `sign-up.role-options.${normalizedName}`;
-      const translatedLabel = this.translate.instant(translationKey);
-      return {
-        value: role.name,
-        label: translatedLabel === translationKey
-          ? this.humanizeRoleName(role.name)
-          : translatedLabel,
-      };
-    });
+    return this.iamStore.roles()
+      .filter((role) => role.name.trim().toUpperCase() !== 'ADMIN')
+      .map((role) => {
+        const translationKey = `sign-up.role-options.${role.name.trim().toLowerCase()}`;
+        const translatedLabel = this.translate.instant(translationKey);
+        return {
+          value: role.name,
+          label: translatedLabel === translationKey
+            ? this.humanizeRoleName(role.name)
+            : translatedLabel,
+          disabled: false,
+        };
+      });
   });
 
   signUpForm: FormGroup = this.fb.group({
     emailAddress: ['', [nonBlankEmailValidator]],
-    password: ['', [nonBlankValidator, Validators.minLength(6)]],
+    password: ['', [nonBlankValidator, Validators.minLength(8), Validators.maxLength(128)]],
     confirmPassword: ['', [nonBlankValidator]],
     role: ['', [Validators.required]]
   }, { validators: this.passwordMatchValidator });
@@ -65,8 +68,9 @@ export class SignUpForm implements OnInit {
 
   ngOnInit(): void {
     this.iamStore.loadRoles().subscribe((roles) => {
-      if (roles.length > 0 && !this.signUpForm.get('role')?.value) {
-        this.signUpForm.patchValue({ role: roles[0].name });
+      const farmer = roles.find((role) => role.name.trim().toUpperCase() === 'FARMER');
+      if (farmer && !this.signUpForm.get('role')?.value) {
+        this.signUpForm.patchValue({ role: farmer.name });
       }
     });
   }
@@ -87,7 +91,7 @@ export class SignUpForm implements OnInit {
     if (this.signUpForm.valid) {
       const { emailAddress, password, role } = this.signUpForm.value;
       this.submitForm.emit({
-        email_address: String(emailAddress).trim(),
+        email: String(emailAddress).trim(),
         password,
         role,
       });

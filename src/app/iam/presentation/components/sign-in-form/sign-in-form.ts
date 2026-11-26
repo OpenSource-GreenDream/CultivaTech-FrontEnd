@@ -1,6 +1,6 @@
 import {Component, inject, input, output} from '@angular/core';
-import {SignInRequest} from '../../../infrastructure/sign-in.request';
-import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {SignIn} from '../../../domain/model/sign-in.model';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
 import {
   nonBlankEmailValidator,
@@ -19,13 +19,13 @@ import {
 export class SignInForm {
   private fb = inject(FormBuilder);
 
-  submitForm = output<SignInRequest>();
+  submitForm = output<SignIn>();
   navigateToSignUp = output<void>();
   readonly isSubmitting = input(false);
 
   signInForm: FormGroup = this.fb.group({
     emailAddress: ['', [nonBlankEmailValidator]],
-    password: ['', [nonBlankValidator]]
+    password: ['', [nonBlankValidator, Validators.maxLength(128)]]
   });
 
   onSubmit() {
