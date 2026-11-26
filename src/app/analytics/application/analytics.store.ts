@@ -233,7 +233,7 @@ export class AnalyticsStore {
               catchError(() => of([])),
               map((deviceResources) =>
                 deviceResources
-                  .filter(resource => allowedFieldIds.has(Number(resource.field_id)))
+                  .filter(resource => allowedFieldIds.has(Number(resource.fieldId)))
                   .map(DeviceAssembler.toEntityFromResource)
               ),
               tap((userDevices) => {

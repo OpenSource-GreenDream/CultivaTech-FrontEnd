@@ -1,9 +1,8 @@
 export interface SensorReadingResource {
   id: number;
-  device_id: number;
+  deviceId: number;
   parameter: string;
   value: number;
   unit: string;
-  recorded_at: string;
-  created_at: string;
+  recordedAt: string;
 }

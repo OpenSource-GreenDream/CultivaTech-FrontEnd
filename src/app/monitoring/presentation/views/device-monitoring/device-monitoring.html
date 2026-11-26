@@ -105,8 +105,27 @@
 
             <div class="sync-info">
               <span class="info-label">{{ "monitoring.card.last-sync" | translate }}</span>
-              <small>{{ device.lastSync | date:'dd/MM/yyyy HH:mm' }}</small>
+              <small>
+                @if (device.lastSync) {
+                  {{ device.lastSync | date:'dd/MM/yyyy HH:mm' }}
+                } @else {
+                  {{ "monitoring.card.no-sync" | translate }}
+                }
+              </small>
             </div>
+
+            @if (canManage()) {
+              <div class="device-actions">
+                <select [value]="device.status" (change)="updateDeviceStatus(device.id, $any($event.target).value)">
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="WARNING_BATTERY">WARNING_BATTERY</option>
+                  <option value="OFFLINE">OFFLINE</option>
+                </select>
+                <button type="button" class="btn-danger" (click)="deleteDevice(device.id)">
+                  {{ "monitoring.card.delete-btn" | translate }}
+                </button>
+              </div>
+            }
 
             @if (getReadings(device.id).length > 0) {
               <div class="readings-section">
