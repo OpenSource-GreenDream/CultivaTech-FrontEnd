@@ -19,7 +19,8 @@
       "error-roles": "Roles could not be loaded. Please try again.",
       "error-role-required": "Please select a user role",
       "error-submit": "Could not register account. Please verify your details and try again.",
-      "success": "Account created successfully."
+      "success": "Account created successfully.",
+      "error-role-unsupported": "This role is not available for registration yet."
     },
     "submit": {
       "click-1": "Create account",
@@ -48,7 +49,8 @@
       "error-1": "Email is required",
       "error-2": "Enter a valid email address",
       "error-3": "Password is required",
-      "error-credentials": "Invalid email or password. Please verify your credentials."
+      "error-credentials": "Invalid email or password. Please verify your credentials.",
+      "success-authenticated": "Authentication successful. User identity is not fully resolved yet."
     },
     "submit": {
       "click-1": "Log in",
@@ -246,7 +248,13 @@
       "soil": "Soil",
       "area": "Area",
       "coordinates": "Coordinates",
-      "edit-btn": "Edit"
+      "edit-btn": "Edit",
+      "delete-btn": "Delete"
+    },
+    "delete": {
+      "confirm": "Do you want delete the field?",
+      "cancel": "Cancel",
+      "confirm-btn": "Confirm"
     }
   },
   "profile": {

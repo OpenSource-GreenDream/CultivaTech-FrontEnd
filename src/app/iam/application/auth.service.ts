@@ -1,49 +1,38 @@
 import {computed, inject, Injector, Service, signal} from '@angular/core';
 import {User} from '../domain/model/user.entity';
-import {Role} from '../domain/model/role.entity';
-import {IamStore} from './iam.store';
 import {environment} from '../../../environments/environment';
 import {IAM_SESSION_STORAGE_KEY} from '../domain/model/iam.constants';
+import {AuthSession} from './auth-session.model';
+import {JwtDecoder} from '../infrastructure/jwt-decoder';
+import {SignInResponse} from '../infrastructure/sign-in.response';
+import {UserAssembler} from '../infrastructure/user.assembler';
+import {IamStore} from './iam.store';
 
-export interface PersistedSessionState {
-  user_id: number;
-  email_address: string;
-  role?: string;
-  roles: Array<{ id: number; name: string; description: string }>;
+export interface PersistedAuthSession {
+  userId: number;
+  email: string;
+  accessToken: string;
+  tokenType: string;
+  expiresAt: number;
+  roles: string[];
 }
 
-/**
- * Application service for IAM session management across Bounded Contexts.
- * Roles are treated as dynamic backend data: any role name returned by the
- * API is preserved and compared case-insensitively instead of being restricted
- * to a hardcoded union.
- * @author Jorge Manuel Retuerto Rodriguez - U202318612
- */
 @Service()
 export class AuthService {
   private readonly injector = inject(Injector);
   private readonly cleanupCallbacks = new Set<() => void>();
   private readonly storageKey = environment.sessionStorageKey || IAM_SESSION_STORAGE_KEY;
 
-  readonly currentUser = signal<User | null>(null);
+  private readonly sessionState = signal<AuthSession | null>(null);
 
-  readonly isSignedIn = computed(() => this.currentUser() !== null);
-
-  /**
-   * Normalized role names of the current user. No fixed role catalog is
-   * assumed, so roles created in the backend are automatically supported.
-   */
-  readonly currentUserRoles = computed<string[]>(() => {
-    const user = this.currentUser();
-    if (!user || !user.roles) return [];
-    return user.roles
-      .map((role) => this.normalizeRoleName(role.name))
-      .filter((role): role is string => role !== null);
+  readonly session = this.sessionState.asReadonly();
+  readonly isSignedIn = computed(() => {
+    const session = this.sessionState();
+    return session !== null && !this.isExpired(session);
   });
-
-  /**
-   * Principal role assigned to the current user, when one is available.
-   */
+  readonly currentUserId = computed(() => this.sessionState()?.userId ?? null);
+  readonly currentUserEmail = computed(() => this.sessionState()?.email ?? null);
+  readonly currentUserRoles = computed<readonly string[]>(() => this.sessionState()?.roles ?? []);
   readonly currentRole = computed<string | null>(() => {
     const roles = this.currentUserRoles();
     return roles.length > 0 ? roles[0] : null;
@@ -53,112 +42,181 @@ export class AuthService {
     this.hydrateSession();
   }
 
-  /**
-   * Verify if current user has a specific role (case-insensitive).
-   */
-  hasRole(roleName: string): boolean {
-    const expected = this.normalizeRoleName(roleName);
-    if (!expected) return false;
-    return this.currentUserRoles().includes(expected);
-  }
-
-  /**
-   * Verify if current user has at least one of the allowed roles.
-   */
-  hasAnyRole(allowedRoles: readonly string[]): boolean {
-    if (!allowedRoles || allowedRoles.length === 0) return true;
-    return allowedRoles.some((role) => this.hasRole(role));
-  }
-
-  /**
-   * Set active user session in memory and persist in localStorage.
-   */
-  setSession(user: User): void {
-    this.currentUser.set(user);
-    this.persistSession(user);
-  }
-
   registerCleanup(callback: () => void): void {
     this.cleanupCallbacks.add(callback);
   }
 
+  isExpired(session: AuthSession): boolean {
+    return session.expiresAt <= Date.now();
+  }
+
+  establishSession(response: SignInResponse, email: string): AuthSession {
+    if (!response || typeof response.accessToken !== 'string' || response.accessToken.trim() === '') {
+      throw new Error('INVALID_SIGN_IN_RESPONSE');
+    }
+    if (typeof response.tokenType !== 'string' || response.tokenType.trim() === '') {
+      throw new Error('INVALID_SIGN_IN_RESPONSE');
+    }
+    if (typeof response.expiresIn !== 'number' || !Number.isFinite(response.expiresIn)) {
+      throw new Error('INVALID_SIGN_IN_RESPONSE');
+    }
+    if (!response.user || typeof response.user.id !== 'number' || !Number.isFinite(response.user.id)) {
+      throw new Error('INVALID_SIGN_IN_RESPONSE');
+    }
+    if (typeof response.user.email !== 'string' || response.user.email.trim() === '') {
+      throw new Error('INVALID_SIGN_IN_RESPONSE');
+    }
+    if (!Array.isArray(response.user.roles)) {
+      throw new Error('INVALID_SIGN_IN_RESPONSE');
+    }
+
+    const payload = JwtDecoder.decode(response.accessToken);
+    const userId = Number(payload.sub);
+    if (!Number.isFinite(userId) || userId <= 0) {
+      throw new Error('INVALID_JWT_SUBJECT');
+    }
+    if (userId !== response.user.id) {
+      throw new Error('INCONSISTENT_SIGN_IN_RESPONSE');
+    }
+
+    const expiresAt = typeof payload.exp === 'number'
+      ? payload.exp * 1000
+      : Date.now() + response.expiresIn * 1000;
+
+    if (expiresAt <= Date.now()) {
+      throw new Error('EXPIRED_JWT');
+    }
+
+    const session: AuthSession = {
+      userId: response.user.id,
+      email: response.user.email.trim(),
+      accessToken: response.accessToken,
+      tokenType: response.tokenType,
+      expiresAt,
+      roles: response.user.roles.map((role) => String(role || '').trim()).filter(Boolean),
+    };
+
+    this.sessionState.set(session);
+    this.persistSession(session);
+    return session;
+  }
+
+  currentUser(): User | null {
+    const session = this.sessionState();
+    if (!session || this.isExpired(session)) return null;
+    return UserAssembler.toEntityFromSummary({
+      id: session.userId,
+      email: session.email,
+      roles: [...session.roles],
+      active: true,
+    });
+  }
+
+  hasRole(roleName: string): boolean {
+    const expected = this.normalizeRoleName(roleName);
+    if (!expected) return false;
+    return this.sessionState()?.roles
+      .map((role) => this.normalizeRoleName(role))
+      .filter((role): role is string => role !== null)
+      .includes(expected) ?? false;
+  }
+
+  hasAnyRole(allowedRoles: readonly string[]): boolean {
+    if (!allowedRoles || allowedRoles.length === 0) return true;
+    const roles = this.sessionState()?.roles ?? [];
+    if (roles.length === 0) return false;
+    return allowedRoles.some((role) => this.hasRole(role));
+  }
+
   signOut(): void {
-    this.currentUser.set(null);
+    this.sessionState.set(null);
     this.clearPersistedSession();
-    const iamStore = this.injector.get(IamStore, null, { optional: true });
+    const iamStore = this.injector.get(IamStore, null, {optional: true});
     iamStore?.clearSession();
     this.cleanupCallbacks.forEach((callback) => callback());
   }
 
   private hydrateSession(): void {
-    if (typeof localStorage === 'undefined') {
-      return;
-    }
+    if (typeof localStorage === 'undefined') return;
 
     try {
       const raw = localStorage.getItem(this.storageKey);
-      if (!raw) {
-        return;
-      }
+      if (!raw) return;
 
-      const parsed = JSON.parse(raw) as Partial<PersistedSessionState>;
-      const userId = Number(parsed?.user_id);
-      const email = typeof parsed?.email_address === 'string' ? parsed.email_address.trim() : '';
-
-      if (!Number.isFinite(userId) || userId <= 0 || !email) {
+      const parsed = JSON.parse(raw) as Partial<PersistedAuthSession>;
+      if (
+        typeof parsed?.userId !== 'number' ||
+        !Number.isFinite(parsed.userId) ||
+        parsed.userId <= 0 ||
+        typeof parsed?.email !== 'string' ||
+        parsed.email.trim() === '' ||
+        typeof parsed?.accessToken !== 'string' ||
+        parsed.accessToken.trim() === '' ||
+        typeof parsed?.tokenType !== 'string' ||
+        parsed.tokenType.trim() === '' ||
+        typeof parsed?.expiresAt !== 'number' ||
+        !Number.isFinite(parsed.expiresAt) ||
+        !Array.isArray(parsed.roles)
+      ) {
         this.clearPersistedSession();
         return;
       }
 
-      const roles: Role[] = Array.isArray(parsed.roles) && parsed.roles.length > 0
-        ? parsed.roles.map(
-            (role) => new Role(
-              Number(role.id) || 0,
-              String(role.name || ''),
-              String(role.description || ''),
-            ),
-          )
-        : parsed.role
-          ? [new Role(0, String(parsed.role), '')]
-          : [];
+      const session: AuthSession = {
+        userId: parsed.userId,
+        email: parsed.email.trim(),
+        accessToken: parsed.accessToken,
+        tokenType: parsed.tokenType,
+        expiresAt: parsed.expiresAt,
+        roles: parsed.roles.map((role) => String(role || '').trim()).filter(Boolean),
+      };
 
-      this.currentUser.set(new User(userId, email, roles));
+      if (this.isExpired(session)) {
+        this.clearPersistedSession();
+        return;
+      }
+
+      try {
+        const payload = JwtDecoder.decode(session.accessToken);
+        if (Number(payload.sub) !== session.userId) {
+          this.clearPersistedSession();
+          return;
+        }
+      } catch {
+        this.clearPersistedSession();
+        return;
+      }
+
+      this.sessionState.set(session);
     } catch {
       this.clearPersistedSession();
     }
   }
 
-  private persistSession(user: User): void {
-    if (typeof localStorage === 'undefined') {
-      return;
-    }
+  private persistSession(session: AuthSession): void {
+    if (typeof localStorage === 'undefined') return;
 
     try {
-      const roles = (user.roles ?? []).map((role) => ({
-        id: role.id,
-        name: role.name,
-        description: role.description,
-      }));
-      const sessionPayload: PersistedSessionState = {
-        user_id: user.id,
-        email_address: user.email_address,
-        role: this.normalizeRoleName(roles[0]?.name) ?? undefined,
-        roles,
+      const payload: PersistedAuthSession = {
+        userId: session.userId,
+        email: session.email,
+        accessToken: session.accessToken,
+        tokenType: session.tokenType,
+        expiresAt: session.expiresAt,
+        roles: [...session.roles],
       };
-      localStorage.setItem(this.storageKey, JSON.stringify(sessionPayload));
+      localStorage.setItem(this.storageKey, JSON.stringify(payload));
     } catch {
-      // Ignore storage quota errors
+      // Ignore storage quota errors.
     }
   }
 
   private clearPersistedSession(): void {
-    if (typeof localStorage === 'undefined') {
-      return;
-    }
+    if (typeof localStorage === 'undefined') return;
     try {
       localStorage.removeItem(this.storageKey);
     } catch {
-      // Ignore storage removal errors
+      // Ignore storage removal errors.
     }
   }
 

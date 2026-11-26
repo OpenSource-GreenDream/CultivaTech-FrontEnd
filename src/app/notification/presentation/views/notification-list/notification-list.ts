@@ -23,7 +23,7 @@ export class NotificationList implements OnInit, OnDestroy {
   private alertModalTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly moistureThreshold = computed(() => this.profileContext.currentProfile()?.moistureThreshold ?? null);
-  readonly tempThreshold = computed(() => this.profileContext.currentProfile()?.tempThreshold ?? null);
+  readonly tempThreshold = computed(() => this.profileContext.currentProfile()?.temperatureThreshold ?? null);
 
   readonly notifications = signal<Notification[]>([]);
   readonly isLoading = signal(false);

@@ -19,7 +19,8 @@
       "error-roles": "No se pudieron cargar los roles. Inténtelo de nuevo.",
       "error-role-required": "Seleccione un rol de usuario",
       "error-submit": "No se pudo registrar la cuenta. Verifique sus datos e inténtelo nuevamente.",
-      "success": "Cuenta creada exitosamente."
+      "success": "Cuenta creada exitosamente.",
+      "error-role-unsupported": "This role is not available for registration yet."
     },
     "submit": {
       "click-1": "Crear cuenta",
@@ -48,7 +49,8 @@
       "error-1": "El correo es obligatorio",
       "error-2": "Ingrese un correo electrónico válido",
       "error-3": "La contraseña es obligatoria",
-      "error-credentials": "Correo o contraseña incorrectos. Verifique sus credenciales."
+      "error-credentials": "Correo o contraseña incorrectos. Verifique sus credenciales.",
+      "success-authenticated": "Authentication successful. User identity is not fully resolved yet."
     },
     "submit": {
       "click-1": "Iniciar sesión",
@@ -246,7 +248,13 @@
       "soil": "Suelo",
       "area": "Área",
       "coordinates": "Coordenadas",
-      "edit-btn": "Editar"
+      "edit-btn": "Editar",
+      "delete-btn": "Borrar"
+    },
+    "delete": {
+      "confirm": "Seguro que quiere borrar el field?",
+      "cancel": "Cancelar",
+      "confirm-btn": "Confirmar"
     }
   },
   "profile": {
