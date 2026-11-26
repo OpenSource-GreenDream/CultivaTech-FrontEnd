@@ -5,7 +5,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
 import {AnalyticsReport} from '../../../../analytics/domain/model/entity/analytics-report.entity';
 import {SensorReading} from '../../../domain/model/sensor-reading.entity';
-import {PARAMETER_I18N_KEYS, TelemetryParameter} from '../../../domain/model/telemetry-parameter';
+import {PARAMETER_I18N_KEYS, TelemetryParameter, isTelemetryParameter} from '../../../domain/model/telemetry-parameter';
 
 @Component({
   imports: [
@@ -27,6 +27,7 @@ export class DeviceMonitoring implements OnInit {
   readonly moistureThreshold = this.monitoringStore.moistureThreshold;
   readonly tempThreshold = this.monitoringStore.tempThreshold;
   readonly activeAlerts = this.monitoringStore.activeAlerts;
+  readonly canManage = this.monitoringStore.canManageAgriculturalMonitoring;
 
   ngOnInit(): void {
     this.monitoringStore.loadMonitoringData().subscribe({
@@ -57,8 +58,11 @@ export class DeviceMonitoring implements OnInit {
     return report ? this.monitoringStore.thresholdFor(report) : null;
   }
 
-  getParameterKey(parameter: TelemetryParameter | undefined): string {
-    return parameter ? PARAMETER_I18N_KEYS[parameter] : PARAMETER_I18N_KEYS[TelemetryParameter.MOISTURE];
+  getParameterKey(parameter: string | undefined): string {
+    if (parameter && isTelemetryParameter(parameter)) {
+      return PARAMETER_I18N_KEYS[parameter];
+    }
+    return parameter ?? PARAMETER_I18N_KEYS[TelemetryParameter.MOISTURE];
   }
 
   onFieldChange(event: Event): void {
@@ -72,6 +76,23 @@ export class DeviceMonitoring implements OnInit {
 
   goToCreateDevice(): void {
     this.router.navigate(['/monitoring/create-device']);
+  }
+
+  updateDeviceStatus(deviceId: number, status: string): void {
+    this.monitoringStore.updateDevice(deviceId, status).subscribe({
+      error: () => {
+        // keep current state; error propagated
+      },
+    });
+  }
+
+  deleteDevice(deviceId: number): void {
+    if (!window.confirm('Delete device?')) return;
+    this.monitoringStore.deleteDevice(deviceId).subscribe({
+      error: () => {
+        // keep current state
+      },
+    });
   }
 
   goToSummary(): void {

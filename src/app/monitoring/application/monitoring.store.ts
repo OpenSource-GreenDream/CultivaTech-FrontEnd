@@ -8,14 +8,16 @@ import {Field} from '../../profile/domain/model/field.entity';
 import {catchError, forkJoin, map, Observable, of, switchMap, tap, throwError} from 'rxjs';
 import {DeviceAssembler} from '../infrastructure/device.assembler';
 import {FieldAssembler} from '../../profile/infrastructure/field.assembler';
-import {AnalyticsContext} from '../../analytics/application/analytics-context.store';
-import {AnalyticsReport} from '../../analytics/domain/model/entity/analytics-report.entity';
+
 import {CreateDeviceRequest} from '../domain/model/create-device.request';
 import {SensorReading} from '../domain/model/sensor-reading.entity';
+import {AnalyticsReport} from '../../analytics/domain/model/entity/analytics-report.entity';
 import {SensorReadingAssembler} from '../infrastructure/sensor-reading.assembler';
 import {SensorReadingsApi} from '../infrastructure/sensor-readings-api';
+import {RegisterSensorReadingRequest} from '../infrastructure/register-sensor-reading.request';
 import {
   evaluateTelemetryStatus,
+  isTelemetryParameter,
   resolveParameterThreshold,
   TelemetryParameter,
   TelemetryStatus,
@@ -32,7 +34,7 @@ export interface TelemetryAlertItem {
   macAddress: string;
   fieldId: number;
   fieldName: string;
-  parameter: TelemetryParameter;
+  parameter: string;
   unit: string;
   meanValue: number;
   thresholdValue: number;
@@ -44,7 +46,6 @@ export class MonitoringStore {
   private readonly deviceApi = inject(DeviceApi);
   private readonly sensorReadingsApi = inject(SensorReadingsApi);
   private readonly fieldApi = inject(FieldApi);
-  private readonly analyticsContext = inject(AnalyticsContext);
   private readonly notificationApi = inject(NotificationApiService);
   private readonly notificationEvents = inject(NotificationEventService);
   private readonly authService = inject(AuthService);
@@ -67,6 +68,14 @@ export class MonitoringStore {
     () => this.profileContext.currentProfile()?.temperatureThreshold ?? null
   );
 
+  readonly canManageAgriculturalMonitoring = computed(
+    () => this.authService.hasRole('FARMER') || this.authService.hasRole('ADMIN'),
+  );
+
+  readonly isCommercialUser = computed(
+    () => this.authService.hasRole('CUSTOMER') || this.authService.hasRole('SUPPLIER'),
+  );
+
   readonly devices = computed(() => {
     const user = this.authService.currentUser();
     if (!user) return [];
@@ -79,6 +88,25 @@ export class MonitoringStore {
     const list = this.devices();
     if (fieldId === null) return list;
     return list.filter((device) => Number(device.fieldId) === Number(fieldId));
+  });
+
+  readonly filteredReadings = computed(() => {
+    const fieldId = this.selectedFieldId();
+    const allowedDeviceIds = new Set(this.devices().map((device) => Number(device.id)));
+    let list = this.readings().filter((reading) =>
+      allowedDeviceIds.has(Number(reading.deviceId)),
+    );
+    if (fieldId !== null) {
+      const fieldDeviceIds = new Set(
+        this.devices()
+          .filter((device) => Number(device.fieldId) === Number(fieldId))
+          .map((device) => Number(device.id)),
+      );
+      list = list.filter((reading) => fieldDeviceIds.has(Number(reading.deviceId)));
+    }
+    return [...list].sort(
+      (a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime(),
+    );
   });
 
   readonly sortedReports = computed(() => {
@@ -151,26 +179,34 @@ export class MonitoringStore {
     const fieldsList = this.fields();
     const alerts: TelemetryAlertItem[] = [];
 
-    for (const report of this.latestReports()) {
-      const status = this.evaluateReportStatus(report);
-      if (status === 'OPTIMAL') continue;
+    for (const deviceReadings of this.latestReadingsByDevice().values()) {
+      for (const reading of deviceReadings) {
+        if (!isTelemetryParameter(reading.parameter)) continue;
 
-      const device = this.devices().find(d => Number(d.id) === Number(report.deviceId));
-      if (!device) continue;
+        const status = evaluateTelemetryStatus(
+          reading.parameter,
+          Number(reading.value),
+          this.thresholds(),
+        );
+        if (status === 'OPTIMAL') continue;
 
-      const field = fieldsList.find(f => Number(f.id) === Number(device.fieldId));
+        const device = this.devices().find(d => Number(d.id) === Number(reading.deviceId));
+        if (!device) continue;
 
-      alerts.push({
-        deviceId: device.id,
-        macAddress: device.macAddress,
-        fieldId: device.fieldId,
-        fieldName: field ? field.name : `${TELEMETRY_ALERT_TYPE_KEYS.FIELD_FALLBACK_PREFIX}${device.fieldId}`,
-        parameter: report.parameter,
-        unit: report.unit,
-        meanValue: report.meanValue,
-        thresholdValue: this.thresholdFor(report),
-        status,
-      });
+        const field = fieldsList.find(f => Number(f.id) === Number(device.fieldId));
+
+        alerts.push({
+          deviceId: device.id,
+          macAddress: device.macAddress,
+          fieldId: device.fieldId,
+          fieldName: field ? field.name : `${TELEMETRY_ALERT_TYPE_KEYS.FIELD_FALLBACK_PREFIX}${device.fieldId}`,
+          parameter: reading.parameter,
+          unit: reading.unit,
+          meanValue: reading.value,
+          thresholdValue: this.thresholdForParameter(reading.parameter),
+          status,
+        });
+      }
     }
 
     return alerts;
@@ -204,7 +240,20 @@ export class MonitoringStore {
    * Resolves the threshold used by the alert evaluation for the report parameter.
    */
   thresholdFor(report: AnalyticsReport): number {
+    if (!isTelemetryParameter(report.parameter)) return 0;
     return resolveParameterThreshold(report.parameter, this.thresholds());
+  }
+
+  thresholdForParameter(parameter: string): number {
+    if (!isTelemetryParameter(parameter)) return 0;
+    return resolveParameterThreshold(parameter, this.thresholds());
+  }
+
+  evaluateReadingStatus(reading: SensorReading | undefined): TelemetryAlertStatus {
+    if (!reading || !isTelemetryParameter(reading.parameter)) {
+      return 'OPTIMAL';
+    }
+    return evaluateTelemetryStatus(reading.parameter, Number(reading.value), this.thresholds());
   }
 
   private thresholds() {
@@ -217,6 +266,11 @@ export class MonitoringStore {
   loadMonitoringData(): Observable<void> {
     const currentUser = this.authService.currentUser();
     if (!currentUser) {
+      this.clearState();
+      return of(void 0);
+    }
+
+    if (this.authService.hasRole('CUSTOMER') || this.authService.hasRole('SUPPLIER')) {
       this.clearState();
       return of(void 0);
     }
@@ -252,10 +306,9 @@ export class MonitoringStore {
             const fieldIds = userFields.map(f => Number(f.id));
 
             return this.deviceApi.getDevicesByFieldIds(fieldIds).pipe(
-              catchError(() => of([])),
               map((deviceResources) =>
                 deviceResources
-                  .filter(resource => allowedFieldIds.has(Number(resource.field_id)))
+                  .filter(resource => allowedFieldIds.has(Number(resource.fieldId)))
                   .map(DeviceAssembler.toEntityFromResource)
               ),
               tap((userDevices) => {
@@ -271,25 +324,15 @@ export class MonitoringStore {
 
                 const deviceIds = userDevices.map(d => Number(d.id));
 
-                return forkJoin({
-                  reports: this.analyticsContext.getReportsByDeviceIds(deviceIds).pipe(
-                    catchError(() => of([]))
-                  ),
-                  readings: this.sensorReadingsApi.getReadingsByDeviceIds(deviceIds).pipe(
-                    catchError(() => of([]))
-                  ),
-                }).pipe(
-                  map(({ reports, readings }) => {
+                return this.sensorReadingsApi.getReadingsByDeviceIds(deviceIds).pipe(
+                  map((readings) => {
                     const allowedDeviceIds = new Set(deviceIds);
-                    return {
-                      reports: reports.filter(report => allowedDeviceIds.has(Number(report.deviceId))),
-                      readings: readings
-                        .filter(reading => allowedDeviceIds.has(Number(reading.device_id)))
-                        .map(SensorReadingAssembler.toEntityFromResource),
-                    };
+                    return readings
+                      .filter(reading => allowedDeviceIds.has(Number(reading.deviceId)))
+                      .map(SensorReadingAssembler.toEntityFromResource);
                   }),
-                  tap(({ reports, readings }) => {
-                    this.reports.set(reports);
+                  tap((readings) => {
+                    this.reports.set([]);
                     this.readings.set(readings);
                     this.loading.set(false);
                     this.persistThresholdAlerts();
@@ -322,6 +365,55 @@ export class MonitoringStore {
     );
   }
 
+  updateDevice(deviceId: number, status: string): Observable<Device> {
+    return this.deviceApi.updateDevice(deviceId, { status }).pipe(
+      map(DeviceAssembler.toEntityFromResource),
+      tap((updatedDevice) => {
+        this._devices.update((current) =>
+          current.map((device) =>
+            Number(device.id) === Number(deviceId) ? updatedDevice : device,
+          ),
+        );
+      }),
+    );
+  }
+
+  deleteDevice(deviceId: number): Observable<void> {
+    return this.deviceApi.deleteDevice(deviceId).pipe(
+      tap(() => {
+        this._devices.update((current) =>
+          current.filter((device) => Number(device.id) !== Number(deviceId)),
+        );
+        this.readings.update((current) =>
+          current.filter((reading) => Number(reading.deviceId) !== Number(deviceId)),
+        );
+      }),
+    );
+  }
+
+  createReading(
+    deviceId: number,
+    request: RegisterSensorReadingRequest,
+  ): Observable<SensorReading> {
+    return this.sensorReadingsApi.createReading(deviceId, request).pipe(
+      map(SensorReadingAssembler.toEntityFromResource),
+      tap((newReading) => {
+        this.readings.update((current) => [...current, newReading]);
+        this.persistThresholdAlerts();
+      }),
+    );
+  }
+
+  deleteReading(sensorReadingId: number): Observable<void> {
+    return this.sensorReadingsApi.deleteReading(sensorReadingId).pipe(
+      tap(() => {
+        this.readings.update((current) =>
+          current.filter((reading) => Number(reading.id) !== Number(sensorReadingId)),
+        );
+      }),
+    );
+  }
+
   getReadingsForDevice(deviceId: number): SensorReading[] {
     return this.latestReadingsByDevice().get(Number(deviceId)) ?? [];
   }
@@ -337,44 +429,49 @@ export class MonitoringStore {
     }
 
     const fieldsList = this.fields();
+    const thresholds = this.thresholds();
 
-    for (const report of this.latestReports()) {
-      const status = this.evaluateReportStatus(report);
-      if (status === 'OPTIMAL') continue;
+    for (const deviceReadings of this.latestReadingsByDevice().values()) {
+      for (const reading of deviceReadings) {
+        if (!isTelemetryParameter(reading.parameter)) continue;
 
-      const alertKey = `${report.deviceId}-${report.parameter}-${report.generatedAt}`;
-      if (this.persistedAlertKeys.has(alertKey)) continue;
+        const status = evaluateTelemetryStatus(reading.parameter, Number(reading.value), thresholds);
+        if (status === 'OPTIMAL') continue;
 
-      const device = this.devices().find(d => Number(d.id) === Number(report.deviceId));
-      if (!device) continue;
+        const alertKey = `${reading.deviceId}-${reading.parameter}-${reading.recordedAt}`;
+        if (this.persistedAlertKeys.has(alertKey)) continue;
 
-      const field = fieldsList.find(f => Number(f.id) === Number(device.fieldId));
-      const zoneName = field
-        ? field.name
-        : `${TELEMETRY_ALERT_TYPE_KEYS.FIELD_FALLBACK_PREFIX}${device.fieldId}`;
-      const threshold = this.thresholdFor(report);
+        const device = this.devices().find(d => Number(d.id) === Number(reading.deviceId));
+        if (!device) continue;
 
-      const template =
-        status === 'LOW_MOISTURE'
-          ? TELEMETRY_ALERT_MESSAGES.lowMoisture
-          : TELEMETRY_ALERT_MESSAGES.outOfRange;
+        const field = fieldsList.find(f => Number(f.id) === Number(device.fieldId));
+        const zoneName = field
+          ? field.name
+          : `${TELEMETRY_ALERT_TYPE_KEYS.FIELD_FALLBACK_PREFIX}${device.fieldId}`;
+        const threshold = this.thresholdForParameter(reading.parameter);
 
-      this.persistedAlertKeys.add(alertKey);
+        const template =
+          status === 'LOW_MOISTURE'
+            ? TELEMETRY_ALERT_MESSAGES.lowMoisture
+            : TELEMETRY_ALERT_MESSAGES.outOfRange;
 
-      this.notificationApi
-        .create({
-          profileId,
-          title: template.title,
-          message: template.message(zoneName, device.macAddress, report.meanValue, report.unit, threshold),
-          type: NotificationType.SENSOR_ALERT,
-          fieldId: device.fieldId,
-        })
-        .pipe(catchError(() => of(null)))
-        .subscribe();
+        this.persistedAlertKeys.add(alertKey);
+
+        this.notificationApi
+          .create({
+            profileId,
+            title: template.title,
+            message: template.message(zoneName, device.macAddress, reading.value, reading.unit, threshold),
+            type: NotificationType.SENSOR_ALERT,
+            fieldId: device.fieldId,
+          })
+          .pipe(catchError(() => of(null)))
+          .subscribe();
+      }
     }
   }
 
-  private reportKey(deviceId: number, parameter: TelemetryParameter): string {
+  private reportKey(deviceId: number, parameter: string): string {
     return `${Number(deviceId)}-${parameter}`;
   }
 }
