@@ -3,12 +3,8 @@ import {CanActivateFn, Router} from '@angular/router';
 import {catchError, map, of} from 'rxjs';
 import {AuthService} from '../../iam/application/auth.service';
 import {ProfileContextService} from '../application/profile-context.service';
+import {isProfileComplete} from '../domain/model/profile.entity';
 
-/**
- * Guard that verifies the authenticated user has an active farmer profile (US26).
- * Redirects to onboarding only when the API explicitly confirms that no profile exists;
- * transport errors never trigger a false redirect to profile creation.
- */
 export const profileCompleteGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const profileContext = inject(ProfileContextService);
@@ -20,12 +16,19 @@ export const profileCompleteGuard: CanActivateFn = () => {
   }
 
   const activeProfile = profileContext.currentProfile();
-  if (activeProfile && activeProfile.userId === currentUser.id) {
+  if (activeProfile && isProfileComplete(activeProfile, authService.currentUserRoles() as readonly string[])) {
     return true;
   }
 
   return profileContext.fetchCurrentProfile().pipe(
-    map((profile) => (profile ? true : router.createUrlTree(['/profile/create']))),
-    catchError(() => of(true)),
+    map((profile) => (profile && isProfileComplete(profile, authService.currentUserRoles() as readonly string[])
+      ? true
+      : router.createUrlTree(['/profile/create']))),
+    catchError((error) => {
+      if (error?.status === 404) {
+        return of(router.createUrlTree(['/profile/create']));
+      }
+      return of(true);
+    }),
   );
 };

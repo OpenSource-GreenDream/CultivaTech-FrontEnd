@@ -119,6 +119,25 @@
     </div>
   }
 
+  @if (deleteTarget(); as fieldToDelete) {
+    <div class="card delete-confirmation">
+      <p>{{ "fields.delete.confirm" | translate:{ name: fieldToDelete.name } }}</p>
+      <div class="form-buttons">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()">
+          {{ "fields.delete.cancel" | translate }}
+        </button>
+        <button type="button" class="btn-submit" [disabled]="isSubmitting()" (click)="confirmDelete()">
+          {{ "fields.delete.confirm-btn" | translate }}
+        </button>
+      </div>
+      @if (errorMessage(); as errKey) {
+        <div class="alert alert-error">
+          {{ errKey | translate }}
+        </div>
+      }
+    </div>
+  }
+
   @if (fields().length === 0) {
     <div class="card empty-fields">
       <p>{{ "fields.empty" | translate }}</p>
@@ -132,6 +151,9 @@
               <span class="field-id">{{ "fields.card.lot-id" | translate:{ id: field.id } }}</span>
               <button type="button" class="btn-edit" (click)="startEdit(field)">
                 {{ "fields.card.edit-btn" | translate }}
+              </button>
+              <button type="button" class="btn-delete" (click)="requestDelete(field)">
+                {{ "fields.card.delete-btn" | translate }}
               </button>
             </div>
             <h4 class="field-name">{{ field.name }}</h4>

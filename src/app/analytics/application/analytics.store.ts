@@ -70,7 +70,7 @@ export class AnalyticsStore {
   );
 
   readonly tempThreshold = computed<number | null>(
-    () => this.profileContext.currentProfile()?.tempThreshold ?? null
+    () => this.profileContext.currentProfile()?.temperatureThreshold ?? null
   );
 
   private readonly thresholds = computed(() => ({
@@ -210,7 +210,7 @@ export class AnalyticsStore {
         }).pipe(
           map(({ fieldsRaw }) =>
             fieldsRaw
-              .filter(field => Number(field.profile_id) === Number(profile.id))
+              .filter(field => Number(field.profileId) === Number(profile.id))
               .map(FieldAssembler.toEntityFromResource)
           ),
           tap((userFields) => {

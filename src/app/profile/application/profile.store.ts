@@ -7,16 +7,12 @@ import {inject, Service, signal} from '@angular/core';
 import {ProfileApi} from '../infrastructure/profile-api';
 import {AuthService} from '../../iam/application/auth.service';
 import {Profile} from '../domain/model/profile.entity';
+import {COMMERCIAL_PROFILE_DEFAULTS} from '../domain/model/profile.constants';
 import {ProfileAssembler} from '../infrastructure/profile.assembler';
 import {CreateProfileRequest} from '../infrastructure/create-profile.request';
 import {ProfileContextService} from './profile-context.service';
 import {NotificationEventService} from '../../notification/application/notification-event.service';
 
-/**
- * Application service store for the Profile Bounded Context.
- * Synchronized with ProfileContextService as the single source of truth.
- * @author Jorge Manuel Retuerto Rodriguez - U202318612
- */
 @Service()
 export class ProfileStore {
   private profileApi = inject(ProfileApi);
@@ -44,9 +40,6 @@ export class ProfileStore {
     this.feedbackMessage.set(null);
   }
 
-  /**
-   * Fetches profile associated with the currently authenticated user
-   */
   loadProfileByCurrentUser(): Observable<Profile> {
     const currentUser = this.authService.currentUser();
     if (!currentUser) {
@@ -63,21 +56,13 @@ export class ProfileStore {
     );
   }
 
-  /**
-   * Creates a new Profile for the current user and updates reactive state in both store and context
-   */
-  createProfile(request: Omit<CreateProfileRequest, 'user_id'>): Observable<Profile> {
-    const currentUser = this.authService.currentUser();
-    if (!currentUser) {
+  updateProfile(request: CreateProfileRequest): Observable<Profile> {
+    const userId = this.authService.currentUserId();
+    if (userId === null) {
       return throwError(() => new Error('User is not authenticated'));
     }
 
-    const payload: CreateProfileRequest = {
-      ...request,
-      user_id: currentUser.id
-    };
-
-    return this.profileApi.createProfile(payload).pipe(
+    return this.profileApi.updateProfile(userId, request).pipe(
       map(resource => ProfileAssembler.toEntityFromResource(resource)),
       tap(profile => {
         this.profileContext.setProfile(profile);
@@ -86,9 +71,44 @@ export class ProfileStore {
     );
   }
 
-  /**
-   * Fetches all fields belonging to the active profile
-   */
+  createProfile(request: CreateProfileRequest): Observable<Profile> {
+    return this.updateProfile(request);
+  }
+
+  completeProfile(contactPhone: string, agricultural?: {
+    fundoName: string;
+    moistureThreshold: number;
+    temperatureThreshold: number;
+  }): Observable<Profile> {
+    const userId = this.authService.currentUserId();
+    if (userId === null) {
+      return throwError(() => new Error('User is not authenticated'));
+    }
+
+    const isFarmer = this.authService.hasRole('FARMER');
+    const request: CreateProfileRequest = isFarmer
+      ? {
+          fundoName: agricultural?.fundoName ?? '',
+          contactPhone,
+          moistureThreshold: agricultural?.moistureThreshold ?? 0,
+          temperatureThreshold: agricultural?.temperatureThreshold ?? 0,
+        }
+      : {
+          fundoName: COMMERCIAL_PROFILE_DEFAULTS.fundoName,
+          contactPhone,
+          moistureThreshold: COMMERCIAL_PROFILE_DEFAULTS.moistureThreshold,
+          temperatureThreshold: COMMERCIAL_PROFILE_DEFAULTS.temperatureThreshold,
+        };
+
+    return this.profileApi.updateProfile(userId, request).pipe(
+      map(resource => ProfileAssembler.toEntityFromResource(resource)),
+      tap(profile => {
+        this.profileContext.setProfile(profile);
+        this.notificationEvents.profileCreated(profile);
+      })
+    );
+  }
+
   loadFieldsForCurrentProfile(): Observable<Field[]> {
     const profileId = this.profileContext.currentProfileId();
 
@@ -99,9 +119,7 @@ export class ProfileStore {
 
     return this.profileApi.getFieldsByProfileId(profileId).pipe(
       map((resources) =>
-        resources
-          .filter(res => res.profile_id === profileId)
-          .map(res => FieldAssembler.toEntityFromResource(res))
+        resources.map(res => FieldAssembler.toEntityFromResource(res))
       ),
       tap((fields) => {
         this.fields.set(fields);
@@ -109,21 +127,13 @@ export class ProfileStore {
     );
   }
 
-  /**
-   * Creates a new Field under the current active profile
-   */
-  createField(request: Omit<CreateFieldRequest, 'profile_id'>): Observable<Field> {
+  createField(request: CreateFieldRequest): Observable<Field> {
     const profile = this.currentProfile();
     if (!profile) {
       return throwError(() => new Error('No active profile loaded to add a field'));
     }
 
-    const payload: CreateFieldRequest = {
-      ...request,
-      profile_id: profile.id
-    };
-
-    return this.profileApi.createField(payload).pipe(
+    return this.profileApi.createField(profile.id, request).pipe(
       map(resource => FieldAssembler.toEntityFromResource(resource)),
       tap(newField => {
         this.fields.update(currentFields => [...currentFields, newField]);
@@ -132,27 +142,22 @@ export class ProfileStore {
     );
   }
 
-  /**
-   * Updates an existing Field under the current active profile
-   */
-  updateField(fieldId: number, request: Omit<UpdateFieldRequest, 'profile_id'>): Observable<Field> {
-    const profile = this.currentProfile();
-    if (!profile) {
-      return throwError(() => new Error('No active profile loaded to update a field'));
-    }
-
-    const payload: UpdateFieldRequest = {
-      ...request,
-      profile_id: profile.id
-    };
-
-    return this.profileApi.updateField(fieldId, payload).pipe(
+  updateField(fieldId: number, request: UpdateFieldRequest): Observable<Field> {
+    return this.profileApi.updateField(fieldId, request).pipe(
       map(resource => FieldAssembler.toEntityFromResource(resource)),
       tap(updatedField => {
         this.fields.update(currentFields =>
           currentFields.map(field => (field.id === updatedField.id ? updatedField : field))
         );
         this.notificationEvents.fieldUpdated(updatedField);
+      })
+    );
+  }
+
+  deleteField(fieldId: number): Observable<void> {
+    return this.profileApi.deleteField(fieldId).pipe(
+      tap(() => {
+        this.fields.update(currentFields => currentFields.filter(field => field.id !== fieldId));
       })
     );
   }
