@@ -1,52 +1,61 @@
 import {inject, Service} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
+import {forkJoin, Observable, of} from 'rxjs';
+import {map} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {DeviceResource} from './device-response';
-import {Observable, of} from 'rxjs';
 import {CreateDeviceRequest} from '../domain/model/create-device.request';
+import {RegisterDeviceRequest} from './register-device.request';
+import {UpdateDeviceRequest} from './update-device.request';
 
 @Service()
-export class DeviceApi{
+export class DeviceApi {
   private readonly http = inject(HttpClient);
-  private readonly resourceUrl = `${environment.cultivatechBaseApi}${environment.devicesEndpoint}`;
+  private readonly devicesUrl = `${environment.cultivatechBaseApi}${environment.devicesEndpoint}`;
+  private readonly fieldsUrl = `${environment.cultivatechBaseApi}${environment.fieldsEndpoint}`;
 
   getDevices(): Observable<DeviceResource[]> {
-    return this.http.get<DeviceResource[]>(this.resourceUrl);
+    return this.http.get<DeviceResource[]>(this.devicesUrl);
+  }
+
+  getDeviceById(id: number): Observable<DeviceResource> {
+    return this.http.get<DeviceResource>(`${this.devicesUrl}/${id}`);
   }
 
   getDevicesByFieldId(fieldId: number): Observable<DeviceResource[]> {
-    const params = new HttpParams().set('field_id', fieldId.toString());
-    return this.http.get<DeviceResource[]>(this.resourceUrl, { params });
+    return this.http.get<DeviceResource[]>(`${this.fieldsUrl}/${fieldId}/devices`);
   }
 
   /**
-   * Retrieves the devices of several fields in a single scoped request.
+   * Aggregates devices from several fields using the real nested endpoints.
+   * Empty input does not trigger any HTTP request.
    */
   getDevicesByFieldIds(fieldIds: number[]): Observable<DeviceResource[]> {
     if (fieldIds.length === 0) {
       return of([]);
     }
-    let params = new HttpParams();
-    for (const fieldId of fieldIds) {
-      params = params.append('field_id', fieldId.toString());
-    }
-    return this.http.get<DeviceResource[]>(this.resourceUrl, { params });
-  }
-
-  getDeviceById(id: number): Observable<DeviceResource> {
-    return this.http.get<DeviceResource>(`${this.resourceUrl}/${id}`);
+    return forkJoin(fieldIds.map((fieldId) => this.getDevicesByFieldId(fieldId))).pipe(
+      map((results) => results.flat()),
+    );
   }
 
   createDevice(request: CreateDeviceRequest): Observable<DeviceResource> {
-    const payload = {
-      field_id: request.fieldId,
-      mac_address: request.macAddress,
+    const payload: RegisterDeviceRequest = {
+      macAddress: request.macAddress,
       status: 'ACTIVE',
-      last_sync: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
     };
 
-    return this.http.post<DeviceResource>(this.resourceUrl, payload);
+    return this.http.post<DeviceResource>(
+      `${this.fieldsUrl}/${request.fieldId}/devices`,
+      payload,
+    );
+  }
+
+  updateDevice(deviceId: number, request: UpdateDeviceRequest): Observable<DeviceResource> {
+    return this.http.put<DeviceResource>(`${this.devicesUrl}/${deviceId}`, request);
+  }
+
+  deleteDevice(deviceId: number): Observable<void> {
+    return this.http.delete<void>(`${this.devicesUrl}/${deviceId}`);
   }
 }

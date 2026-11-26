@@ -3,7 +3,5 @@ export interface Device {
   fieldId: number;
   macAddress: string;
   status: string;
-  lastSync: string;
-  createdAt: string;
-  updatedAt: string;
+  lastSync: string | null;
 }

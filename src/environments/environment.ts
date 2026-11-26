@@ -15,7 +15,7 @@ export const environment = {
   profilesEndpoint: '/profiles',
   fieldsEndpoint: '/fields',
   devicesEndpoint: '/devices',
-  sensorReadingsEndpoint: '/sensor_readings',
+  sensorReadingsEndpoint: '/sensor-readings',
   reportsEndpoint: '/reports',
   harvestProjectionsEndpoint: '/harvest_projections',
 

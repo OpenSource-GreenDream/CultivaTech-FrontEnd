@@ -27,52 +27,48 @@
       <p>{{ "monitoring.loading" | translate }}</p>
     </div>
   } @else {
-    @if (reports().length === 0) {
+    @if (readings().length === 0) {
       <div class="empty-state">
         <h3>{{ "monitoring.history.empty-title" | translate }}</h3>
         <p>{{ "monitoring.history.empty-description" | translate }}</p>
       </div>
     } @else {
       <div class="history-list">
-        @for (report of reports(); track report.id) {
-          @let status = getReportStatus(report);
+        @for (reading of readings(); track reading.id) {
+          @let status = getReadingStatus(reading);
           <div class="history-card" [class.history-alert]="status !== 'OPTIMAL'">
             <div class="history-header">
               <div class="history-badges">
-                <span class="device-badge">{{ "monitoring.card.device-title" | translate }} #{{ report.deviceId }}</span>
-                <span class="zone-badge">{{ getDeviceZoneName(report.deviceId) }}</span>
-                <span class="parameter-badge">{{ getParameterKey(report.parameter) | translate }}</span>
+                <span class="device-badge">{{ "monitoring.card.device-title" | translate }} #{{ reading.deviceId }}</span>
+                <span class="zone-badge">{{ getDeviceZoneName(reading.deviceId) }}</span>
+                <span class="parameter-badge">{{ getParameterKey(reading.parameter) | translate }}</span>
                 <span
                   class="status-pill"
                   [class.pill-critical]="status === 'LOW_MOISTURE'"
                   [class.pill-warning]="status === 'OUT_OF_RANGE'"
                   [class.pill-optimal]="status === 'OPTIMAL'">
                   @if (status === 'LOW_MOISTURE') {
-                    {{ "monitoring.card.alert-low-moisture" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                    {{ "monitoring.card.alert-low-moisture" | translate:{ threshold: getThreshold(reading) + reading.unit } }}
                   } @else if (status === 'OUT_OF_RANGE') {
-                    {{ "monitoring.card.alert-out-of-range" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                    {{ "monitoring.card.alert-out-of-range" | translate:{ threshold: getThreshold(reading) + reading.unit } }}
                   } @else {
-                    {{ "monitoring.card.status-optimal" | translate:{ threshold: getThreshold(report) + report.unit } }}
+                    {{ "monitoring.card.status-optimal" | translate:{ threshold: getThreshold(reading) + reading.unit } }}
                   }
                 </span>
               </div>
-              <small>{{ report.generatedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+              <small>{{ reading.recordedAt | date:'dd/MM/yyyy HH:mm' }}</small>
             </div>
             <div class="history-body">
               <div class="metric-box" [class.metric-alert]="status !== 'OPTIMAL'">
                 <span>{{ "monitoring.history.average-value" | translate }}</span>
-                <strong>{{ report.meanValue }}{{ report.unit }}</strong>
+                <strong>{{ reading.value }}{{ reading.unit }}</strong>
               </div>
-              <div class="metric-details">
-                <p><strong>{{ "monitoring.card.variance" | translate }}</strong> {{ report.variance }}</p>
-                <p><strong>{{ "monitoring.card.std-dev" | translate }}</strong> {{ report.standardDeviation }}</p>
-              </div>
+              @if (canManage()) {
+                <button type="button" class="btn-danger" (click)="deleteReading(reading)">
+                  {{ "monitoring.history.delete-btn" | translate }}
+                </button>
+              }
             </div>
-            @if (report.technicalInterpretation) {
-              <div class="history-footer" [class.footer-alert]="status !== 'OPTIMAL'">
-                <p><em>{{ report.technicalInterpretation }}</em></p>
-              </div>
-            }
           </div>
         }
       </div>
