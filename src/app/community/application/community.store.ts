@@ -2,7 +2,7 @@ import {computed, inject, Service, signal} from '@angular/core';
 import {CommunityApi} from '../infrastructure/community-api';
 import {CommunityProfile} from '../domain/model/community-profile.entity';
 import {Review} from '../domain/model/review.entity';
-import {catchError, forkJoin, map, Observable, of, tap, throwError} from 'rxjs';
+import {catchError, forkJoin, map, Observable, of, switchMap, tap, throwError} from 'rxjs';
 import {CommunityProfileAssembler} from '../infrastructure/community-profile.assembler';
 import {ReviewAssembler} from '../infrastructure/review.assembler';
 import {CreateReviewRequest} from '../infrastructure/create-review.request';
@@ -317,8 +317,72 @@ export class CommunityStore {
       return throwError(() => new Error(COMMUNITY_ERROR_CODES.INVALID_RATING));
     }
 
+    const isProduct = request.target_type === 'PRODUCT';
+
+    if (isProduct) {
+      const productId = Number(request.product_id);
+      if (!Number.isFinite(productId) || productId <= 0) {
+        return throwError(() => new Error(COMMUNITY_ERROR_CODES.UNRESOLVED_TARGET));
+      }
+
+      this.loading.set(true);
+      this.error.set(null);
+
+      return this.productApi.getProducer(productId).pipe(
+        switchMap((producer) => {
+          const producerProfileId = Number(producer.profileId);
+          if (!Number.isFinite(producerProfileId) || producerProfileId <= 0) {
+            return throwError(() => new Error(COMMUNITY_ERROR_CODES.UNRESOLVED_TARGET));
+          }
+
+          if (Number(producerProfileId) !== Number(request.target_profile_id)) {
+            return throwError(() => new Error(COMMUNITY_ERROR_CODES.INVALID_TARGET));
+          }
+
+          if (Number(producerProfileId) === Number(request.author_profile_id)) {
+            return throwError(() => new Error(COMMUNITY_ERROR_CODES.SELF_REVIEW_NOT_ALLOWED));
+          }
+
+          const sanitizedRequest: CreateReviewRequest = {
+            ...request,
+            target_profile_id: producerProfileId,
+            product_id: productId,
+            rating: Math.round(numericRating),
+          };
+
+          return this.communityApi.createReview(sanitizedRequest).pipe(
+            map((resource) => {
+              const entity = ReviewAssembler.toEntityFromResource(resource);
+              if (sanitizedRequest.target_type) {
+                entity.targetType = sanitizedRequest.target_type;
+              }
+              if (sanitizedRequest.field_id !== undefined) {
+                entity.fieldId = sanitizedRequest.field_id;
+              }
+              if (sanitizedRequest.product_id !== undefined) {
+                entity.productId = sanitizedRequest.product_id;
+              }
+              return entity;
+            }),
+            tap((newReview) => {
+              this.reviews.update((current) => [newReview, ...current]);
+              if (newReview.targetProfileId) {
+                this.refreshCommunityProfile(newReview.targetProfileId).subscribe();
+              }
+              this.loading.set(false);
+            }),
+          );
+        }),
+        catchError((error) => {
+          this.loading.set(false);
+          this.error.set('community.errors.review-save');
+          return throwError(() => error);
+        }),
+      );
+    }
+
     const resolvedTargetProfileId = this.resolveReviewTargetProfileId(
-      request.target_type === 'PRODUCT' ? 'PRODUCT' : 'FIELD',
+      'FIELD',
       request.field_id ?? null,
       request.product_id ?? null,
     );
@@ -338,13 +402,13 @@ export class CommunityStore {
     const sanitizedRequest: CreateReviewRequest = {
       ...request,
       target_profile_id: resolvedTargetProfileId,
-      rating: Math.round(numericRating)
+      rating: Math.round(numericRating),
     };
 
     this.loading.set(true);
     this.error.set(null);
     return this.communityApi.createReview(sanitizedRequest).pipe(
-      map(resource => {
+      map((resource) => {
         const entity = ReviewAssembler.toEntityFromResource(resource);
         if (sanitizedRequest.target_type) {
           entity.targetType = sanitizedRequest.target_type;
@@ -357,8 +421,8 @@ export class CommunityStore {
         }
         return entity;
       }),
-      tap(newReview => {
-        this.reviews.update(current => [newReview, ...current]);
+      tap((newReview) => {
+        this.reviews.update((current) => [newReview, ...current]);
         if (newReview.targetProfileId) {
           this.refreshCommunityProfile(newReview.targetProfileId).subscribe();
         }
@@ -368,7 +432,7 @@ export class CommunityStore {
         this.loading.set(false);
         this.error.set('community.errors.review-save');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -418,6 +482,22 @@ export class CommunityStore {
         this.error.set('community.errors.review-delete');
         return throwError(() => error);
       })
+    );
+  }
+
+  getAverageProductRating(profileId: number): Observable<{ average: number; count: number }> {
+    return this.communityApi.getAllReviews(profileId).pipe(
+      map((reviews) => {
+        const productReviews = reviews
+          .map((r) => ReviewAssembler.toEntityFromResource(r))
+          .filter((r) => r.targetType === 'PRODUCT');
+        if (productReviews.length === 0) {
+          return { average: 0, count: 0 };
+        }
+        const sum = productReviews.reduce((acc, r) => acc + Number(r.rating), 0);
+        return { average: +(sum / productReviews.length).toFixed(1), count: productReviews.length };
+      }),
+      catchError(() => of({ average: 0, count: 0 })),
     );
   }
 
