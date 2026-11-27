@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {MonitoringStore, TelemetryAlertStatus} from '../../../application/monitoring.store';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
+import {DisplayUnitPipe} from '../../pipes/display-unit.pipe';
 import {AnalyticsReport} from '../../../../analytics/domain/model/entity/analytics-report.entity';
 import {SensorReading} from '../../../domain/model/sensor-reading.entity';
 import {PARAMETER_I18N_KEYS, TelemetryParameter, isTelemetryParameter} from '../../../domain/model/telemetry-parameter';
@@ -10,7 +11,8 @@ import {PARAMETER_I18N_KEYS, TelemetryParameter, isTelemetryParameter} from '../
 @Component({
   imports: [
     TranslatePipe,
-    DatePipe
+    DatePipe,
+    DisplayUnitPipe
   ],
   selector: 'app-device-monitoring',
   styleUrl: './device-monitoring.css',
