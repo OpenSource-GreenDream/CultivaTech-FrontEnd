@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {ProductResource} from './product-response';
+import {ProducerResource} from './producer-response';
 import {CreateProductRequest} from './create-product.request';
 import {map} from 'rxjs';
 
@@ -17,6 +18,10 @@ export class ProductApi {
 
   getProductById(id: number): Observable<ProductResource> {
     return this.http.get<ProductResource>(`${this.baseUrl}/${id}`);
+  }
+
+  getProducer(productId: number): Observable<ProducerResource> {
+    return this.http.get<ProducerResource>(`${this.baseUrl}/${productId}/producer`);
   }
 
   getProductsByFieldId(fieldId: number): Observable<ProductResource[]> {
