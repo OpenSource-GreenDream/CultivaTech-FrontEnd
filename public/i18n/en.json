@@ -77,7 +77,46 @@
   },
   "home": {
     "title": "Welcome to CultivaTech",
-    "description": "Select an option from the side menu to manage your crops, monitor sensors, and review alerts."
+    "description": "Select an option from the side menu to manage your crops, monitor sensors, and review alerts.",
+    "welcome": "Welcome, farmer.",
+    "subtitle": "Review the current state of your agricultural activity.",
+    "kpi": {
+      "fields": "Registered fields",
+      "devices": "Active devices",
+      "products": "Published products",
+      "alerts": "Unread alerts"
+    },
+    "moisture": {
+      "title": "Soil moisture"
+    },
+    "devices": {
+      "title": "Device summary",
+      "empty": "No devices available."
+    },
+    "fields": {
+      "title": "Registered fields",
+      "link": "View all fields",
+      "empty": "No fields registered."
+    },
+    "alerts": {
+      "title": "Recent alerts",
+      "read": "Read",
+      "unread": "Unread",
+      "link": "View all notifications",
+      "empty": "No recent alerts."
+    },
+    "analytics": {
+      "link": "View detailed analytics"
+    },
+    "monitoring": {
+      "link": "View monitoring"
+    },
+    "actions": {
+      "fields": "My fields",
+      "monitoring": "Monitoring",
+      "inventory": "Inventory",
+      "analytics": "Analytics"
+    }
   },
   "notification": {
     "types": {
