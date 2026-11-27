@@ -77,7 +77,46 @@
   },
   "home": {
     "title": "Bienvenido a CultivaTech",
-    "description": "Selecciona una opción del menú lateral para gestionar tus cultivos, monitorear sensores y revisar alertas."
+    "description": "Selecciona una opción del menú lateral para gestionar tus cultivos, monitorear sensores y revisar alertas.",
+    "welcome": "Bienvenido, agricultor.",
+    "subtitle": "Consulta el estado general de tu actividad agrícola.",
+    "kpi": {
+      "fields": "Campos registrados",
+      "devices": "Dispositivos activos",
+      "products": "Productos publicados",
+      "alerts": "Alertas no leídas"
+    },
+    "moisture": {
+      "title": "Humedad del suelo"
+    },
+    "devices": {
+      "title": "Resumen de dispositivos",
+      "empty": "No hay dispositivos disponibles."
+    },
+    "fields": {
+      "title": "Campos registrados",
+      "link": "Ver todos los campos",
+      "empty": "No hay campos registrados."
+    },
+    "alerts": {
+      "title": "Alertas recientes",
+      "read": "Leída",
+      "unread": "No leída",
+      "link": "Ver todas las notificaciones",
+      "empty": "No hay alertas recientes."
+    },
+    "analytics": {
+      "link": "Ver analítica detallada"
+    },
+    "monitoring": {
+      "link": "Ver monitoreo"
+    },
+    "actions": {
+      "fields": "Mis campos",
+      "monitoring": "Monitoreo",
+      "inventory": "Inventario",
+      "analytics": "Analítica"
+    }
   },
   "notification": {
     "types": {
@@ -600,6 +639,12 @@
       "profile-delete": "No se pudo eliminar el perfil comunitario.",
       "review-save": "No se pudo guardar la valoración.",
       "review-delete": "No se pudo eliminar la valoración."
+    }
+  },
+  "auth": {
+    "brand": {
+      "headline": "Agricultura inteligente para un futuro más productivo y sostenible.",
+      "description": "Soluciones digitales para monitorear, gestionar y mejorar tu producción agrícola."
     }
   }
 }

@@ -1,82 +1,140 @@
 .layout-container {
   display: flex;
   min-height: 100vh;
-  width: 100vw;
-  background-color: #e2e8f0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  width: 100%;
+  background-color: var(--color-background);
+  font-family: var(--font-family-base);
+  position: relative;
+}
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 30;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.sidebar-overlay {
+  display: none;
 }
 
 .sidebar {
-  width: 260px;
-  background-color: #81c784;
+  width: 240px;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(176, 190, 150, 0.16) 0%, rgba(176, 190, 150, 0) 42%),
+    radial-gradient(circle at 80% 70%, rgba(134, 150, 96, 0.14) 0%, rgba(134, 150, 96, 0) 46%),
+    radial-gradient(circle at 50% 100%, rgba(102, 121, 74, 0.18) 0%, rgba(102, 121, 74, 0) 52%),
+    var(--color-primary-dark);
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0;
+  padding: var(--space-6) 0;
   box-sizing: border-box;
   flex-shrink: 0;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 
 .brand-section {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  margin-bottom: 2.5rem;
-  padding: 0 1.5rem;
+  margin-bottom: var(--space-6);
+  padding: 0 var(--space-6);
 }
 
 .brand-logo {
   max-width: 120px;
   height: auto;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-1);
   flex: 1;
+  padding: 0 var(--space-3);
 }
 
 .nav-item {
-  display: block;
-  padding: 0.9rem 2rem;
-  color: #1b4332;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-inverse);
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: var(--font-size-label);
   text-decoration: none;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-item svg.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  stroke: currentColor;
 }
 
 .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(242, 235, 221, 0.12);
 }
 
 .nav-item.active {
-  background-color: #e2e8f0;
-  color: #1e293b;
+  background-color: var(--color-primary-soft);
+  color: var(--color-text-primary);
   font-weight: 700;
 }
 
+.nav-icon {
+  font-size: var(--font-size-body);
+  width: 20px;
+  text-align: center;
+}
+
 .sidebar-footer {
-  padding: 1.5rem;
-  border-top: 1px solid rgba(27, 67, 50, 0.2);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid rgba(242, 235, 221, 0.18);
+  position: relative;
 }
 
 .btn-logout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   background: transparent;
   border: none;
-  color: #1b4332;
+  color: var(--color-text-inverse);
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: var(--font-size-label);
   cursor: pointer;
   padding: 0;
   text-align: left;
-  transition: color 0.2s ease;
+  transition: color var(--transition-fast);
+}
+
+.btn-logout svg.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .btn-logout:hover {
-  color: #081c15;
+  color: var(--color-accent);
   text-decoration: underline;
+}
+
+.sidebar-decoration {
+  display: none;
 }
 
 .main-wrapper {
@@ -87,37 +145,113 @@
 }
 
 .top-header {
-  height: 90px;
-  background-color: #81c784;
+  height: 68px;
+  background-color: var(--color-surface);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 3rem;
+  padding: 0 var(--space-6);
   box-sizing: border-box;
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(48, 58, 40, 0.04);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
 }
 
 .header-title {
-  color: #1b4332;
-  font-size: 2rem;
-  font-weight: 800;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-h3);
+  font-weight: 700;
   margin: 0;
 }
 
-.sr-only {
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.notification-bell {
+  position: relative;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  color: var(--color-primary-dark);
+  transition: background-color var(--transition-fast);
+}
+
+.notification-bell:hover {
+  background-color: var(--color-primary-soft);
+}
+
+.bell-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.bell-badge {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  top: 2px;
+  right: 2px;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-caption);
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
 }
 
 .content-body {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem 3rem;
-  background-color: #f1f5f9;
+  padding: var(--space-6);
+  background-color: var(--color-background);
+}
+
+@media (max-width: 900px) {
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    transition: transform var(--transition-fast);
+    z-index: 20;
+  }
+
+  .layout-container.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .layout-container.sidebar-open .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(48, 58, 40, 0.4);
+    z-index: 10;
+  }
+
+  .top-header {
+    padding: 0 var(--space-4);
+  }
+
+  .content-body {
+    padding: var(--space-4);
+  }
 }

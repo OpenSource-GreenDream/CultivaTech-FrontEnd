@@ -1,1 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-primary: #66794A;
+  --color-primary-dark: #35432C;
+  --color-primary-hover: #52653B;
+  --color-secondary: #869660;
+  --color-accent: #B0BE96;
+  --color-primary-soft: #E4E9DA;
+
+  --color-background: #EAE7DE;
+  --color-surface: #F2EBDD;
+  --color-surface-secondary: #E8E1D3;
+  --color-input-background: #EDE6D8;
+  --color-border: #C9C6B5;
+  --color-border-strong: #A8AC98;
+  background-color: #f8fafc;
+
+  --color-text-primary: #303A28;
+  --color-text-secondary: #59634E;
+  --color-text-muted: #68725E;
+  --color-text-inverse: #F2EBDD;
+
+  --color-success: #39734F;
+  --color-success-soft: #E3EDE3;
+  --color-warning: #805A24;
+  --color-warning-soft: #F3EBDD;
+  --color-error: #AB4949;
+  --color-error-soft: #F4E5E3;
+  --color-info: #416B89;
+  --color-info-soft: #E5EDF3;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --font-family-base: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-size-display: 40px;
+  --font-size-h1: 32px;
+  --font-size-h2: 24px;
+  --font-size-h3: 20px;
+  --font-size-body: 16px;
+  --font-size-label: 14px;
+  --font-size-small: 13px;
+  --font-size-caption: 12px;
+
+  --shadow-soft: 0 20px 40px rgba(48, 58, 40, 0.08);
+  --transition-fast: 180ms ease;
+}
+
+html, body {
+  font-family: var(--font-family-base);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}

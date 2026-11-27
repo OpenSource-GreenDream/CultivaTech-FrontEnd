@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {AuthService} from '../../../../iam/application/auth.service';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
@@ -24,8 +24,17 @@ export class Layout {
   private readonly notificationStore = inject(NotificationStore);
 
   readonly unreadNotifications = this.notificationStore.unreadCount;
+  readonly sidebarOpen = signal(false);
 
   pageTitle: string = 'CultivaTech';
+
+  toggleSidebar(): void {
+    this.sidebarOpen.update((value) => !value);
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
 
   onSignOut(): void {
     this.authService.signOut();

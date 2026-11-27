@@ -1,31 +1,31 @@
 .lang-pill-container {
   display: inline-flex;
-  background-color: #e2e8f0;
-  border-radius: 9999px;
+  background-color: var(--color-surface-secondary);
+  border-radius: var(--radius-full);
   padding: 3px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   gap: 2px;
 }
 
 .lang-pill-btn {
   border: none;
   background: transparent;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: var(--font-size-caption);
   padding: 0.35rem 0.85rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all 0.25s ease-in-out;
+  transition: all var(--transition-fast);
   outline: none;
 }
 
 .lang-pill-btn:hover:not(.active) {
-  color: #1b4332;
+  color: var(--color-primary-dark);
 }
 
 .lang-pill-btn.active {
-  background-color: #1b4332;
-  color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: 0 2px 4px rgba(48, 58, 40, 0.12);
 }

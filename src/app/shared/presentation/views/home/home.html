@@ -1,4 +1,105 @@
-<div class="home-container">
-  <h2>{{"home.title" | translate}}</h2>
-  <p>{{"home.description" | translate}}</p>
-</div>
+@if (!isFarmer()) {
+  <div class="home-container">
+    <h2>{{ 'home.title' | translate }}</h2>
+    <p>{{ 'home.description' | translate }}</p>
+  </div>
+} @else {
+  <div class="dashboard">
+    <section class="welcome-header">
+      <div>
+        <h1>{{ 'home.welcome' | translate }}</h1>
+        <p>{{ 'home.subtitle' | translate }}</p>
+        <p class="date">{{ today | date:'fullDate' }}</p>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.kpi.fields' | translate }}</span>
+        <span class="kpi-value">{{ registeredFieldsCount() }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.kpi.devices' | translate }}</span>
+        <span class="kpi-value">{{ activeDevicesCount() }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.kpi.products' | translate }}</span>
+        <span class="kpi-value">{{ publishedProductsCount() }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.kpi.alerts' | translate }}</span>
+        <span class="kpi-value">{{ unreadAlertsCount() }}</span>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="left-column">
+        <div class="card chart-card">
+          <div class="card-header">
+            <h3>{{ 'home.moisture.title' | translate }}</h3>
+            <select (change)="selectDevice(+$any($event.target).value)" class="device-select">
+              @for (device of devices(); track device.id) {
+                <option [value]="device.id">{{ device.macAddress }}</option>
+              }
+            </select>
+          </div>
+          <app-telemetry-chart
+            [readings]="moistureReadings()"
+            [parameter]="'MOISTURE'"
+            [unit]="'%'"
+            [color]="'#66794A'"
+            [loading]="false">
+          </app-telemetry-chart>
+          <button type="button" class="link-btn" (click)="navigate('/analytics')">{{ 'home.analytics.link' | translate }}</button>
+        </div>
+      </div>
+
+      <div class="right-column">
+        <div class="card device-card">
+          <h3>{{ 'home.devices.title' | translate }}</h3>
+          @for (device of devices().slice(0, 5); track device.id) {
+            <div class="device-item">
+              <span>{{ device.macAddress }}</span>
+              <span>{{ device.status }}</span>
+              <span>{{ getLatestReading(device.id) }}</span>
+            </div>
+          }
+          @if (devices().length === 0) {
+            <p class="empty-state">{{ 'home.devices.empty' | translate }}</p>
+          }
+          <button type="button" class="link-btn" (click)="navigate('/monitoring')">{{ 'home.monitoring.link' | translate }}</button>
+        </div>
+
+        <div class="card fields-card">
+          <h3>{{ 'home.fields.title' | translate }}</h3>
+          @for (field of fields().slice(0, 5); track field.id) {
+            <div class="field-item">
+              <span>{{ field.name }}</span>
+              <span>{{ field.sizeM2 }} m²</span>
+              <span>{{ field.soilType }}</span>
+            </div>
+          }
+          @if (fields().length === 0) {
+            <p class="empty-state">{{ 'home.fields.empty' | translate }}</p>
+          }
+          <button type="button" class="link-btn" (click)="navigate('/profile')">{{ 'home.fields.link' | translate }}</button>
+        </div>
+
+        <div class="card alerts-card">
+          <h3>{{ 'home.alerts.title' | translate }}</h3>
+          @for (alert of recentAlerts(); track alert.id) {
+            <div class="alert-item">
+              <span>{{ alert.title }}</span>
+              <span>{{ alert.createdAt | date:'short' }}</span>
+              <span>{{ alert.isRead ? ('home.alerts.read' | translate) : ('home.alerts.unread' | translate) }}</span>
+            </div>
+          }
+          @if (recentAlerts().length === 0) {
+            <p class="empty-state">{{ 'home.alerts.empty' | translate }}</p>
+          }
+          <button type="button" class="link-btn" (click)="navigate('/notifications')">{{ 'home.alerts.link' | translate }}</button>
+        </div>
+      </div>
+    </section>
+  </div>
+}
