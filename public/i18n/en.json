@@ -601,5 +601,11 @@
       "review-save": "Could not save review.",
       "review-delete": "Could not delete review."
     }
+  },
+  "auth": {
+    "brand": {
+      "headline": "Smart agriculture for a more productive and sustainable tomorrow.",
+      "description": "Digital solutions to monitor, manage and improve your agricultural production."
+    }
   }
 }
