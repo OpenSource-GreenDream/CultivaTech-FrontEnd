@@ -17,7 +17,7 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 35% 65%;
+  grid-template-columns: minmax(0, 35%) minmax(0, 65%);
   gap: var(--space-6);
   align-items: start;
 }
@@ -27,13 +27,15 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  min-width: 0;
 }
 
 .card {
-  background: var(--color-surface);
+  background: var(--color-surface-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
+  box-shadow: var(--shadow-soft);
 }
 
 .card-header {
@@ -41,6 +43,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-4);
+  gap: var(--space-3);
 }
 
 .card-title {
@@ -63,9 +66,10 @@
 
 .info-label {
   font-size: var(--font-size-caption);
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   color: var(--color-text-muted);
+  letter-spacing: 0.04em;
 }
 
 .info-value {
@@ -79,29 +83,139 @@
   font-weight: 700;
 }
 
-.btn-edit,
-.btn-primary,
-.btn-secondary,
-.link-btn {
+.thresholds-block {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sub-heading {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-label);
+  font-weight: 600;
+}
+
+.threshold-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.threshold-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.threshold-card.moisture {
+  background: var(--color-primary-soft);
+}
+
+.threshold-card.temperature {
+  background: var(--color-surface-secondary);
+}
+
+.threshold-icon {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-dark);
+  flex-shrink: 0;
+}
+
+.threshold-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.threshold-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.threshold-label {
+  font-size: var(--font-size-caption);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.threshold-value {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.btn-edit {
   background: var(--color-primary);
   color: var(--color-text-inverse);
   border: none;
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-4);
   font-weight: 600;
+  font-size: var(--font-size-small);
   cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-edit:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-5);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  height: 48px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
   background: var(--color-surface-secondary);
   color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-5);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  height: 48px;
+}
+
+.btn-secondary:hover {
+  background: var(--color-surface);
 }
 
 .link-btn {
   background: transparent;
   color: var(--color-primary);
+  border: none;
   padding: 0;
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .empty-state {
@@ -112,11 +226,28 @@
 .review-item {
   padding: var(--space-3) 0;
   border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.review-item:last-child {
+  border-bottom: none;
 }
 
 .review-item .rating {
   font-weight: 700;
   color: var(--color-primary-dark);
+}
+
+.review-item p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.review-item .date {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
 }
 
 .modal-overlay {
@@ -127,14 +258,23 @@
   align-items: center;
   justify-content: center;
   z-index: 50;
+  padding: var(--space-4);
 }
 
 .modal-card {
-  background: var(--color-surface);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
+  box-shadow: var(--shadow-soft);
+}
+
+.modal-card h3 {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-h3);
 }
 
 .form-group {
@@ -144,18 +284,36 @@
   margin-bottom: var(--space-4);
 }
 
+.form-group label {
+  font-size: var(--font-size-label);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
 .form-group input {
-  height: 44px;
-  padding: 0 var(--space-3);
+  height: 48px;
+  padding: 0 var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-input-background);
+  background: var(--color-input-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body);
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(102, 121, 74, 0.12);
 }
 
 .form-buttons {
   display: flex;
   gap: var(--space-3);
   justify-content: flex-end;
+  margin-top: var(--space-2);
 }
 
 .alert {
@@ -174,8 +332,16 @@
   color: var(--color-error);
 }
 
+.loading-state {
+  color: var(--color-text-secondary);
+}
+
 @media (max-width: 900px) {
   .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .threshold-grid {
     grid-template-columns: 1fr;
   }
 }

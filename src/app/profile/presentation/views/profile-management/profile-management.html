@@ -1,7 +1,7 @@
 <div class="profile-container">
   <div class="header-section">
-    <h2 class="section-title">{{ 'profile.management.title' | translate }}</h2>
-    <p class="section-subtitle">{{ 'profile.management.subtitle' | translate }}</p>
+    <h2 class="section-title">{{ "profile.management.title" | translate }}</h2>
+    <p class="section-subtitle">{{ "profile.management.subtitle" | translate }}</p>
   </div>
 
   @if (profileStore.feedbackMessage(); as feedbackKey) {
@@ -18,20 +18,20 @@
 
   @if (isLoading()) {
     <div class="loading-state">
-      <p>{{ 'profile.management.loading' | translate }}</p>
+      <p>{{ "profile.management.loading" | translate }}</p>
     </div>
   } @else if (!errorMessage()) {
     <div class="profile-grid">
       <div class="left-column">
         <div class="card profile-info-card">
           <div class="card-header">
-            <h3 class="card-title">{{ 'profile.info.title' | translate }}</h3>
-            <button type="button" class="btn-edit" (click)="openEdit()">{{ 'profile.info.edit' | translate }}</button>
+            <h3 class="card-title">{{ "profile.info.title" | translate }}</h3>
+            <button type="button" class="btn-edit" (click)="openEdit()">{{ "profile.info.edit" | translate }}</button>
           </div>
           <div class="card-body">
             @if (profileStore.currentProfile(); as p) {
               <div class="info-group">
-                <span class="info-label">{{ 'profile.info.account-type' | translate }}</span>
+                <span class="info-label">{{ "profile.info.account-type" | translate }}</span>
                 <span class="info-value">{{ currentUserRoles().join(', ') }}</span>
               </div>
               <div class="info-group">
@@ -39,48 +39,41 @@
                 <span class="info-value name-value">{{ p.fundoName }}</span>
               </div>
               <div class="info-group">
-                <span class="info-label">{{ 'profile.info.contact-phone' | translate }}</span>
+                <span class="info-label">{{ "profile.info.contact-phone" | translate }}</span>
                 <span class="info-value">{{ p.contactPhone }}</span>
               </div>
               @if (isAgricultural()) {
-                <div class="info-group">
-                  <span class="info-label">{{ 'profile.info.moisture-threshold' | translate }}</span>
-                  <span class="info-value">{{ p.moistureThreshold }}%</span>
-                </div>
-                <div class="info-group">
-                  <span class="info-label">{{ 'profile.info.temp-threshold' | translate }}</span>
-                  <span class="info-value">{{ p.temperatureThreshold }}°C</span>
+                <div class="thresholds-block">
+                  <h4 class="sub-heading">{{ "profile.info.thresholds-title" | translate }}</h4>
+                  <div class="threshold-grid">
+                    <div class="threshold-card moisture">
+                      <span class="threshold-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                        </svg>
+                      </span>
+                      <div class="threshold-content">
+                        <span class="threshold-label">{{ "profile.info.moisture-threshold" | translate }}</span>
+                        <span class="threshold-value">{{ p.moistureThreshold }}%</span>
+                      </div>
+                    </div>
+                    <div class="threshold-card temperature">
+                      <span class="threshold-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                        </svg>
+                      </span>
+                      <div class="threshold-content">
+                        <span class="threshold-label">{{ "profile.info.temp-threshold" | translate }}</span>
+                        <span class="threshold-value">{{ p.temperatureThreshold }}°C</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               }
             }
           </div>
         </div>
-
-        @if (!isAgricultural()) {
-          <div class="card community-card">
-            <div class="card-header">
-              <h3 class="card-title">{{ 'profile.community.title' | translate }}</h3>
-            </div>
-            <div class="card-body">
-              @if (communityProfile(); as cp) {
-                <div class="info-group">
-                  <span class="info-label">{{ 'profile.community.nickname' | translate }}</span>
-                  <span class="info-value">{{ cp.nickname }}</span>
-                </div>
-                <div class="info-group">
-                  <span class="info-label">{{ 'profile.community.reputation' | translate }}</span>
-                  <span class="info-value">{{ cp.reputationScore }}</span>
-                </div>
-                @if (cp.publicBio) {
-                  <p>{{ cp.publicBio }}</p>
-                }
-              } @else {
-                <p class="empty-state">{{ 'profile.community.empty' | translate }}</p>
-              }
-              <button type="button" class="link-btn" (click)="navigate('/community')">{{ 'profile.community.link' | translate }}</button>
-            </div>
-          </div>
-        }
       </div>
 
       <div class="right-column">
@@ -92,21 +85,23 @@
         } @else {
           <div class="card reviews-card">
             <div class="card-header">
-              <h3 class="card-title">{{ 'profile.reviews.title' | translate }}</h3>
+              <h3 class="card-title">{{ "profile.my-reviews.title" | translate }}</h3>
             </div>
             <div class="card-body">
-              @if (receivedReviews().length === 0) {
-                <p class="empty-state">{{ 'profile.reviews.empty' | translate }}</p>
+              @if (myReviews().length === 0) {
+                <p class="empty-state">{{ "profile.my-reviews.empty" | translate }}</p>
               } @else {
-                @for (review of receivedReviews(); track review.id) {
+                @for (review of myReviews(); track review.id) {
                   <div class="review-item">
                     <span class="rating">{{ review.rating }}/5</span>
                     <p>{{ review.content }}</p>
                     <span class="date">{{ review.createdAt | date:'short' }}</span>
+                    @if (review.productId) {
+                      <button type="button" class="link-btn" (click)="navigate('/community/products/' + review.productId + '/reviews')">{{ "profile.my-reviews.view-product" | translate }}</button>
+                    }
                   </div>
                 }
               }
-              <button type="button" class="link-btn" (click)="navigate('/community')">{{ 'profile.reviews.link' | translate }}</button>
             </div>
           </div>
         }
