@@ -1,16 +1,16 @@
-<div class="page-layout">
-  <header class="navbar">
-    <div class="navbar-brand">
-      <img src="/assets/logo.svg" alt="CultivaTech Logo" class="brand-logo" />
-    </div>
+<div class="auth-page">
+  <div class="auth-language">
+    <app-language-switcher />
+  </div>
 
-    <nav class="navbar-nav">
-      <button class="btn-solid" (click)="onNavigateToSignUp()">{{"sign-in.submit.click-3" | translate}}</button>
-    </nav>
-  </header>
+  <section class="auth-brand">
+    <img src="/assets/logo.svg" alt="CultivaTech Logo" class="brand-logo" />
+    <h1>{{ 'auth.brand.headline' | translate }}</h1>
+    <p>{{ 'auth.brand.description' | translate }}</p>
+  </section>
 
-  <main class="content-wrapper">
-    <div class="auth-stack">
+  <section class="auth-panel">
+    <div class="auth-card">
       @if (errorMessage(); as errorKey) {
         <div class="alert alert-error" role="alert">
           {{ errorKey | translate }}
@@ -27,5 +27,5 @@
         (navigateToSignUp)="onNavigateToSignUp()">
       </app-sign-in-form>
     </div>
-  </main>
+  </section>
 </div>
