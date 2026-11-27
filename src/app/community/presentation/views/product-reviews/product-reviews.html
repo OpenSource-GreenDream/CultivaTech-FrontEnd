@@ -1,0 +1,69 @@
+<div class="product-reviews">
+  <button type="button" class="link-btn" (click)="back()">{{ 'community.producer.back' | translate }}</button>
+
+  <div class="product-header">
+    @if (productImageUrl()) {
+      <img [src]="productImageUrl() ?? ''" [alt]="productName()" class="product-image" />
+    }
+    <div>
+      <h2>{{ productName() }}</h2>
+      <p>{{ producerName() }}</p>
+      <p>{{ (productPrice() ?? 0) | currency }}</p>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="left-column">
+      <div class="rating-summary">
+        <strong>{{ averageRating() }} / 5</strong>
+        <span>{{ reviews().length }} {{ 'community.reviews.count' | translate }}</span>
+        @if (reviews().length === 0) {
+          <span>{{ 'community.reviews.not-rated' | translate }}</span>
+        }
+        @for (i of [4,3,2,1,0]; track i) {
+          <div class="dist-row">
+            <span>{{ i + 1 }} ★</span>
+            <div class="dist-bar"><span [style.width.%]="(ratingDistribution()[i] / (reviews().length || 1)) * 100"></span></div>
+            <span>{{ ratingDistribution()[i] }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="reviews-list">
+        @for (review of reviews(); track review.id) {
+          <div class="review-card">
+            <div class="review-header">
+              <span class="author">{{ (authorNames().get(review.authorProfileId) || 'community.member') | translate }}</span>
+              <span class="date">{{ review.createdAt | date:'short' }}</span>
+              <span class="rating">{{ review.rating }}/5 ★</span>
+            </div>
+            <p>{{ review.content }}</p>
+          </div>
+        }
+        @if (reviews().length === 0) {
+          <p>{{ 'community.reviews.empty' | translate }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="review-form">
+        <h3>{{ 'community.form.title' | translate }}</h3>
+        @if (errorMessage(); as err) {
+          <div class="alert alert-error">{{ err | translate }}</div>
+        }
+        @if (successMessage(); as ok) {
+          <div class="alert alert-success">{{ ok | translate }}</div>
+        }
+        <div class="star-rating">
+          @for (star of [1,2,3,4,5]; track star) {
+            <button type="button" class="star-btn" [class.active]="reviewRating() >= star" (click)="reviewRating.set(star)">★</button>
+          }
+          <span>{{ reviewRating() }}/5</span>
+        </div>
+        <textarea [(ngModel)]="reviewContent" class="form-control" rows="4"></textarea>
+        <button type="button" class="btn-submit" [disabled]="isSubmitting()" (click)="submitReview()">{{ 'community.form.submit' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

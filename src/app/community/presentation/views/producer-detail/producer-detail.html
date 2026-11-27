@@ -1,0 +1,43 @@
+<div class="producer-detail">
+  <button type="button" class="link-btn" (click)="back()">{{ 'community.producer.back' | translate }}</button>
+  @if (producer(); as p) {
+    <div class="producer-header">
+      @if (p.imageUrl) {
+        <img [src]="p.imageUrl" [alt]="p.nickname" class="producer-image" />
+      } @else {
+        <div class="producer-image fallback">{{ p.nickname.charAt(0) }}</div>
+      }
+      <div>
+        <h2>{{ p.nickname }}</h2>
+        <p>{{ p.publicBio }}</p>
+        <span class="reputation">{{ 'community.average-product-rating' | translate }}: {{ (averageRating().count ? (averageRating().average + ' ★') : ('community.reviews.not-rated' | translate)) }}</span>
+      </div>
+    </div>
+
+    <h3>{{ 'community.producer.products' | translate }}</h3>
+    @if (products().length === 0) {
+      <p class="empty-state">{{ 'community.producer.no-products' | translate }}</p>
+    } @else {
+      @for (product of products(); track product.id) {
+        <div class="product-row">
+          @if (product.imageUrl) {
+            <img [src]="product.imageUrl" [alt]="product.name" class="product-image" />
+          } @else {
+            <div class="product-image fallback"></div>
+          }
+          <div class="product-info">
+            <strong>{{ product.name }}</strong>
+            <span>{{ product.type }}</span>
+            <span>{{ product.price | currency }}</span>
+            <span>{{ 'stock.catalog.detail-available' | translate }}</span>
+          </div>
+          <button type="button" class="btn-page" (click)="viewProductReviews(product.id)">
+            {{ 'stock.catalog.review-product' | translate }} ›
+          </button>
+        </div>
+      }
+    }
+  } @else {
+    <p>{{ 'community.producers.empty' | translate }}</p>
+  }
+</div>

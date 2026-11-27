@@ -14,6 +14,7 @@ export class CommunityProfileAssembler {
       resource.reputation_score,
       resource.public_bio,
       resource.visibility_status,
+      resource.image_url ?? null,
       resource.created_at,
       resource.updated_at
     );
@@ -28,6 +29,7 @@ export class CommunityProfileAssembler {
       reputation_score: entity.reputationScore,
       public_bio: entity.publicBio,
       visibility_status: entity.visibilityStatus,
+      image_url: entity.imageUrl ?? null,
       created_at: nowISO,
       updated_at: nowISO,
     };

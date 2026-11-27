@@ -164,6 +164,7 @@
     },
     "list": {
       "title": "Notifications",
+      "subtitle": "Review and manage your notifications.",
       "recent-btn": "Recent",
       "history-btn": "History",
       "filters-label": "Notification filters",
@@ -196,12 +197,15 @@
       "refresh": "Refresh",
       "delete": "Delete",
       "unread": "Unread",
+      "read": "Read",
       "status-alert": "Alert",
       "status-info": "Info",
       "unread-notifications": "Unread notifications",
       "agricultural-alerts": "Agricultural alerts",
       "delete-notification": "Delete notification",
-      "notification-error": "Notification error"
+      "notification-error": "Notification error",
+      "total": "Total",
+      "critical": "Critical alerts"
     },
     "modal": {
       "close": "Close",
@@ -321,7 +325,7 @@
       "load-error": "Farm information could not be loaded. Please try again."
     },
     "info": {
-      "title": "Farm Information",
+      "title": "Profile Information",
       "farm-name": "Farm Name",
       "contact-phone": "Contact Phone",
       "thresholds-title": "Threshold Configuration",
@@ -377,6 +381,11 @@
       "title": "Received Reviews",
       "empty": "No received reviews.",
       "link": "View community"
+    },
+    "my-reviews": {
+      "title": "My Reviews",
+      "empty": "You have not published any reviews yet.",
+      "view-product": "View Product"
     }
   },
   "stock": {
@@ -459,7 +468,7 @@
       "error-submit": "Could not register the product. Please try again."
     },
     "catalog": {
-      "back-btn": "← Back to Inventory",
+      "back-btn": "← Back",
       "section-label": "Agricultural Catalog",
       "title": "Product Catalog",
       "description": "Browse the agricultural products registered for your farm batches.",
@@ -471,7 +480,7 @@
       "no-image": "No image",
       "available": "Available",
       "out-of-stock": "Out of Stock",
-      "detail-available": "Product available for purchase",
+      "detail-available": "Available for commercial contact",
       "detail-unavailable": "Product currently unavailable",
       "close-btn": "Close",
       "origin-title": "Product origin",
@@ -482,7 +491,13 @@
       "phone-label": "Commercial contact phone",
       "reputation-label": "Reputation",
       "loading-producer": "Loading producer information...",
-      "no-producer": "Producer information is not available."
+      "no-producer": "Producer information is not available.",
+      "field-label": "Field",
+      "type-label": "Type",
+      "bio-label": "About the producer",
+      "review-product": "Review this product",
+      "average-product-rating": "Average product rating",
+      "not-rated": "Not rated yet"
     },
     "submit": {
       "register": "Register product"
@@ -560,7 +575,9 @@
       "no-data": "No reports available",
       "alert-low-moisture": "Low Moisture (< {{threshold}})",
       "alert-out-of-range": "Out of Range (Threshold: {{threshold}})",
-      "status-optimal": "Optimal (Threshold: {{threshold}})"
+      "status-optimal": "Optimal (Threshold: {{threshold}})",
+      "no-sync": "Not synchronized",
+      "delete-btn": "Delete device"
     },
     "history": {
       "back-btn": "← Back to Monitoring",
@@ -570,7 +587,21 @@
       "empty-title": "No data available",
       "empty-description": "There are no moisture or telemetry records to display for the selected zone.",
       "avg-moisture": "Average Moisture",
-      "average-value": "Average Value"
+      "average-value": "Average Value",
+      "date": "Date and time",
+      "device": "Device",
+      "field": "Field",
+      "parameter": "Parameter",
+      "value": "Measured value",
+      "status": "Threshold status",
+      "actions": "Actions",
+      "below-threshold": "Below minimum threshold",
+      "out-of-range": "Out of range",
+      "measured": "Measured value",
+      "delete-btn": "Delete reading",
+      "threshold-not-configured": "Threshold not configured",
+      "at-or-above-threshold": "At or above minimum threshold",
+      "no-reference-range": "No reference range"
     },
     "create-device": {
       "title": "Register New IoT Sensor",
@@ -613,7 +644,9 @@
       "empty": "No reviews have been published for the selected criteria yet.",
       "field-badge": "Crop Lot",
       "product-badge": "Product",
-      "profile-badge": "Profile"
+      "profile-badge": "Profile",
+      "count": "reviews",
+      "not-rated": "Not rated yet"
     },
     "form": {
       "title": "Publish Review & Rating",
@@ -659,15 +692,43 @@
       "saved": "Profile saved.",
       "deleted": "Profile deleted.",
       "error-save": "Could not save profile.",
-      "error-delete": "Could not delete profile."
+      "error-delete": "Could not delete profile.",
+      "create-title": "Create Community Profile",
+      "image-url": "Image URL",
+      "public": "Public",
+      "private": "Private"
     },
     "errors": {
       "load": "Could not load community data.",
       "profile-save": "Could not save community profile.",
       "profile-delete": "Could not delete community profile.",
       "review-save": "Could not save review.",
-      "review-delete": "Could not delete review."
-    }
+      "review-delete": "Could not delete review.",
+      "no-author-profile": "Author profile is unavailable.",
+      "no-producer-profile": "Producer profile cannot be resolved.",
+      "product-not-found": "Product not found."
+    },
+    "tabs": {
+      "community": "Community",
+      "profile": "My Community Profile"
+    },
+    "context": {
+      "clear": "Clear filter"
+    },
+    "search": {
+      "placeholder": "Search by producer, farm or product..."
+    },
+    "producers": {
+      "empty": "No producers found."
+    },
+    "producer": {
+      "view": "View Profile",
+      "back": "Back to Community",
+      "products": "Published products",
+      "no-products": "This producer has no published products yet."
+    },
+    "member": "Community member",
+    "average-product-rating": "Average product rating"
   },
   "auth": {
     "brand": {

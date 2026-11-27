@@ -8,6 +8,7 @@ export class CommunityProfile implements BaseEntity {
     public reputationScore: number,
     public publicBio: string,
     public visibilityStatus: number,
+    public imageUrl: string | null = null,
     public createdAt?: string,
     public updatedAt?: string,
   ) {}

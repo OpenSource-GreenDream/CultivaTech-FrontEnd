@@ -33,44 +33,59 @@
         <p>{{ "monitoring.history.empty-description" | translate }}</p>
       </div>
     } @else {
-      <div class="history-list">
-        @for (reading of readings(); track reading.id) {
-          @let status = getReadingStatus(reading);
-          <div class="history-card" [class.history-alert]="status !== 'OPTIMAL'">
-            <div class="history-header">
-              <div class="history-badges">
-                <span class="device-badge">{{ "monitoring.card.device-title" | translate }} #{{ reading.deviceId }}</span>
-                <span class="zone-badge">{{ getDeviceZoneName(reading.deviceId) }}</span>
-                <span class="parameter-badge">{{ getParameterKey(reading.parameter) | translate }}</span>
-                <span
-                  class="status-pill"
-                  [class.pill-critical]="status === 'LOW_MOISTURE'"
-                  [class.pill-warning]="status === 'OUT_OF_RANGE'"
-                  [class.pill-optimal]="status === 'OPTIMAL'">
-                  @if (status === 'LOW_MOISTURE') {
-                    {{ "monitoring.card.alert-low-moisture" | translate:{ threshold: getThreshold(reading) + reading.unit } }}
-                  } @else if (status === 'OUT_OF_RANGE') {
-                    {{ "monitoring.card.alert-out-of-range" | translate:{ threshold: getThreshold(reading) + reading.unit } }}
-                  } @else {
-                    {{ "monitoring.card.status-optimal" | translate:{ threshold: getThreshold(reading) + reading.unit } }}
-                  }
-                </span>
-              </div>
-              <small>{{ reading.recordedAt | date:'dd/MM/yyyy HH:mm' }}</small>
-            </div>
-            <div class="history-body">
-              <div class="metric-box" [class.metric-alert]="status !== 'OPTIMAL'">
-                <span>{{ "monitoring.history.average-value" | translate }}</span>
-                <strong>{{ reading.value }}{{ reading.unit | displayUnit:reading.parameter }}</strong>
-              </div>
+      <div class="history-table-wrapper">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>{{ "monitoring.history.date" | translate }}</th>
+              <th>{{ "monitoring.history.device" | translate }}</th>
+              <th>{{ "monitoring.history.field" | translate }}</th>
+              <th>{{ "monitoring.history.parameter" | translate }}</th>
+              <th>{{ "monitoring.history.value" | translate }}</th>
+              <th>{{ "monitoring.history.status" | translate }}</th>
               @if (canManage()) {
-                <button type="button" class="btn-danger" (click)="deleteReading(reading)">
-                  {{ "monitoring.history.delete-btn" | translate }}
-                </button>
+                <th>{{ "monitoring.history.actions" | translate }}</th>
               }
-            </div>
-          </div>
-        }
+            </tr>
+          </thead>
+          <tbody>
+            @for (reading of readings(); track reading.id) {
+              <tr>
+                <td>{{ reading.recordedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ "monitoring.card.device-title" | translate }} #{{ reading.deviceId }}</td>
+                <td>{{ getDeviceZoneName(reading.deviceId) }}</td>
+                <td>{{ getParameterKey(reading.parameter) | translate }}</td>
+                <td>{{ reading.value }}{{ reading.parameter === 'PH' ? '' : (reading.unit | displayUnit:reading.parameter) }}</td>
+                <td>
+                  @let status = getReadingStatus(reading);
+                  <span class="status-pill"
+                    [class.pill-critical]="status === 'LOW_MOISTURE'"
+                    [class.pill-warning]="status === 'OUT_OF_RANGE'"
+                    [class.pill-neutral]="true">
+                    @if (reading.parameter === 'MOISTURE') {
+                      @if (moistureThreshold() === null) {
+                        {{ "monitoring.history.threshold-not-configured" | translate }}
+                      } @else if (status === 'LOW_MOISTURE') {
+                        {{ "monitoring.history.below-threshold" | translate }}
+                      } @else {
+                        {{ "monitoring.history.at-or-above-threshold" | translate }}
+                      }
+                    } @else {
+                      {{ "monitoring.history.no-reference-range" | translate }}
+                    }
+                  </span>
+                </td>
+                @if (canManage()) {
+                  <td>
+                    <button type="button" class="btn-danger btn-compact" (click)="deleteReading(reading)">
+                      {{ "monitoring.history.delete-btn" | translate }}
+                    </button>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     }
   }

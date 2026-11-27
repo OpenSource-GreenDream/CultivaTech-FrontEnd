@@ -9,6 +9,7 @@ export interface CommunityProfileResource {
   reputation_score: number;
   public_bio: string;
   visibility_status: number;
+  image_url?: string | null;
   created_at: string;
   updated_at: string;
 }

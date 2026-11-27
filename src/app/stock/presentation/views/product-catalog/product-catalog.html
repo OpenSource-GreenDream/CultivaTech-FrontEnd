@@ -58,47 +58,68 @@
           <button type="button" class="close-btn" (click)="closeDetail()">✕</button>
         </div>
         <div class="modal-body">
-          @if (product.imageUrl) {
-            <div class="modal-image-box">
-              <img [src]="product.imageUrl" [alt]="product.name" />
+          <div class="left-column">
+            @if (product.imageUrl) {
+              <div class="modal-image-box">
+                <img [src]="product.imageUrl" [alt]="product.name" />
+              </div>
+            }
+            <p class="price-large">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</p>
+            <p class="description">{{ product.description }}</p>
+            <div class="status-box" [class.in-stock]="available">
+              {{ (available ? 'stock.catalog.detail-available' : 'stock.catalog.detail-unavailable') | translate }}
             </div>
-          }
-          <p class="category">
-            {{ "stock.catalog.batch-label" | translate }}:
-            <strong>{{ fieldName || ("stock.catalog.global-batch" | translate) }}</strong>
-          </p>
-          <p class="price-large">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</p>
-          <p class="description">{{ product.description }}</p>
-          <div class="status-box" [class.in-stock]="available">
-            {{ (available ? 'stock.catalog.detail-available' : 'stock.catalog.detail-unavailable') | translate }}
+            <p class="category">
+              {{ "stock.catalog.type-label" | translate }}:
+              <strong>{{ product.type }}</strong>
+            </p>
+            <p class="category">
+              {{ "stock.catalog.batch-label" | translate }}:
+              <strong>{{ fieldName || ("stock.catalog.global-batch" | translate) }}</strong>
+            </p>
           </div>
 
-          <h3>{{ 'stock.catalog.origin-title' | translate }}</h3>
-          <p>{{ 'stock.catalog.field-label' | translate }}: <strong>{{ fieldName || ("stock.catalog.global-batch" | translate) }}</strong></p>
-          <p>{{ 'stock.catalog.fundo-label' | translate }}: <strong>{{ selectedProducer()?.fundoName || '-' }}</strong></p>
-          <p>{{ 'stock.catalog.soil-label' | translate }}: <strong>{{ getSoilType(product.fieldId) || '-' }}</strong></p>
+          <div class="right-column">
+            <div class="section-card">
+              <h3>{{ 'stock.catalog.origin-title' | translate }}</h3>
+              <p>{{ 'stock.catalog.field-label' | translate }}: <strong>{{ fieldName || ("stock.catalog.global-batch" | translate) }}</strong></p>
+              <p>{{ 'stock.catalog.fundo-label' | translate }}: <strong>{{ selectedProducer()?.fundoName || '-' }}</strong></p>
+              <p>{{ 'stock.catalog.soil-label' | translate }}: <strong>{{ getSoilType(product.fieldId) || '-' }}</strong></p>
+            </div>
 
-          <h3>{{ 'stock.catalog.producer-title' | translate }}</h3>
-          @if (producerLoading()) {
-            <p>{{ 'stock.catalog.loading-producer' | translate }}</p>
-          } @else if (selectedProducer(); as producer) {
-            @if (producer.nickname) {
-              <p>{{ 'stock.catalog.nickname-label' | translate }}: <strong>{{ producer.nickname }}</strong></p>
-            }
-            <p>{{ 'stock.catalog.fundo-label' | translate }}: <strong>{{ producer.fundoName }}</strong></p>
-            <p>{{ 'stock.catalog.phone-label' | translate }}: <strong>{{ producer.contactPhone }}</strong></p>
-            @if (producer.reputationScore !== undefined) {
-              <p>{{ 'stock.catalog.reputation-label' | translate }}: <strong>{{ producer.reputationScore }}</strong></p>
-            }
-            @if (producer.publicBio) {
-              <p>{{ producer.publicBio }}</p>
-            }
-          } @else {
-            <p>{{ 'stock.catalog.no-producer' | translate }}</p>
-          }
+            <div class="section-card">
+              <h3>{{ 'stock.catalog.producer-title' | translate }}</h3>
+              @if (producerLoading()) {
+                <p>{{ 'stock.catalog.loading-producer' | translate }}</p>
+              } @else if (selectedProducer(); as producer) {
+                @if (producer.nickname) {
+                  <p>{{ 'stock.catalog.nickname-label' | translate }}: <strong>{{ producer.nickname }}</strong></p>
+                }
+                <p>{{ 'stock.catalog.phone-label' | translate }}: <strong>{{ producer.contactPhone }}</strong></p>
+                <div class="reputation-block">
+                  <span class="reputation-label">{{ 'stock.catalog.average-product-rating' | translate }}</span>
+                  <span class="reputation-value">{{ (averageRating().count ? averageRating().average : ('stock.catalog.not-rated' | translate)) }}</span>
+                  @if (averageRating().count) {
+                    <svg class="reputation-star" viewBox="0 0 24 24" fill="#B49A54" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  }
+                </div>
+                @if (producer.publicBio) {
+                  <div class="bio-block">
+                    <span class="bio-label">{{ 'stock.catalog.bio-label' | translate }}</span>
+                    <p class="bio-text">{{ producer.publicBio }}</p>
+                  </div>
+                }
+              } @else {
+                <p>{{ 'stock.catalog.no-producer' | translate }}</p>
+              }
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="closeDetail()">{{ "stock.catalog.close-btn" | translate }}</button>
+          @if (canReviewProduct()) {
+            <button type="button" class="btn-secondary" (click)="reviewProduct(product.id)">{{ "stock.catalog.review-product" | translate }}</button>
+          }
+          <button type="button" class="btn-close" (click)="closeDetail()">{{ "stock.catalog.close-btn" | translate }}</button>
         </div>
       </div>
     </div>

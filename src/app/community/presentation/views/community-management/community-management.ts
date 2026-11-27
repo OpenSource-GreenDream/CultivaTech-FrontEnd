@@ -1,9 +1,13 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {TranslatePipe} from '@ngx-translate/core';
 import {CommunityStore} from '../../../application/community.store';
 import {ProfileContextService} from '../../../../profile/application/profile-context.service';
+import {AuthService} from '../../../../iam/application/auth.service';
+import {ProductApi} from '../../../../stock/infrastructure/product-api';
 import {FormsModule} from '@angular/forms';
-import {catchError, finalize, of} from 'rxjs';
+import {DatePipe} from '@angular/common';
+import {catchError, finalize, of, switchMap} from 'rxjs';
 import {Review} from '../../../domain/model/review.entity';
 import {CreateCommunityProfileRequest} from '../../../infrastructure/create-community-profile.request';
 import {UpdateCommunityProfileRequest} from '../../../infrastructure/update-community-profile.request';
@@ -18,7 +22,8 @@ import {
 @Component({
   imports: [
     TranslatePipe,
-    FormsModule
+    FormsModule,
+    DatePipe
   ],
   selector: 'app-community-management',
   styleUrl: './community-management.css',
@@ -27,6 +32,27 @@ import {
 export class CommunityManagement implements OnInit {
   protected communityStore = inject(CommunityStore);
   protected profileContext = inject(ProfileContextService);
+  private authService = inject(AuthService);
+  private productApi = inject(ProductApi);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
+  readonly activeTab = signal<'community' | 'profile'>('community');
+  readonly searchTerm = signal('');
+  readonly selectedProducer = signal<any>(null);
+  readonly averageRatings = signal<Map<number, { average: number; count: number }>>(new Map());
+  readonly productContextId = signal<number | null>(null);
+  readonly productContextName = signal<string | null>(null);
+  readonly productContextProducer = signal<string | null>(null);
+  readonly hasCommunityProfile = computed(() => !!this.communityStore.currentCommunityProfile());
+  readonly isFarmer = computed(() => this.authService.hasRole('FARMER'));
+
+  readonly filteredProducers = computed(() => {
+    const term = this.searchTerm().toLowerCase();
+    return this.communityStore.communityProfiles()
+      .filter((p) => Number(p.visibilityStatus) === 1)
+      .filter((p) => !term || p.nickname.toLowerCase().includes(term) || (p.publicBio ?? '').toLowerCase().includes(term));
+  });
 
   readonly isLoading = signal(true);
   readonly isSubmitting = signal(false);
@@ -100,6 +126,7 @@ export class CommunityManagement implements OnInit {
   readonly profileNickname = signal('');
   readonly profileBio = signal('');
   readonly profileVisibility = signal(1);
+  readonly profileImageUrl = signal('');
   readonly isSavingProfile = signal(false);
 
   readonly editingReviewId = signal<number | null>(null);
@@ -123,10 +150,32 @@ export class CommunityManagement implements OnInit {
   };
 
   ngOnInit(): void {
+    const qp = this.route.snapshot.queryParamMap;
+    const targetType = qp.get('targetType');
+    const productId = qp.get('productId');
+    if (targetType === 'PRODUCT' && productId) {
+      this.newReview.targetType = 'PRODUCT';
+      this.newReview.productId = Number(productId);
+      this.productContextId.set(Number(productId));
+      this.selectedProductFilterId.set(Number(productId));
+      this.filterTargetType.set('PRODUCT');
+      this.productApi.getProductById(Number(productId)).subscribe({
+        next: (product) => {
+          this.productContextName.set(product.name);
+          this.productApi.getProducer(product.id).subscribe({
+            next: (producer) => this.productContextProducer.set(producer.fundoName),
+            error: () => {},
+          });
+        },
+        error: () => {},
+      });
+    }
+
     this.profileContext.fetchCurrentProfile().pipe(
       catchError(() => of(null)),
-    ).subscribe();
-    this.loadData();
+    ).subscribe(() => {
+      this.loadData();
+    });
   }
 
   loadData(): void {
@@ -150,7 +199,21 @@ export class CommunityManagement implements OnInit {
           this.profileNickname.set(current.nickname);
           this.profileBio.set(current.publicBio ?? '');
           this.profileVisibility.set(current.visibilityStatus ?? 1);
+          this.profileImageUrl.set(current.imageUrl ?? '');
         }
+
+        const publicProfiles = this.communityStore.communityProfiles().filter((p) => Number(p.visibilityStatus) === 1);
+        const map = new Map<number, { average: number; count: number }>();
+        for (const p of publicProfiles) {
+          this.communityStore.getAverageProductRating(p.profileId).subscribe({
+            next: (res) => {
+              map.set(p.profileId, res);
+              this.averageRatings.set(new Map(map));
+            }
+          });
+        }
+        this.averageRatings.set(map);
+
         this.isLoading.set(false);
       })
     ).subscribe({
@@ -338,6 +401,7 @@ export class CommunityManagement implements OnInit {
       nickname: this.profileNickname(),
       public_bio: this.profileBio(),
       visibility_status: this.profileVisibility(),
+      image_url: this.profileImageUrl().trim() ? this.profileImageUrl().trim() : null,
     };
     const current = this.communityStore.currentCommunityProfile();
     const obs = current
@@ -385,6 +449,17 @@ export class CommunityManagement implements OnInit {
       },
       error: () => this.errorMessage.set('community.form.error-submit'),
     });
+  }
+
+  viewProducer(profile: any): void {
+    this.router.navigate(['/community/producers', profile.id]);
+  }
+
+  clearProductContext(): void {
+    this.productContextId.set(null);
+    this.productContextName.set(null);
+    this.productContextProducer.set(null);
+    this.newReview.targetType = 'PROFILE';
   }
 
   deleteReview(review: Review): void {

@@ -19,19 +19,12 @@
     </button>
   </div>
 
-  @if (moistureThreshold() !== null || tempThreshold() !== null) {
+  @if (moistureThreshold() !== null) {
     <div class="thresholds-banner">
       <span class="thresholds-title">{{ "monitoring.thresholds.active-label" | translate }}</span>
-      @if (moistureThreshold() !== null) {
-        <span class="threshold-pill moisture">
-          {{ "monitoring.thresholds.moisture" | translate }}: <strong>{{ moistureThreshold() }}%</strong>
-        </span>
-      }
-      @if (tempThreshold() !== null) {
-        <span class="threshold-pill temp">
-          {{ "monitoring.thresholds.temperature" | translate }}: <strong>{{ tempThreshold() }}°C</strong>
-        </span>
-      }
+      <span class="threshold-pill moisture">
+        {{ "monitoring.thresholds.moisture" | translate }}: <strong>{{ moistureThreshold() }}%</strong>
+      </span>
     </div>
   }
 
@@ -103,16 +96,6 @@
               <strong>{{ getFieldName(device.fieldId) }}</strong>
             </div>
 
-            <div class="sync-info">
-              <span class="info-label">{{ "monitoring.card.last-sync" | translate }}</span>
-              <small>
-                @if (device.lastSync) {
-                  {{ device.lastSync | date:'dd/MM/yyyy HH:mm' }}
-                } @else {
-                  {{ "monitoring.card.no-sync" | translate }}
-                }
-              </small>
-            </div>
 
             @if (canManage()) {
               <div class="device-actions">
@@ -130,14 +113,16 @@
             @if (getReadings(device.id).length > 0) {
               <div class="readings-section">
                 <p class="value-label">{{ "monitoring.card.current-readings" | translate }}</p>
-                <ul class="readings-list">
+                <div class="readings-grid">
                   @for (reading of getReadings(device.id); track reading.id) {
-                    <li>
-                      <span>{{ getParameterKey(reading.parameter) | translate }}</span>
-                      <strong>{{ reading.value }}{{ reading.unit }}</strong>
-                    </li>
+                    <div class="reading-card">
+                      <span class="reading-param">{{ getParameterKey(reading.parameter) | translate }}</span>
+                      <strong class="reading-value">
+                        {{ reading.value }}{{ reading.parameter === 'PH' ? '' : (reading.unit | displayUnit:reading.parameter) }}
+                      </strong>
+                    </div>
                   }
-                </ul>
+                </div>
               </div>
             }
 
@@ -179,10 +164,6 @@
                   <p>{{ report.technicalInterpretation }}</p>
                 </div>
               }
-            } @else {
-              <div class="no-report">
-                {{ "monitoring.card.no-data" | translate }}
-              </div>
             }
           </div>
         }
