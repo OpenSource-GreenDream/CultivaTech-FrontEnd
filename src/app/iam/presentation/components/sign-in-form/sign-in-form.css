@@ -1,8 +1,8 @@
 .card-container {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  padding: 2.5rem;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  padding: var(--space-8);
   width: 100%;
   max-width: 440px;
   box-sizing: border-box;
@@ -10,103 +10,104 @@
 
 .card-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-6);
 }
 
 .card-header h2 {
-  color: #1e293b;
-  font-size: 1.75rem;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-h2);
   font-weight: 700;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 var(--space-2) 0;
 }
 
 .card-header p {
-  color: #64748b;
-  font-size: 0.925rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
   margin: 0;
 }
 
 .form-content {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-4);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: var(--space-1);
 }
 
 .form-group label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-label);
   font-weight: 600;
-  color: #334155;
+  color: var(--color-text-secondary);
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.95rem;
+  height: 48px;
+  padding: 0 var(--space-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body);
   background-color: #f8fafc;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   box-sizing: border-box;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #2e7d32;
-  background-color: #ffffff;
-  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+  box-shadow: 0 0 0 4px rgba(102, 121, 74, 0.12);
 }
 
 .form-group input.is-invalid {
-  border-color: #ef4444;
-  background-color: #fef2f2;
+  border-color: var(--color-error);
+  background-color: var(--color-error-soft);
 }
 
 .error-text {
-  color: #dc2626;
-  font-size: 0.78rem;
+  color: var(--color-error);
+  font-size: var(--font-size-caption);
 }
 
 .btn-primary {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
   width: 100%;
-  padding: 0.85rem;
-  background-color: #2e7d32;
-  color: #ffffff;
+  height: 48px;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body);
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--transition-fast);
 }
 
 .btn-primary:hover {
-  background-color: #236327;
+  background-color: var(--color-primary-hover);
 }
 
 .btn-primary:disabled {
-  background-color: #94a3b8;
+  background-color: var(--color-border-strong);
   cursor: not-allowed;
 }
 
 .card-footer {
   text-align: center;
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 1rem;
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+  margin-top: var(--space-4);
 }
 
 .link-action {
-  color: #2e7d32;
+  color: var(--color-primary);
   font-weight: 600;
   cursor: pointer;
-  margin-left: 0.25rem;
+  margin-left: var(--space-1);
   text-decoration: none;
 }
 

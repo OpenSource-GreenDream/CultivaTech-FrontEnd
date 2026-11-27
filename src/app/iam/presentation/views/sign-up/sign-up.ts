@@ -4,11 +4,13 @@ import {Router} from '@angular/router';
 import {SignUp as SignUpModel} from '../../../domain/model/sign-up.model';
 import {SignUpForm} from '../../components/sign-up-form/sign-up-form';
 import {TranslatePipe} from '@ngx-translate/core';
+import {LanguageSwitcher} from '../../../../shared/presentation/components/language-switcher/language-switcher';
 
 @Component({
   imports: [
     SignUpForm,
-    TranslatePipe
+    TranslatePipe,
+    LanguageSwitcher
   ],
   selector: 'app-sign-up',
   styleUrl: './sign-up.css',

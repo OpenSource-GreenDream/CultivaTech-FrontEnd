@@ -5,11 +5,13 @@ import {SignIn as SignInModel} from '../../../domain/model/sign-in.model';
 import {AuthService} from '../../../application/auth.service';
 import {SignInForm} from '../../components/sign-in-form/sign-in-form';
 import {TranslatePipe} from '@ngx-translate/core';
+import {LanguageSwitcher} from '../../../../shared/presentation/components/language-switcher/language-switcher';
 
 @Component({
   imports: [
     SignInForm,
-    TranslatePipe
+    TranslatePipe,
+    LanguageSwitcher
   ],
   selector: 'app-sign-in',
   styleUrl: './sign-in.css',
