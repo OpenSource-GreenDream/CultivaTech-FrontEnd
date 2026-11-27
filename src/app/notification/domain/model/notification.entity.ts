@@ -1,5 +1,3 @@
-  import { NotificationType } from './notification-type.enum';
-
 export class Notification {
   constructor(
     public readonly id: number,
@@ -8,8 +6,6 @@ export class Notification {
     public readonly message: string,
     public readonly isRead: boolean,
     public readonly isAlert: boolean,
-    public readonly type: NotificationType,
-    public readonly fieldId: number | null,
     public readonly createdAt: string,
     public readonly updatedAt: string,
   ) {}

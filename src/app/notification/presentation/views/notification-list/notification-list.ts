@@ -1,12 +1,10 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { AuthService } from '../../../../iam/application/auth.service';
-import { ProfileContextService } from '../../../../profile/application/profile-context.service';
 import { Notification } from '../../../domain/model/notification.entity';
-import { NotificationType } from '../../../domain/model/notification-type.enum';
-import { NotificationApiService } from '../../../infrastructure/notification-api.service';
+import { NotificationStore } from '../../../application/notification.store';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -18,66 +16,34 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class NotificationList implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
-  private readonly profileContext = inject(ProfileContextService);
-  private readonly notificationApi = inject(NotificationApiService);
+  private readonly notificationStore = inject(NotificationStore);
   private alertModalTimer: ReturnType<typeof setTimeout> | null = null;
 
-  readonly moistureThreshold = computed(() => this.profileContext.currentProfile()?.moistureThreshold ?? null);
-  readonly tempThreshold = computed(() => this.profileContext.currentProfile()?.temperatureThreshold ?? null);
+  readonly notifications = this.notificationStore.notifications;
+  readonly isLoading = this.notificationStore.loading;
+  readonly hasError = this.notificationStore.hasError;
+  readonly unreadCount = this.notificationStore.unreadCount;
 
-  readonly notifications = signal<Notification[]>([]);
-  readonly isLoading = signal(false);
-  readonly hasError = signal(false);
   readonly showAlertsOnly = signal(false);
   readonly showHistoryOnly = signal(false);
   readonly selectedNotification = signal<Notification | null>(null);
   readonly visibleNotifications = computed(() => {
     const notifications = this.notifications();
     if (this.showAlertsOnly()) {
-      return notifications.filter((notification) => notification.type === NotificationType.SENSOR_ALERT);
+      return notifications.filter((notification) => notification.isAlert);
     }
     if (this.showHistoryOnly()) {
       return notifications.filter((notification) => notification.isRead);
     }
-    return notifications.filter((notification) => !notification.isRead);
+    return notifications;
   });
 
   ngOnInit(): void {
     const user = this.authService.currentUser();
     if (user === null) {
-      this.hasError.set(true);
       return;
     }
-
-    this.profileContext.fetchCurrentProfile().pipe(
-      catchError(() => of(null)),
-    ).subscribe();
-
-    this.isLoading.set(true);
-    this.notificationApi.getProfileIdByUser(user.id).pipe(
-      switchMap((profileId) => {
-        if (profileId === null) {
-          return of(null);
-        }
-        return this.notificationApi.getByProfile(profileId);
-      }),
-      catchError(() => {
-        this.hasError.set(true);
-        return of(null);
-      }),
-    ).subscribe((result) => {
-      if (result !== null) {
-        this.notifications.set(result);
-        // Show alert modal for first unread critical alert
-        const firstCriticalAlert = result.find(n => n.isAlert && !n.isRead);
-        if (firstCriticalAlert) {
-          this.alertModalTimer = setTimeout(() => this.openAlertModal(firstCriticalAlert), 500);
-        }
-      } else {
-        this.hasError.set(true);
-      }
-      this.isLoading.set(false);
-    });
+    this.notificationStore.loadNotifications().pipe(catchError(() => of([]))).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -87,19 +53,16 @@ export class NotificationList implements OnInit, OnDestroy {
     }
   }
 
-  setAlertFilter(enabled: boolean): void {
-    this.showAlertsOnly.set(enabled);
+  refresh(): void {
+    this.notificationStore.loadNotifications().pipe(catchError(() => of([]))).subscribe();
   }
 
   markAsRead(notification: Notification): void {
-    this.notificationApi.markAsRead(notification).subscribe({
-      next: (updatedNotification) => {
-        this.notifications.update((notifications) => notifications.map((current) =>
-          current.id === updatedNotification.id ? updatedNotification : current,
-        ));
-      },
-      error: () => this.hasError.set(true),
-    });
+    this.notificationStore.markAsRead(notification).pipe(catchError(() => of(notification))).subscribe();
+  }
+
+  delete(notification: Notification): void {
+    this.notificationStore.delete(notification).pipe(catchError(() => of(void 0))).subscribe();
   }
 
   openAlertModal(notification: Notification): void {
@@ -130,6 +93,10 @@ export class NotificationList implements OnInit, OnDestroy {
   showRecent(): void {
     this.showAlertsOnly.set(false);
     this.showHistoryOnly.set(false);
+  }
+
+  setAlertFilter(enabled: boolean): void {
+    this.showAlertsOnly.set(enabled);
   }
 
   viewDetails(notification: Notification): void {

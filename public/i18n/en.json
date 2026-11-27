@@ -149,8 +149,19 @@
         "reading": "Reading / Parameter",
         "status": "Status",
         "date": "Date & Time",
-        "actions": "Actions"
-      }
+        "actions": "Actions",
+        "title": "Title",
+        "message": "Message"
+      },
+      "refresh": "Refresh",
+      "delete": "Delete",
+      "unread": "Unread",
+      "status-alert": "Alert",
+      "status-info": "Info",
+      "unread-notifications": "Unread notifications",
+      "agricultural-alerts": "Agricultural alerts",
+      "delete-notification": "Delete notification",
+      "notification-error": "Notification error"
     },
     "modal": {
       "close": "Close",
