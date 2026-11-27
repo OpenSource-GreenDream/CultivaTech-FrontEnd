@@ -1,6 +1,4 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
 import { catchError, of } from 'rxjs';
 import { AuthService } from '../../../../iam/application/auth.service';
 import { Notification } from '../../../domain/model/notification.entity';
@@ -10,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-notification-list',
-  imports: [MatButtonModule, MatListModule, DatePipe, TranslatePipe],
+  imports: [DatePipe, TranslatePipe],
   templateUrl: './notification-list.html',
   styleUrl: './notification-list.css',
 })
@@ -23,6 +21,9 @@ export class NotificationList implements OnInit, OnDestroy {
   readonly isLoading = this.notificationStore.loading;
   readonly hasError = this.notificationStore.hasError;
   readonly unreadCount = this.notificationStore.unreadCount;
+
+  readonly totalNotifications = computed(() => this.notifications().length);
+  readonly criticalAlerts = computed(() => this.notifications().filter((n) => n.isAlert).length);
 
   readonly showAlertsOnly = signal(false);
   readonly showHistoryOnly = signal(false);

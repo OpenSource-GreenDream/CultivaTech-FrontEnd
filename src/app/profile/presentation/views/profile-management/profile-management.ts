@@ -7,10 +7,10 @@ import {ProfileContextService} from '../../../application/profile-context.servic
 import {AuthService} from '../../../../iam/application/auth.service';
 import {canManageFields} from '../../../../shared/domain/access-policy';
 import {CommunityApi} from '../../../../community/infrastructure/community-api';
-import {CommunityProfileAssembler} from '../../../../community/infrastructure/community-profile.assembler';
 import {ReviewAssembler} from '../../../../community/infrastructure/review.assembler';
-import {CommunityProfile} from '../../../../community/domain/model/community-profile.entity';
 import {Review} from '../../../../community/domain/model/review.entity';
+import {CommunityProfileAssembler} from '../../../../community/infrastructure/community-profile.assembler';
+import {CommunityProfile} from '../../../../community/domain/model/community-profile.entity';
 import {ProfileInfo} from '../../components/profile-info/profile-info';
 import {FieldList} from '../../components/field-list/field-list';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -44,6 +44,7 @@ export class ProfileManagementComponent implements OnInit, OnDestroy {
   readonly isSaving = signal(false);
   readonly communityProfile = signal<CommunityProfile | null>(null);
   readonly receivedReviews = signal<Review[]>([]);
+  readonly myReviews = signal<Review[]>([]);
 
   readonly editForm = this.fb.group({
     fundoName: ['', [Validators.required]],
@@ -70,7 +71,7 @@ export class ProfileManagementComponent implements OnInit, OnDestroy {
           if (this.canManageFields()) {
             this.loadFields();
           } else {
-            this.loadCommunityData(profile.id);
+            this.loadMyReviews(profile.id);
           }
         } else {
           this.isLoading.set(false);
@@ -80,6 +81,23 @@ export class ProfileManagementComponent implements OnInit, OnDestroy {
       error: () => {
         this.isLoading.set(false);
         this.errorMessage.set('profile.management.load-error');
+      }
+    });
+  }
+
+  private loadMyReviews(profileId: number): void {
+    this.communityApi.getAllReviews().subscribe({
+      next: (reviews) => {
+        const authored = reviews
+          .map((r) => ReviewAssembler.toEntityFromResource(r))
+          .filter((r) => Number(r.authorProfileId) === Number(profileId))
+          .sort((a: Review, b: Review) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime());
+        this.myReviews.set(authored);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.myReviews.set([]);
+        this.isLoading.set(false);
       }
     });
   }

@@ -1,6 +1,6 @@
 <div class="fields-section">
-  <div class="section-actions">
-    <h3 class="title">{{ "fields.title" | translate }}</h3>
+  <div class="section-header">
+    <h3 class="section-title">{{ "fields.title" | translate }}</h3>
     <button type="button" class="btn-primary" (click)="toggleForm()">
       {{ (showForm() ? 'fields.cancel-btn' : 'fields.register-btn') | translate }}
     </button>
@@ -13,7 +13,7 @@
   }
 
   @if (showForm()) {
-    <div class="card form-card">
+    <div class="form-card">
       <h4 class="form-title">
         {{ (isEditing() ? 'fields.form.edit-title' : 'fields.form.title') | translate }}
       </h4>
@@ -146,34 +146,48 @@
     <div class="fields-grid">
       @for (field of fields(); track field.id) {
         <div class="card field-card">
-          <div class="field-header">
-            <div class="field-header-top">
+          <div class="field-block field-identification">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22V12"/>
+                <path d="M12 12C12 7 8 4 4 4c0 4 3 8 8 8z"/>
+                <path d="M12 12c0-5 4-8 8-8 0 4-3 8-8 8z"/>
+              </svg>
+            </span>
+            <div class="field-id-group">
               <span class="field-id">{{ "fields.card.lot-id" | translate:{ id: field.id } }}</span>
-              <button type="button" class="btn-edit" (click)="startEdit(field)">
-                {{ "fields.card.edit-btn" | translate }}
-              </button>
-              <button type="button" class="btn-delete" (click)="requestDelete(field)">
-                {{ "fields.card.delete-btn" | translate }}
-              </button>
+              <h4 class="field-name">{{ field.name }}</h4>
             </div>
-            <h4 class="field-name">{{ field.name }}</h4>
           </div>
 
-          <div class="field-details">
-            <div class="detail-item">
-              <span class="detail-label">{{ "fields.card.soil" | translate }}</span>
-              <span class="detail-value">{{ field.soilType }}</span>
+          <div class="field-block field-agri">
+            <div class="data-card">
+              <span class="data-label">{{ "fields.card.soil" | translate }}</span>
+              <span class="data-value">{{ field.soilType }}</span>
             </div>
+            <div class="data-card">
+              <span class="data-label">{{ "fields.card.area" | translate }}</span>
+              <span class="data-value">{{ field.sizeM2 | number }} m²</span>
+            </div>
+          </div>
 
-            <div class="detail-item">
-              <span class="detail-label">{{ "fields.card.area" | translate }}</span>
-              <span class="detail-value">{{ field.sizeM2 | number }} m²</span>
-            </div>
+          <div class="field-block field-coords">
+            <span class="coord-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-6-5.5-6-10a6 6 0 1 1 12 0c0 4.5-6 10-6 10z"/>
+                <circle cx="12" cy="11" r="2"/>
+              </svg>
+            </span>
+            <span class="coord-value">{{ field.latitude }}, {{ field.longitude }}</span>
+          </div>
 
-            <div class="detail-item full-width">
-              <span class="detail-label">{{ "fields.card.coordinates" | translate }}</span>
-              <span class="detail-value geo">{{ field.latitude }}, {{ field.longitude }}</span>
-            </div>
+          <div class="field-actions">
+            <button type="button" class="btn-edit" (click)="startEdit(field)">
+              {{ "fields.card.edit-btn" | translate }}
+            </button>
+            <button type="button" class="btn-delete" (click)="requestDelete(field)">
+              {{ "fields.card.delete-btn" | translate }}
+            </button>
           </div>
         </div>
       }

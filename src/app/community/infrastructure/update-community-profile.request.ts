@@ -3,4 +3,5 @@ export interface UpdateCommunityProfileRequest {
   nickname: string;
   public_bio?: string;
   visibility_status?: number;
+  image_url?: string | null;
 }
