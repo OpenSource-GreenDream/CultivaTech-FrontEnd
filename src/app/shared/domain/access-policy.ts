@@ -36,5 +36,11 @@ export function canAccessProfile(roles: readonly string[] | null | undefined): b
 }
 
 export function canAccessNotifications(roles: readonly string[] | null | undefined): boolean {
-  return canAccessAgriculturalModules(roles);
+  const normalized = normalizeRoles(roles);
+  return (
+    normalized.includes('ADMIN') ||
+    normalized.includes('FARMER') ||
+    normalized.includes('CUSTOMER') ||
+    normalized.includes('SUPPLIER')
+  );
 }
