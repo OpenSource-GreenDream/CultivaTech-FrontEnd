@@ -25,9 +25,4 @@ export class AnalyticsContext {
     );
   }
 
-  getAllReportsForAnalytics(): Observable<AnalyticsReport[]> {
-    return this.reportApi.getAllReports().pipe(
-      map((resources) => resources.map(AnalyticsReportAssembler.toEntityFromResource))
-    );
-  }
 }
