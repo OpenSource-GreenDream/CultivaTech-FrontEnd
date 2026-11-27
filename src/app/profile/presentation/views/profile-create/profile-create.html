@@ -19,9 +19,8 @@
     }
 
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
-      @if (isFarmer) {
-        <div class="form-group">
-          <label for="fundoName">{{ "profile.create.fundo-name-label" | translate }}</label>
+      <div class="form-group">
+        <label for="fundoName">{{ (isAgricultural ? 'profile.create.fundo-name-label' : 'profile.create.name-label') | translate }}</label>
           <input
             id="fundoName"
             type="text"
@@ -33,7 +32,6 @@
             <span class="error-text">{{ "profile.create.error-fundo-name" | translate }}</span>
           }
         </div>
-      }
 
       <div class="form-group">
         <label for="contactPhone">{{ "profile.create.phone-label" | translate }}</label>
@@ -49,7 +47,7 @@
         }
       </div>
 
-      @if (isFarmer) {
+      @if (isAgricultural) {
         <div class="form-row">
           <div class="form-group">
             <label for="moistureThreshold">{{ "profile.create.moisture-label" | translate }}</label>
