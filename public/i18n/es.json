@@ -406,7 +406,16 @@
       "out-of-stock": "Agotado",
       "detail-available": "Producto disponible para compra",
       "detail-unavailable": "Producto no disponible actualmente",
-      "close-btn": "Cerrar"
+      "close-btn": "Cerrar",
+      "origin-title": "Origen del producto",
+      "fundo-label": "Fundo",
+      "soil-label": "Tipo de suelo",
+      "producer-title": "Información del productor",
+      "nickname-label": "Apodo",
+      "phone-label": "Teléfono comercial",
+      "reputation-label": "Reputación",
+      "loading-producer": "Cargando información del productor...",
+      "no-producer": "La información del productor no está disponible."
     },
     "submit": {
       "register": "Registrar producto"

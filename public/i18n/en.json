@@ -406,7 +406,16 @@
       "out-of-stock": "Out of Stock",
       "detail-available": "Product available for purchase",
       "detail-unavailable": "Product currently unavailable",
-      "close-btn": "Close"
+      "close-btn": "Close",
+      "origin-title": "Product origin",
+      "fundo-label": "Fundo",
+      "soil-label": "Soil type",
+      "producer-title": "Producer information",
+      "nickname-label": "Nickname",
+      "phone-label": "Commercial contact phone",
+      "reputation-label": "Reputation",
+      "loading-producer": "Loading producer information...",
+      "no-producer": "Producer information is not available."
     },
     "submit": {
       "register": "Register product"
