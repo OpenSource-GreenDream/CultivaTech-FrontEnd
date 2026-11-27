@@ -49,6 +49,7 @@ export const routes: Routes = [
       {
         path: 'notifications',
         canActivate: [authenticationGuard, profileCompleteGuard],
+        data: { roles: ['ADMIN', 'FARMER'] },
         loadChildren: () => import('./notification/notification.routes')
           .then((routes) => routes.NOTIFICATION_ROUTES),
       },
@@ -68,12 +69,14 @@ export const routes: Routes = [
       {
         path: 'monitoring',
         canActivate: [authenticationGuard, profileCompleteGuard],
+        data: { roles: ['ADMIN', 'FARMER'] },
         loadChildren: () => import('./monitoring/monitoring-routes')
           .then((routes) => routes.MONITORING_ROUTES),
       },
       {
         path: 'analytics',
         canActivate: [authenticationGuard, profileCompleteGuard],
+        data: { roles: ['ADMIN', 'FARMER'] },
         loadComponent: () => import('./analytics/presentation/views/analytics-dashboard/analytics-dashboard')
           .then((m) => m.AnalyticsDashboardComponent),
       },
