@@ -13,7 +13,9 @@ export class CommunityProfileAssembler {
       resource.nickname,
       resource.reputation_score,
       resource.public_bio,
-      resource.visibility_status
+      resource.visibility_status,
+      resource.created_at,
+      resource.updated_at
     );
   }
 

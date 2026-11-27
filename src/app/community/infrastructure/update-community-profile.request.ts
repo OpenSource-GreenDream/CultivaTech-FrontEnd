@@ -1,0 +1,6 @@
+export interface UpdateCommunityProfileRequest {
+  profile_id: number;
+  nickname: string;
+  public_bio?: string;
+  visibility_status?: number;
+}
