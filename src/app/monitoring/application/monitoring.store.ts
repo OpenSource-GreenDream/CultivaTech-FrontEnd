@@ -23,7 +23,7 @@ import {
   TelemetryStatus,
 } from '../domain/model/telemetry-parameter';
 import {NotificationApiService} from '../../notification/infrastructure/notification-api.service';
-import {NotificationType} from '../../notification/domain/model/notification-type.enum';
+
 import {TELEMETRY_ALERT_MESSAGES, TELEMETRY_ALERT_TYPE_KEYS} from '../domain/model/telemetry-alert.constants';
 import {NotificationEventService} from '../../notification/application/notification-event.service';
 
@@ -462,8 +462,7 @@ export class MonitoringStore {
             profileId,
             title: template.title,
             message: template.message(zoneName, device.macAddress, reading.value, reading.unit, threshold),
-            type: NotificationType.SENSOR_ALERT,
-            fieldId: device.fieldId,
+            isAlert: true,
           })
           .pipe(catchError(() => of(null)))
           .subscribe();

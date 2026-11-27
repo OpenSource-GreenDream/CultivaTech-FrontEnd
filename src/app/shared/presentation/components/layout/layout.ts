@@ -3,6 +3,7 @@ import {AuthService} from '../../../../iam/application/auth.service';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {LanguageSwitcher} from '../language-switcher/language-switcher';
+import {NotificationStore} from '../../../../notification/application/notification.store';
 
 @Component({
   imports: [
@@ -20,6 +21,9 @@ export class Layout {
   private authService = inject(AuthService);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private readonly notificationStore = inject(NotificationStore);
+
+  readonly unreadNotifications = this.notificationStore.unreadCount;
 
   pageTitle: string = 'CultivaTech';
 
