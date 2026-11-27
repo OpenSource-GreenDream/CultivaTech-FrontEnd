@@ -5,6 +5,9 @@ import {ProfileContextService} from '../../../../profile/application/profile-con
 import {FormsModule} from '@angular/forms';
 import {catchError, finalize, of} from 'rxjs';
 import {Review} from '../../../domain/model/review.entity';
+import {CreateCommunityProfileRequest} from '../../../infrastructure/create-community-profile.request';
+import {UpdateCommunityProfileRequest} from '../../../infrastructure/update-community-profile.request';
+import {UpdateReviewRequest} from '../../../infrastructure/update-review.request';
 import {
   COMMUNITY_ERROR_CODES,
   COMMUNITY_PAGE_SIZE,
@@ -23,7 +26,7 @@ import {
 })
 export class CommunityManagement implements OnInit {
   protected communityStore = inject(CommunityStore);
-  private profileContext = inject(ProfileContextService);
+  protected profileContext = inject(ProfileContextService);
 
   readonly isLoading = signal(true);
   readonly isSubmitting = signal(false);
@@ -53,6 +56,13 @@ export class CommunityManagement implements OnInit {
       return ownerProfileId !== null
         && (currentProfileId === null || ownerProfileId !== Number(currentProfileId));
     });
+  });
+
+  readonly reviewableProfiles = computed(() => {
+    const currentProfileId = this.profileContext.currentProfileId();
+    return this.communityStore.communityProfiles().filter(
+      (profile) => currentProfileId === null || Number(profile.profileId) !== Number(currentProfileId)
+    );
   });
 
   readonly filteredReviews = computed(() => {
@@ -87,16 +97,27 @@ export class CommunityManagement implements OnInit {
     return Math.ceil(this.filteredReviews().length / this.pageSize) || 1;
   });
 
+  readonly profileNickname = signal('');
+  readonly profileBio = signal('');
+  readonly profileVisibility = signal(1);
+  readonly isSavingProfile = signal(false);
+
+  readonly editingReviewId = signal<number | null>(null);
+  readonly editContent = signal('');
+  readonly editRating = signal(5);
+
   newReview: {
-    targetType: 'FIELD' | 'PRODUCT';
+    targetType: 'FIELD' | 'PRODUCT' | 'PROFILE';
     fieldId: number | null;
     productId: number | null;
+    targetProfileId: number | null;
     rating: number;
     content: string;
   } = {
     targetType: 'FIELD',
     fieldId: null,
     productId: null,
+    targetProfileId: null,
     rating: 5,
     content: ''
   };
@@ -119,6 +140,16 @@ export class CommunityManagement implements OnInit {
         }
         if (this.newReview.productId === null && products.length > 0) {
           this.newReview.productId = products[0].id;
+        }
+        const profiles = this.reviewableProfiles();
+        if (this.newReview.targetProfileId === null && profiles.length > 0) {
+          this.newReview.targetProfileId = profiles[0].profileId;
+        }
+        const current = this.communityStore.currentCommunityProfile();
+        if (current) {
+          this.profileNickname.set(current.nickname);
+          this.profileBio.set(current.publicBio ?? '');
+          this.profileVisibility.set(current.visibilityStatus ?? 1);
         }
         this.isLoading.set(false);
       })
@@ -215,23 +246,32 @@ export class CommunityManagement implements OnInit {
     }
 
     const isFieldTarget = this.newReview.targetType === 'FIELD';
+    const isProductTarget = this.newReview.targetType === 'PRODUCT';
+    const isProfileTarget = this.newReview.targetType === 'PROFILE';
     const selectedFieldId = isFieldTarget ? Number(this.newReview.fieldId) : null;
-    const selectedProductId = !isFieldTarget ? Number(this.newReview.productId) : null;
+    const selectedProductId = isProductTarget ? Number(this.newReview.productId) : null;
+    const selectedTargetProfileId = isProfileTarget ? Number(this.newReview.targetProfileId) : null;
 
     if (isFieldTarget && !selectedFieldId) {
       this.errorMessage.set('community.form.error-target');
       return;
     }
-    if (!isFieldTarget && !selectedProductId) {
+    if (isProductTarget && !selectedProductId) {
+      this.errorMessage.set('community.form.error-target');
+      return;
+    }
+    if (isProfileTarget && !selectedTargetProfileId) {
       this.errorMessage.set('community.form.error-target');
       return;
     }
 
-    const resolvedTargetProfileId = this.communityStore.resolveReviewTargetProfileId(
-      isFieldTarget ? 'FIELD' : 'PRODUCT',
-      selectedFieldId,
-      selectedProductId,
-    );
+    const resolvedTargetProfileId = isProfileTarget
+      ? selectedTargetProfileId
+      : this.communityStore.resolveReviewTargetProfileId(
+          isProductTarget ? 'PRODUCT' : 'FIELD',
+          selectedFieldId,
+          selectedProductId,
+        );
 
     if (resolvedTargetProfileId === null) {
       this.errorMessage.set('community.form.error-target');
@@ -286,5 +326,72 @@ export class CommunityManagement implements OnInit {
       default:
         return 'community.form.error-submit';
     }
+  }
+
+  saveProfile(): void {
+    const profileId = this.profileContext.currentProfileId();
+    if (!profileId) return;
+    this.isSavingProfile.set(true);
+    this.errorMessage.set(null);
+    const request: CreateCommunityProfileRequest = {
+      profile_id: profileId,
+      nickname: this.profileNickname(),
+      public_bio: this.profileBio(),
+      visibility_status: this.profileVisibility(),
+    };
+    const current = this.communityStore.currentCommunityProfile();
+    const obs = current
+      ? this.communityStore.updateCommunityProfile(current.id, request as UpdateCommunityProfileRequest)
+      : this.communityStore.createCommunityProfile(request);
+    obs.pipe(finalize(() => this.isSavingProfile.set(false))).subscribe({
+      next: () => this.successMessage.set('community.profile.saved'),
+      error: () => this.errorMessage.set('community.profile.error-save'),
+    });
+  }
+
+  deleteProfile(): void {
+    const current = this.communityStore.currentCommunityProfile();
+    if (!current) return;
+    if (!confirm('Delete community profile?')) return;
+    this.communityStore.deleteCommunityProfile(current.id).subscribe({
+      next: () => {
+        this.profileNickname.set('');
+        this.profileBio.set('');
+        this.successMessage.set('community.profile.deleted');
+      },
+      error: () => this.errorMessage.set('community.profile.error-delete'),
+    });
+  }
+
+  startEditReview(review: Review): void {
+    this.editingReviewId.set(review.id);
+    this.editContent.set(review.content);
+    this.editRating.set(review.rating);
+  }
+
+  cancelEditReview(): void {
+    this.editingReviewId.set(null);
+  }
+
+  saveEditReview(review: Review): void {
+    const request: UpdateReviewRequest = {
+      content: this.editContent(),
+      rating: this.editRating(),
+    };
+    this.communityStore.updateReview(review.id, request).subscribe({
+      next: () => {
+        this.editingReviewId.set(null);
+        this.successMessage.set('community.form.success');
+      },
+      error: () => this.errorMessage.set('community.form.error-submit'),
+    });
+  }
+
+  deleteReview(review: Review): void {
+    if (!confirm('Delete comment?')) return;
+    this.communityStore.deleteReview(review.id).subscribe({
+      next: () => this.successMessage.set('community.form.success'),
+      error: () => this.errorMessage.set('community.form.error-submit'),
+    });
   }
 }

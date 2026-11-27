@@ -23,6 +23,9 @@ export class ProductCatalog implements OnInit {
 
   readonly selectedProduct = signal<Product | null>(null);
 
+  readonly selectedProducer = this.stockStore.selectedProducer;
+  readonly producerLoading = this.stockStore.producerLoading;
+
   ngOnInit(): void {
     this.stockStore.loadProducts().subscribe();
   }
@@ -35,12 +38,22 @@ export class ProductCatalog implements OnInit {
     return this.stockStore.getFieldName(fieldId);
   }
 
+  getSoilType(fieldId: number | null | undefined): string {
+    if (fieldId === null || fieldId === undefined) return '';
+    const field = this.stockStore.fields().find((f) => Number(f.id) === Number(fieldId));
+    return field?.soilType ?? '';
+  }
+
   viewDetail(product: Product): void {
     this.selectedProduct.set(product);
+    this.stockStore.loadProducer(product.id).subscribe({
+      error: () => {},
+    });
   }
 
   closeDetail(): void {
     this.selectedProduct.set(null);
+    this.stockStore.clearProducer();
   }
 
   goBack(): void {

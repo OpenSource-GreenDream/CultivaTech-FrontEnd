@@ -406,7 +406,16 @@
       "out-of-stock": "Agotado",
       "detail-available": "Producto disponible para compra",
       "detail-unavailable": "Producto no disponible actualmente",
-      "close-btn": "Cerrar"
+      "close-btn": "Cerrar",
+      "origin-title": "Origen del producto",
+      "fundo-label": "Fundo",
+      "soil-label": "Tipo de suelo",
+      "producer-title": "Información del productor",
+      "nickname-label": "Apodo",
+      "phone-label": "Teléfono comercial",
+      "reputation-label": "Reputación",
+      "loading-producer": "Cargando información del productor...",
+      "no-producer": "La información del productor no está disponible."
     },
     "submit": {
       "register": "Registrar producto"
@@ -536,7 +545,8 @@
       "title": "Reseñas y Calificaciones Publicadas",
       "empty": "Aún no existen reseñas publicadas para el criterio seleccionado.",
       "field-badge": "Lote",
-      "product-badge": "Producto"
+      "product-badge": "Producto",
+      "profile-badge": "Perfil"
     },
     "form": {
       "title": "Publicar Reseña y Calificación",
@@ -557,11 +567,39 @@
       "error-self-review": "No puedes calificar tus propios lotes o productos.",
       "error-no-profile": "Se requiere un perfil activo para publicar reseñas.",
       "error-submit": "No se pudo publicar la reseña. Inténtalo de nuevo.",
-      "success": "Reseña publicada exitosamente."
+      "success": "Reseña publicada exitosamente.",
+      "target-profile": "Perfil",
+      "select-profile-label": "Seleccionar perfil",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "save": "Guardar",
+      "cancel": "Cancelar"
     },
     "pagination": {
       "prev": "Anterior",
       "next": "Siguiente"
+    },
+    "profile": {
+      "title": "Perfil comunitario",
+      "missing": "Aún no tienes perfil comunitario.",
+      "nickname": "Apodo",
+      "bio": "Biografía pública",
+      "visibility": "Visibilidad",
+      "reputation": "Reputación",
+      "save": "Guardar perfil",
+      "create": "Crear perfil",
+      "delete": "Eliminar perfil",
+      "saved": "Perfil guardado.",
+      "deleted": "Perfil eliminado.",
+      "error-save": "No se pudo guardar el perfil.",
+      "error-delete": "No se pudo eliminar el perfil."
+    },
+    "errors": {
+      "load": "No se pudieron cargar los datos comunitarios.",
+      "profile-save": "No se pudo guardar el perfil comunitario.",
+      "profile-delete": "No se pudo eliminar el perfil comunitario.",
+      "review-save": "No se pudo guardar la valoración.",
+      "review-delete": "No se pudo eliminar la valoración."
     }
   }
 }
