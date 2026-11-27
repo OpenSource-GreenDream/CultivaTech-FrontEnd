@@ -9,6 +9,51 @@
       <p>{{ "community.loading" | translate }}</p>
     </div>
   } @else {
+    <div class="card profile-card">
+      <h3>{{ 'community.profile.title' | translate }}</h3>
+      @if (communityStore.currentCommunityProfile(); as profile) {
+        <p><strong>{{ profile.nickname }}</strong></p>
+        <p>{{ profile.publicBio }}</p>
+        <p>{{ 'community.profile.reputation' | translate }}: {{ profile.reputationScore }}</p>
+        <p>{{ 'community.profile.visibility' | translate }}: {{ profile.visibilityStatus }}</p>
+        <div class="form-group">
+          <label>{{ 'community.profile.nickname' | translate }}</label>
+          <input [(ngModel)]="profileNickname" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>{{ 'community.profile.bio' | translate }}</label>
+          <textarea [(ngModel)]="profileBio" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+          <label>{{ 'community.profile.visibility' | translate }}</label>
+          <input type="number" [(ngModel)]="profileVisibility" class="form-control" />
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="btn-submit" (click)="saveProfile()" [disabled]="isSavingProfile()">
+            {{ 'community.profile.save' | translate }}
+          </button>
+          <button type="button" class="btn-page" (click)="deleteProfile()">
+            {{ 'community.profile.delete' | translate }}
+          </button>
+        </div>
+      } @else {
+        <p>{{ 'community.profile.missing' | translate }}</p>
+        <div class="form-group">
+          <label>{{ 'community.profile.nickname' | translate }}</label>
+          <input [(ngModel)]="profileNickname" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>{{ 'community.profile.bio' | translate }}</label>
+          <textarea [(ngModel)]="profileBio" class="form-control"></textarea>
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="btn-submit" (click)="saveProfile()" [disabled]="isSavingProfile()">
+            {{ 'community.profile.create' | translate }}
+          </button>
+        </div>
+      }
+    </div>
+
     <div class="community-grid">
       <div class="card reputation-card">
         <h3>{{ "community.reputation.title" | translate }}</h3>
@@ -97,6 +142,7 @@
                 <select [(ngModel)]="newReview.targetType" name="targetType" required class="form-control">
                   <option value="FIELD">{{ "community.form.target-field" | translate }}</option>
                   <option value="PRODUCT">{{ "community.form.target-product" | translate }}</option>
+                  <option value="PROFILE">{{ "community.form.target-profile" | translate }}</option>
                 </select>
               </div>
 
@@ -109,12 +155,21 @@
                     }
                   </select>
                 </div>
-              } @else {
+              } @else if (newReview.targetType === 'PRODUCT') {
                 <div class="form-group">
                   <label>{{ "community.form.select-product-label" | translate }}</label>
                   <select [(ngModel)]="newReview.productId" name="productId" required class="form-control">
                     @for (product of reviewableProducts(); track product.id) {
                       <option [value]="product.id">{{ product.name }}</option>
+                    }
+                  </select>
+                </div>
+              } @else {
+                <div class="form-group">
+                  <label>{{ "community.form.select-profile-label" | translate }}</label>
+                  <select [(ngModel)]="newReview.targetProfileId" name="targetProfileId" required class="form-control">
+                    @for (profile of reviewableProfiles(); track profile.profileId) {
+                      <option [value]="profile.profileId">{{ profile.nickname }}</option>
                     }
                   </select>
                 </div>
@@ -161,12 +216,37 @@
                 <div class="review-header">
                   <span class="rating">★ {{ review.rating }}/5</span>
                   <span class="target-info">
-                    {{ (review.targetType === 'PRODUCT' ? 'community.reviews.product-badge' : 'community.reviews.field-badge') | translate }}:
+                    {{ (review.targetType === 'PRODUCT' ? 'community.reviews.product-badge' : (review.targetType === 'PROFILE' ? 'community.reviews.profile-badge' : 'community.reviews.field-badge')) | translate }}:
                     <strong>{{ getReviewTargetLabel(review) }}</strong>
                     — {{ getAuthorLabel(review.authorProfileId) }}
                   </span>
                 </div>
-                <p class="content">{{ review.content }}</p>
+                @if (editingReviewId() === review.id) {
+                  <div class="form-group">
+                    <textarea [(ngModel)]="editContent" class="form-control" rows="2"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <select [(ngModel)]="editRating" class="form-control">
+                      <option [value]="5">5</option>
+                      <option [value]="4">4</option>
+                      <option [value]="3">3</option>
+                      <option [value]="2">2</option>
+                      <option [value]="1">1</option>
+                    </select>
+                  </div>
+                  <div class="form-buttons">
+                    <button type="button" class="btn-submit" (click)="saveEditReview(review)">{{ 'community.form.save' | translate }}</button>
+                    <button type="button" class="btn-page" (click)="cancelEditReview()">{{ 'community.form.cancel' | translate }}</button>
+                  </div>
+                } @else {
+                  <p class="content">{{ review.content }}</p>
+                  @if (review.authorProfileId === profileContext.currentProfileId()) {
+                    <div class="form-buttons">
+                      <button type="button" class="btn-page" (click)="startEditReview(review)">{{ 'community.form.edit' | translate }}</button>
+                      <button type="button" class="btn-page" (click)="deleteReview(review)">{{ 'community.form.delete' | translate }}</button>
+                    </div>
+                  }
+                }
               </div>
             }
           </div>

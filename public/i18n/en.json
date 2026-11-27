@@ -536,7 +536,8 @@
       "title": "Published Reviews & Ratings",
       "empty": "No reviews have been published for the selected criteria yet.",
       "field-badge": "Crop Lot",
-      "product-badge": "Product"
+      "product-badge": "Product",
+      "profile-badge": "Profile"
     },
     "form": {
       "title": "Publish Review & Rating",
@@ -557,11 +558,39 @@
       "error-self-review": "You cannot review your own crop lots or products.",
       "error-no-profile": "An active profile is required to publish reviews.",
       "error-submit": "Could not publish the review. Please try again.",
-      "success": "Review published successfully."
+      "success": "Review published successfully.",
+      "target-profile": "Profile",
+      "select-profile-label": "Select profile",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel"
     },
     "pagination": {
       "prev": "Previous",
       "next": "Next"
+    },
+    "profile": {
+      "title": "Community profile",
+      "missing": "No community profile yet.",
+      "nickname": "Nickname",
+      "bio": "Public biography",
+      "visibility": "Visibility",
+      "reputation": "Reputation",
+      "save": "Save profile",
+      "create": "Create profile",
+      "delete": "Delete profile",
+      "saved": "Profile saved.",
+      "deleted": "Profile deleted.",
+      "error-save": "Could not save profile.",
+      "error-delete": "Could not delete profile."
+    },
+    "errors": {
+      "load": "Could not load community data.",
+      "profile-save": "Could not save community profile.",
+      "profile-delete": "Could not delete community profile.",
+      "review-save": "Could not save review.",
+      "review-delete": "Could not delete review."
     }
   }
 }
