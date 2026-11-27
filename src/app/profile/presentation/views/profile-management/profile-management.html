@@ -1,7 +1,7 @@
 <div class="profile-container">
   <div class="header-section">
-    <h2 class="section-title">{{ "profile.management.title" | translate }}</h2>
-    <p class="section-subtitle">{{ "profile.management.subtitle" | translate }}</p>
+    <h2 class="section-title">{{ 'profile.management.title' | translate }}</h2>
+    <p class="section-subtitle">{{ 'profile.management.subtitle' | translate }}</p>
   </div>
 
   @if (profileStore.feedbackMessage(); as feedbackKey) {
@@ -18,16 +18,131 @@
 
   @if (isLoading()) {
     <div class="loading-state">
-      <p>{{ "profile.management.loading" | translate }}</p>
+      <p>{{ 'profile.management.loading' | translate }}</p>
     </div>
   } @else if (!errorMessage()) {
     <div class="profile-grid">
-      <app-profile-info [profile]="profileStore.currentProfile()"></app-profile-info>
+      <div class="left-column">
+        <div class="card profile-info-card">
+          <div class="card-header">
+            <h3 class="card-title">{{ 'profile.info.title' | translate }}</h3>
+            <button type="button" class="btn-edit" (click)="openEdit()">{{ 'profile.info.edit' | translate }}</button>
+          </div>
+          <div class="card-body">
+            @if (profileStore.currentProfile(); as p) {
+              <div class="info-group">
+                <span class="info-label">{{ 'profile.info.account-type' | translate }}</span>
+                <span class="info-value">{{ currentUserRoles().join(', ') }}</span>
+              </div>
+              <div class="info-group">
+                <span class="info-label">{{ (isAgricultural() ? 'profile.info.farm-name' : 'profile.info.name') | translate }}</span>
+                <span class="info-value name-value">{{ p.fundoName }}</span>
+              </div>
+              <div class="info-group">
+                <span class="info-label">{{ 'profile.info.contact-phone' | translate }}</span>
+                <span class="info-value">{{ p.contactPhone }}</span>
+              </div>
+              @if (isAgricultural()) {
+                <div class="info-group">
+                  <span class="info-label">{{ 'profile.info.moisture-threshold' | translate }}</span>
+                  <span class="info-value">{{ p.moistureThreshold }}%</span>
+                </div>
+                <div class="info-group">
+                  <span class="info-label">{{ 'profile.info.temp-threshold' | translate }}</span>
+                  <span class="info-value">{{ p.temperatureThreshold }}°C</span>
+                </div>
+              }
+            }
+          </div>
+        </div>
 
-      <app-field-list
-        [fields]="profileStore.fields()"
-        (fieldCreated)="onFieldCreated()">
-      </app-field-list>
+        @if (!isAgricultural()) {
+          <div class="card community-card">
+            <div class="card-header">
+              <h3 class="card-title">{{ 'profile.community.title' | translate }}</h3>
+            </div>
+            <div class="card-body">
+              @if (communityProfile(); as cp) {
+                <div class="info-group">
+                  <span class="info-label">{{ 'profile.community.nickname' | translate }}</span>
+                  <span class="info-value">{{ cp.nickname }}</span>
+                </div>
+                <div class="info-group">
+                  <span class="info-label">{{ 'profile.community.reputation' | translate }}</span>
+                  <span class="info-value">{{ cp.reputationScore }}</span>
+                </div>
+                @if (cp.publicBio) {
+                  <p>{{ cp.publicBio }}</p>
+                }
+              } @else {
+                <p class="empty-state">{{ 'profile.community.empty' | translate }}</p>
+              }
+              <button type="button" class="link-btn" (click)="navigate('/community')">{{ 'profile.community.link' | translate }}</button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="right-column">
+        @if (canManageFields()) {
+          <app-field-list
+            [fields]="profileStore.fields()"
+            (fieldCreated)="onFieldCreated()">
+          </app-field-list>
+        } @else {
+          <div class="card reviews-card">
+            <div class="card-header">
+              <h3 class="card-title">{{ 'profile.reviews.title' | translate }}</h3>
+            </div>
+            <div class="card-body">
+              @if (receivedReviews().length === 0) {
+                <p class="empty-state">{{ 'profile.reviews.empty' | translate }}</p>
+              } @else {
+                @for (review of receivedReviews(); track review.id) {
+                  <div class="review-item">
+                    <span class="rating">{{ review.rating }}/5</span>
+                    <p>{{ review.content }}</p>
+                    <span class="date">{{ review.createdAt | date:'short' }}</span>
+                  </div>
+                }
+              }
+              <button type="button" class="link-btn" (click)="navigate('/community')">{{ 'profile.reviews.link' | translate }}</button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (isEditing()) {
+    <div class="modal-overlay" (click)="closeEdit()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <h3>{{ 'profile.edit.title' | translate }}</h3>
+        <form [formGroup]="editForm" (ngSubmit)="saveProfile()">
+          <div class="form-group">
+            <label>{{ (isAgricultural() ? 'profile.edit.farm-name' : 'profile.edit.name') | translate }}</label>
+            <input formControlName="fundoName" />
+          </div>
+          <div class="form-group">
+            <label>{{ 'profile.edit.phone' | translate }}</label>
+            <input formControlName="contactPhone" />
+          </div>
+          @if (isAgricultural()) {
+            <div class="form-group">
+              <label>{{ 'profile.edit.moisture' | translate }}</label>
+              <input type="number" formControlName="moistureThreshold" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'profile.edit.temp' | translate }}</label>
+              <input type="number" formControlName="temperatureThreshold" />
+            </div>
+          }
+          <div class="form-buttons">
+            <button type="button" class="btn-secondary" (click)="closeEdit()">{{ 'profile.edit.cancel' | translate }}</button>
+            <button type="submit" class="btn-primary" [disabled]="isSaving()">{{ 'profile.edit.save' | translate }}</button>
+          </div>
+        </form>
+      </div>
     </div>
   }
 </div>

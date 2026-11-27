@@ -24,7 +24,9 @@ export class ReviewAssembler {
       Number(resource.rating),
       targetType,
       resource.field_id ?? null,
-      resource.product_id ?? null
+      resource.product_id ?? null,
+      resource.created_at,
+      resource.updated_at
     );
   }
 

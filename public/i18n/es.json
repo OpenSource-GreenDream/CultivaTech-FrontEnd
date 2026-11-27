@@ -71,7 +71,8 @@
       "notifications": "Notificaciones",
       "profile": "Mi perfil",
       "analytics": "Reportes e indicadores",
-      "community": "Comunidad"
+      "community": "Comunidad",
+      "commercial": "Comercial"
     },
     "logout": "Cerrar sesión"
   },
@@ -314,8 +315,8 @@
   },
   "profile": {
     "management": {
-      "title": "Gestión de Fundo y Terrenos",
-      "subtitle": "Administra la información de tu fundo y supervisa cada uno de tus lotes agrícolas.",
+      "title": "Gestión de perfil",
+      "subtitle": "Administra tu información personal y los detalles de tu perfil.",
       "loading": "Cargando información del fundo...",
       "load-error": "No se pudo cargar la información del fundo. Inténtalo de nuevo."
     },
@@ -326,7 +327,10 @@
       "thresholds-title": "Configuración de Umbrales",
       "moisture-threshold": "Umbral de Humedad",
       "temp-threshold": "Umbral de Temp.",
-      "empty": "No se encontró un perfil de fundo asociado a esta cuenta."
+      "empty": "No se encontró un perfil de fundo asociado a esta cuenta.",
+      "account-type": "Tipo de cuenta",
+      "name": "Nombre",
+      "edit": "Editar perfil"
     },
     "create": {
       "badge": "Configuración Inicial",
@@ -348,7 +352,31 @@
       "error-load": "No se pudo verificar tu perfil actual. Inténtalo de nuevo.",
       "success": "Perfil creado exitosamente.",
       "submit": "Crear Perfil",
-      "submitting": "Creando perfil..."
+      "submitting": "Creando perfil...",
+      "name-label": "Nombre",
+      "name-placeholder": "Tu nombre"
+    },
+    "edit": {
+      "title": "Editar perfil",
+      "farm-name": "Nombre del fundo",
+      "name": "Nombre",
+      "phone": "Teléfono de contacto",
+      "moisture": "Umbral de humedad",
+      "temp": "Umbral de temperatura",
+      "save": "Guardar cambios",
+      "cancel": "Cancelar"
+    },
+    "community": {
+      "title": "Reputación comunitaria",
+      "nickname": "Apodo",
+      "reputation": "Reputación",
+      "empty": "Sin perfil comunitario.",
+      "link": "Ver comunidad"
+    },
+    "reviews": {
+      "title": "Valoraciones recibidas",
+      "empty": "Sin valoraciones recibidas.",
+      "link": "Ver comunidad"
     }
   },
   "stock": {

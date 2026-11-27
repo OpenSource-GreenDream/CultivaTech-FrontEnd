@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
 import {AuthService} from '../../../../iam/application/auth.service';
+import {canAccessAgriculturalModules} from '../../../../shared/domain/access-policy';
 import {ProfileStore} from '../../../../profile/application/profile.store';
 import {ProfileContextService} from '../../../../profile/application/profile-context.service';
 import {StockStore} from '../../../../stock/application/stock.store';
@@ -26,7 +27,7 @@ export class Home implements OnInit {
   private monitoringStore = inject(MonitoringStore);
   private notificationStore = inject(NotificationStore);
 
-  readonly isFarmer = computed(() => this.authService.hasRole('FARMER'));
+  readonly canAccessAgricultural = computed(() => canAccessAgriculturalModules(this.authService.currentUserRoles()));
 
   readonly fields = this.profileStore.fields;
   readonly devices = this.monitoringStore.devices;
@@ -80,7 +81,7 @@ export class Home implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.isFarmer()) return;
+    if (!this.canAccessAgricultural()) return;
     this.profileContext.fetchCurrentProfile().subscribe();
     this.profileStore.loadFieldsForCurrentProfile().subscribe();
     this.stockStore.loadProducts().subscribe();
