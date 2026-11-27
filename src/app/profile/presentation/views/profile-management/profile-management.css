@@ -1,54 +1,181 @@
 .profile-container {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: var(--space-6);
 }
 
-.header-section {
-  background: #ffffff;
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
-  border-left: 5px solid #2d6a4f;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+.header-section .section-title {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-h2);
+  margin: 0 0 var(--space-2);
 }
 
-.section-title {
-  color: #1b4332;
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin: 0 0 0.35rem 0;
-  letter-spacing: -0.3px;
-}
-
-.section-subtitle {
-  color: #64748b;
+.header-section .section-subtitle {
+  color: var(--color-text-secondary);
   margin: 0;
-  font-size: 0.925rem;
 }
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
+  grid-template-columns: 35% 65%;
+  gap: var(--space-6);
   align-items: start;
 }
 
-@media (min-width: 1024px) {
-  .profile-grid {
-    grid-template-columns: 340px 1fr;
-  }
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
-.loading-state {
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.card-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 4rem 2rem;
-  background-color: #ffffff;
-  border-radius: 12px;
-  color: #2d6a4f;
+  margin-bottom: var(--space-4);
+}
+
+.card-title {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-h3);
+  margin: 0;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.info-label {
+  font-size: var(--font-size-caption);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.info-value {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+}
+
+.name-value {
+  font-size: var(--font-size-h3);
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.btn-edit,
+.btn-primary,
+.btn-secondary,
+.link-btn {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+}
+
+.link-btn {
+  background: transparent;
+  color: var(--color-primary);
+  padding: 0;
+  margin-top: var(--space-3);
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.review-item {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.review-item .rating {
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(48, 58, 40, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 480px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.form-group input {
+  height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-input-background);
+}
+
+.form-buttons {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-small);
+}
+
+.alert-success {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.alert-error {
+  background: var(--color-error-soft);
+  color: var(--color-error);
+}
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
 }

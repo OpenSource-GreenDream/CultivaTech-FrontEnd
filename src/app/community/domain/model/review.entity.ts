@@ -14,7 +14,9 @@ export class Review implements BaseEntity {
     public rating: number,
     public targetType: ReviewTargetType = 'FIELD',
     public fieldId: number | null = null,
-    public productId: number | null = null
+    public productId: number | null = null,
+    public createdAt?: string,
+    public updatedAt?: string
   ) {
   }
 }

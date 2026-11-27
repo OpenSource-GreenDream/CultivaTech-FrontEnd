@@ -1,9 +1,10 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {AuthService} from '../../../../iam/application/auth.service';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {LanguageSwitcher} from '../language-switcher/language-switcher';
 import {NotificationStore} from '../../../../notification/application/notification.store';
+import {canAccessAgriculturalModules, canAccessNotifications} from '../../../../shared/domain/access-policy';
 
 @Component({
   imports: [
@@ -25,6 +26,8 @@ export class Layout {
 
   readonly unreadNotifications = this.notificationStore.unreadCount;
   readonly sidebarOpen = signal(false);
+  readonly canAccessAgricultural = computed(() => canAccessAgriculturalModules(this.authService.currentUserRoles()));
+  readonly canAccessNotifications = computed(() => canAccessNotifications(this.authService.currentUserRoles()));
 
   pageTitle: string = 'CultivaTech';
 

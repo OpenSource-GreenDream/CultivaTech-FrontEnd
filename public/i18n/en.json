@@ -71,7 +71,8 @@
       "notifications": "Notifications",
       "profile": "My Profile",
       "analytics": "Analytics",
-      "community": "Community"
+      "community": "Community",
+      "commercial": "Commercial"
     },
     "logout": "Sign Out"
   },
@@ -314,8 +315,8 @@
   },
   "profile": {
     "management": {
-      "title": "Farm & Land Management",
-      "subtitle": "Manage your farm information and monitor each of your agricultural lots.",
+      "title": "Profile Management",
+      "subtitle": "Manage your personal information and profile details.",
       "loading": "Loading farm information...",
       "load-error": "Farm information could not be loaded. Please try again."
     },
@@ -326,7 +327,10 @@
       "thresholds-title": "Threshold Configuration",
       "moisture-threshold": "Moisture Threshold",
       "temp-threshold": "Temp. Threshold",
-      "empty": "No farm profile associated with this account was found."
+      "empty": "No farm profile associated with this account was found.",
+      "account-type": "Account type",
+      "name": "Name",
+      "edit": "Edit Profile"
     },
     "create": {
       "badge": "Onboarding",
@@ -348,7 +352,31 @@
       "error-load": "Could not verify your current profile. Please try again.",
       "success": "Profile created successfully.",
       "submit": "Create Profile",
-      "submitting": "Creating profile..."
+      "submitting": "Creating profile...",
+      "name-label": "Name",
+      "name-placeholder": "Your name"
+    },
+    "edit": {
+      "title": "Edit Profile",
+      "farm-name": "Farm Name",
+      "name": "Name",
+      "phone": "Contact Phone",
+      "moisture": "Moisture threshold",
+      "temp": "Temperature threshold",
+      "save": "Save Changes",
+      "cancel": "Cancel"
+    },
+    "community": {
+      "title": "Community Reputation",
+      "nickname": "Nickname",
+      "reputation": "Reputation",
+      "empty": "No community profile.",
+      "link": "View community"
+    },
+    "reviews": {
+      "title": "Received Reviews",
+      "empty": "No received reviews.",
+      "link": "View community"
     }
   },
   "stock": {

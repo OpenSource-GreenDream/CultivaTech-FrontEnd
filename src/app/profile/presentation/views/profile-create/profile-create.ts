@@ -31,7 +31,7 @@ export class ProfileCreateComponent implements OnInit {
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal(false);
 
-  readonly isFarmer = this.authService.hasRole('FARMER');
+  readonly isAgricultural = this.authService.hasRole('FARMER') || this.authService.hasRole('ADMIN');
 
   readonly profileForm: FormGroup = this.fb.group({
     fundoName: ['', [nonBlankValidator, trimmedMinLengthValidator(2)]],
@@ -41,17 +41,20 @@ export class ProfileCreateComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    if (!this.isFarmer) {
-      this.profileForm.get('fundoName')?.clearValidators();
+    if (!this.isAgricultural) {
       this.profileForm.get('moistureThreshold')?.clearValidators();
       this.profileForm.get('tempThreshold')?.clearValidators();
-      this.profileForm.get('fundoName')?.updateValueAndValidity();
       this.profileForm.get('moistureThreshold')?.updateValueAndValidity();
       this.profileForm.get('tempThreshold')?.updateValueAndValidity();
       this.profileForm.patchValue({
-        fundoName: 'non-field',
         moistureThreshold: 0,
         tempThreshold: 0,
+      });
+    } else {
+      this.profileForm.patchValue({
+        fundoName: '',
+        moistureThreshold: null,
+        tempThreshold: null,
       });
     }
 
