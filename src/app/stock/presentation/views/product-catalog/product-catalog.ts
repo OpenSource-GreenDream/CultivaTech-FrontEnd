@@ -1,6 +1,9 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {StockStore} from '../../../application/stock.store';
 import {Router} from '@angular/router';
+import {CommunityStore} from '../../../../community/application/community.store';
+import {AuthService} from '../../../../iam/application/auth.service';
+
 import {Product} from '../../../domain/model/product.entity';
 import {CurrencyPipe} from '@angular/common';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -16,7 +19,16 @@ import {TranslatePipe} from '@ngx-translate/core';
 })
 export class ProductCatalog implements OnInit {
   private readonly stockStore = inject(StockStore);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly communityStore = inject(CommunityStore);
+
+  readonly averageRating = signal<{ average: number; count: number }>({ average: 0, count: 0 });
+
+  readonly canReviewProduct = computed(() => {
+    const roles = this.authService.currentUserRoles();
+    return roles.includes('CUSTOMER') || roles.includes('SUPPLIER');
+  });
 
   readonly products = this.stockStore.products;
   readonly loading = this.stockStore.loading;
@@ -46,7 +58,16 @@ export class ProductCatalog implements OnInit {
 
   viewDetail(product: Product): void {
     this.selectedProduct.set(product);
+    document.body.style.overflow = 'hidden';
     this.stockStore.loadProducer(product.id).subscribe({
+      next: () => {
+        const producer = this.stockStore.selectedProducer();
+        if (producer) {
+          this.communityStore.getAverageProductRating(producer.profileId).subscribe({
+            next: (res) => this.averageRating.set(res),
+          });
+        }
+      },
       error: () => {},
     });
   }
@@ -54,6 +75,13 @@ export class ProductCatalog implements OnInit {
   closeDetail(): void {
     this.selectedProduct.set(null);
     this.stockStore.clearProducer();
+    this.averageRating.set({ average: 0, count: 0 });
+    document.body.style.overflow = '';
+  }
+
+  reviewProduct(productId: number): void {
+    this.closeDetail();
+    this.router.navigate(['/community/products', productId, 'reviews']);
   }
 
   goBack(): void {
