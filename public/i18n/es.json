@@ -211,7 +211,12 @@
       "average-deviation": "Promedio Desviación Estándar",
       "total-reports": "Total de Reportes",
       "status": "Estado del Sistema"
-    }
+    },
+    "harvest-simulation-title": "Simulación de cosechas (US37)",
+    "reference-production": "Producción de referencia",
+    "projected-production": "Producción proyectada",
+    "stock-quantity": "Cantidad en stock",
+    "no-simulation": "Simulación no disponible"
   },
   "fields": {
     "title": "Mis Lotes de Cultivo",
@@ -434,9 +439,13 @@
     },
     "parameters": {
       "moisture": "Humedad",
-      "temperature": "Temperatura",
-      "nutrients": "Nutrientes",
-      "ph": "pH"
+      "ph": "pH",
+      "nitrogen": "Nitrógeno",
+      "phosphorus": "Fósforo",
+      "potassium": "Potasio",
+      "calcium": "Calcio",
+      "magnesium": "Magnesio",
+      "sulfur": "Azufre"
     },
     "status": {
       "ACTIVE": "Activo",

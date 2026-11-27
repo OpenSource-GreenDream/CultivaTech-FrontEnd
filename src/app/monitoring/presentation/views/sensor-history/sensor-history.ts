@@ -3,6 +3,7 @@ import {MonitoringStore, TelemetryAlertStatus} from '../../../application/monito
 import {Router} from '@angular/router';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe} from '@angular/common';
+import {DisplayUnitPipe} from '../../pipes/display-unit.pipe';
 import {SensorReading} from '../../../domain/model/sensor-reading.entity';
 import {PARAMETER_I18N_KEYS, TelemetryParameter, isTelemetryParameter} from '../../../domain/model/telemetry-parameter';
 import {RegisterSensorReadingRequest} from '../../../infrastructure/register-sensor-reading.request';
@@ -10,7 +11,8 @@ import {RegisterSensorReadingRequest} from '../../../infrastructure/register-sen
 @Component({
   imports: [
     TranslatePipe,
-    DatePipe
+    DatePipe,
+    DisplayUnitPipe
   ],
   selector: 'app-sensor-history',
   styleUrl: './sensor-history.css',
@@ -78,13 +80,16 @@ export class SensorHistory implements OnInit {
     }
   }
 
-  private getUnitFor(parameter: TelemetryParameter): string {
-    // reuse existing ranges via import
+  private getUnitFor(parameter: string): string {
     const ranges: Record<string, string> = {
       MOISTURE: '%',
-      TEMPERATURE: '°C',
-      NUTRIENTS: 'ppm',
-      PH: 'pH',
+      PH: 'unitless',
+      NITROGEN: 'mg/kg',
+      PHOSPHORUS: 'mg/kg',
+      POTASSIUM: 'mg/kg',
+      CALCIUM: 'mg/kg',
+      MAGNESIUM: 'mg/kg',
+      SULFUR: 'mg/kg',
     };
     return ranges[parameter] ?? '';
   }

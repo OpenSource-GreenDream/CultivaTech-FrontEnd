@@ -94,6 +94,14 @@ export class StockStore {
     return mapById;
   });
 
+  readonly productByInventoryIdMap = computed(() => {
+    const mapByInventory = new Map<number, Product>();
+    for (const product of this._products()) {
+      mapByInventory.set(Number(product.inventoryId), product);
+    }
+    return mapByInventory;
+  });
+
   readonly fieldByIdMap = computed(() => {
     const mapById = new Map<number, Field>();
     for (const field of this._fields()) {
@@ -106,11 +114,11 @@ export class StockStore {
     const term = this.searchTerm().trim().toLowerCase();
     const fieldFilter = this.selectedFieldId();
     const criteria = this.stockCriteria();
-    const productMap = this.productByIdMap();
+    const productMap = this.productByInventoryIdMap();
     const fieldMap = this.fieldByIdMap();
 
     return this.inventories().filter((item) => {
-      const product = productMap.get(Number(item.productId));
+      const product = productMap.get(Number(item.id));
       const batchId = Number(item.fieldId ?? product?.fieldId);
       const batchName = (fieldMap.get(batchId)?.name ?? '').toLowerCase();
 
@@ -179,6 +187,10 @@ export class StockStore {
     return this.productByIdMap().get(Number(productId));
   }
 
+  getProductByInventory(inventoryId: number): Product | undefined {
+    return this.productByInventoryIdMap().get(Number(inventoryId));
+  }
+
   getProductName(productId: number): string {
     return this.getProduct(productId)?.name ?? `#${productId}`;
   }
@@ -191,11 +203,11 @@ export class StockStore {
   }
 
   isProductAvailable(productId: number): boolean {
-    const records = this._allInventories().filter(item => Number(item.productId) === Number(productId));
-    if (records.length === 0) {
-      return true;
-    }
-    return records.some(item => item.stockQuantity > 0);
+    const product = this.productByIdMap().get(Number(productId));
+    if (!product) return true;
+    const record = this._allInventories().find(item => Number(item.id) === Number(product.inventoryId));
+    if (!record) return true;
+    return record.stockQuantity > 0;
   }
 
   loadInventories(): Observable<Inventory[]> {
@@ -220,8 +232,8 @@ export class StockStore {
 
         return forkJoin({
           inventoriesRaw: this.inventoryApi.getInventoriesByProfileId(profile.id),
-          productsRaw: this.productApi.getProducts().pipe(catchError(() => of([]))),
-          fieldsRaw: this.fieldApi.getFields(profile.id).pipe(catchError(() => of<FieldResource[]>([])))
+          productsRaw: this.productApi.getProducts(),
+          fieldsRaw: this.fieldApi.getFields(profile.id)
         }).pipe(
           map(({ inventoriesRaw, productsRaw, fieldsRaw }) => {
             const fields = fieldsRaw.filter((field) => Number(field.profileId) === Number(profile.id));
@@ -254,10 +266,10 @@ export class StockStore {
       switchMap((profile) => forkJoin({
         productsRaw: this.productApi.getProducts(),
         inventoriesRaw: profile
-          ? this.inventoryApi.getInventoriesByProfileId(profile.id).pipe(catchError(() => of<InventoryResource[]>([])))
+          ? this.inventoryApi.getInventoriesByProfileId(profile.id)
           : of<InventoryResource[]>([]),
         fieldsRaw: profile
-          ? this.fieldApi.getFields(profile.id).pipe(catchError(() => of<FieldResource[]>([])))
+          ? this.fieldApi.getFields(profile.id)
           : of<FieldResource[]>([])
       }).pipe(
         map(({ productsRaw, inventoriesRaw, fieldsRaw }) => {
@@ -306,16 +318,27 @@ export class StockStore {
     }
 
     const field = this.fieldByIdMap().get(Number(request.fieldId));
-    const profileId = field?.profileId ?? this.profileContext.currentProfileId() ?? undefined;
+    const profileId = field?.profileId ?? this.profileContext.currentProfileId();
+    if (!profileId) {
+      return throwError(() => new Error('No active profile'));
+    }
 
-    return this.createProduct(request).pipe(
-      switchMap((product) => this.createInventory({
-        productId: product.id,
-        profileId,
+    return this.createInventory({
+      profileId,
+      fieldId: Number(request.fieldId),
+      stockQuantity,
+    }).pipe(
+      switchMap((inventory) => this.createProduct({
+        ...request,
+        inventoryId: inventory.id,
         fieldId: Number(request.fieldId),
-        stockQuantity,
+        type: request.type ?? 'PRODUCT',
       }).pipe(
-        map((inventory) => ({ product, inventory }))
+        map((product) => ({ product, inventory })),
+        catchError((error) => {
+          // keep inventory; propagate error
+          return throwError(() => error);
+        })
       ))
     );
   }
@@ -325,20 +348,22 @@ export class StockStore {
       return throwError(() => new Error('La cantidad inicial no puede ser negativa'));
     }
 
-    const activeProfileId = this.profileContext.currentProfileId();
-    const payload: CreateInventoryRequest = {
-      ...request,
-      profileId: request.profileId ?? activeProfileId ?? undefined
-    };
+    const activeProfileId = request.profileId ?? this.profileContext.currentProfileId();
+    if (!activeProfileId) {
+      return throwError(() => new Error('No active profile'));
+    }
 
-    return this.inventoryApi.createInventory(payload).pipe(
+    return this.inventoryApi.createInventory(activeProfileId, {
+      fieldId: request.fieldId,
+      stockQuantity: request.stockQuantity,
+    }).pipe(
       map((resource) => InventoryAssembler.toEntityFromResource(resource)),
       tap((newInventory) => {
         this._inventories.update((current) => [...current, newInventory]);
         this._allInventories.update((current) => [...current, newInventory]);
         this.notificationEvents.stockInitialized(
           newInventory,
-          this.getProductName(newInventory.productId),
+          this.getFieldName(newInventory.fieldId) || 'Inventory',
         );
       })
     );
@@ -353,7 +378,12 @@ export class StockStore {
       this._inventories().find((item) => Number(item.id) === Number(request.inventoryId)) ??
       this._allInventories().find((item) => Number(item.id) === Number(request.inventoryId));
 
-    return this.inventoryApi.updateStockQuantity(request.inventoryId, request.stockQuantity).pipe(
+    const fieldId = previousInventory?.fieldId ?? request.fieldId;
+    if (fieldId === undefined) {
+      return throwError(() => new Error('Missing fieldId'));
+    }
+
+    return this.inventoryApi.updateInventory(request.inventoryId, fieldId, request.stockQuantity).pipe(
       map((resource) => InventoryAssembler.toEntityFromResource(resource)),
       tap((updatedInventory) => {
         this._inventories.update((current) =>
@@ -364,7 +394,7 @@ export class StockStore {
         );
         this.notificationEvents.stockUpdated(
           updatedInventory,
-          this.getProductName(updatedInventory.productId),
+          this.productByInventoryIdMap().get(Number(updatedInventory.id))?.name ?? 'Inventory',
           previousInventory?.stockQuantity ?? null,
         );
       })

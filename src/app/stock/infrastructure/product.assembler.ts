@@ -1,32 +1,30 @@
-import {Service} from '@angular/core';
 import {ProductResource} from './product-response';
 import {Product} from '../domain/model/product.entity';
 
-@Service()
 export class ProductAssembler {
   static toEntityFromResource(resource: ProductResource): Product {
     return {
       id: resource.id,
+      inventoryId: resource.inventoryId,
+      fieldId: resource.fieldId ?? null,
       name: resource.name,
       description: resource.description,
       price: resource.price,
-      fieldId: resource.field_id ?? null,
-      imageUrl: resource.image_url,
-      createdAt: resource.created_at,
-      updatedAt: resource.updated_at,
+      type: resource.type,
+      imageUrl: resource.imageUrl,
     };
   }
 
   static toResourceFromEntity(entity: Product): ProductResource {
     return {
       id: entity.id,
+      inventoryId: entity.inventoryId,
+      fieldId: entity.fieldId,
       name: entity.name,
       description: entity.description,
       price: entity.price,
-      field_id: entity.fieldId,
-      image_url: entity.imageUrl,
-      created_at: entity.createdAt,
-      updated_at: entity.updatedAt,
+      type: entity.type,
+      imageUrl: entity.imageUrl,
     };
   }
 }

@@ -1,15 +1,16 @@
-import {TelemetryParameter} from '../../../../monitoring/domain/model/telemetry-parameter';
-
 export interface AnalyticsReport {
   id: number;
   deviceId: number;
-  parameter: TelemetryParameter;
+  parameter: string;
   unit: string;
+  periodStart: string;
+  periodEnd: string;
+  sampleCount: number;
   generatedAt: string;
   meanValue: number;
   variance: number;
   standardDeviation: number;
-  technicalInterpretation?: string;
+  technicalInterpretation: string;
   createdAt: string;
   updatedAt: string;
 }

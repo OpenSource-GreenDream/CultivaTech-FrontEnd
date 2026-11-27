@@ -211,7 +211,12 @@
       "average-deviation": "Average Std Deviation",
       "total-reports": "Total Reports",
       "status": "System Status"
-    }
+    },
+    "harvest-simulation-title": "Harvest Simulation (US37)",
+    "reference-production": "Reference production",
+    "projected-production": "Projected production",
+    "stock-quantity": "Stock quantity",
+    "no-simulation": "No simulation available"
   },
   "fields": {
     "title": "My Crop Lots",
@@ -429,9 +434,13 @@
     },
     "parameters": {
       "moisture": "Moisture",
-      "temperature": "Temperature",
-      "nutrients": "Nutrients",
-      "ph": "pH"
+      "ph": "pH",
+      "nitrogen": "Nitrogen",
+      "phosphorus": "Phosphorus",
+      "potassium": "Potassium",
+      "calcium": "Calcium",
+      "magnesium": "Magnesium",
+      "sulfur": "Sulfur"
     },
     "status": {
       "ACTIVE": "Active",

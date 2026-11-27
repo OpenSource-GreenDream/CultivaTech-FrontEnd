@@ -9,7 +9,6 @@ import {Product} from '../../../domain/model/product.entity';
 @Component({
   imports: [
     CurrencyPipe,
-    DatePipe,
     FormsModule,
     TranslatePipe
   ],
@@ -40,6 +39,10 @@ export class StockManagement implements OnInit {
 
   getProduct(productId: number): Product | undefined {
     return this.stockStore.getProduct(productId);
+  }
+
+  getProductByInventory(inventoryId: number): Product | undefined {
+    return this.stockStore.getProductByInventory(inventoryId);
   }
 
   getProductName(productId: number): string {

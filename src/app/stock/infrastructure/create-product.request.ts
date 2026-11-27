@@ -1,7 +1,9 @@
 export interface CreateProductRequest {
-  fieldId: number;
+  inventoryId?: number;
+  fieldId?: number | null;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
+  type?: string;
+  imageUrl?: string;
 }

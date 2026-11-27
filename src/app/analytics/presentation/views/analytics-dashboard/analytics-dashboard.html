@@ -28,7 +28,7 @@
       <div class="cards-grid">
         <div class="card">
           <span class="card-title">{{ "analytics.cards.average-mean" | translate }}</span>
-          <span class="card-value">{{ indicators().averageMean }}{{ activeUnit() }}</span>
+          <span class="card-value">{{ indicators().averageMean }}{{ activeUnit() | displayUnit:selectedStatistics()?.parameter }}</span>
         </div>
 
         <div class="card">
@@ -62,134 +62,32 @@
     <div class="section-container">
       <div class="section-header">
         <h3>{{ (parameterKey() | translate) + ' — ' + ("analytics.trend-title" | translate) }}</h3>
+        @if (statisticsParameters().length > 1) {
+          <select [value]="selectedStatisticsParameter() ?? ''" (change)="onParameterChange($event)">
+            @for (parameter of statisticsParameters(); track parameter) {
+              <option [value]="parameter">{{ parameter }}</option>
+            }
+          </select>
+        }
         <div class="chart-legend">
           <span class="legend-item"><span class="legend-color line-color"></span> {{ "analytics.real-reading" | translate }}</span>
           <span class="legend-item"><span class="legend-color threshold-color"></span> {{ "analytics.min-threshold" | translate }} ({{ criticalThreshold() }}{{ activeUnit() }})</span>
         </div>
       </div>
 
-      @if (chartReports().length > 0) {
-        <div class="chart-wrapper">
-          <svg viewBox="0 0 600 180" class="native-chart">
-            <line x1="30" y1="30" x2="570" y2="30" stroke="#edf2f7" stroke-dasharray="4" />
-            <line x1="30" y1="105" x2="570" y2="105" stroke="#edf2f7" stroke-dasharray="4" />
-            <line x1="30" y1="150" x2="570" y2="150" stroke="#cbd5e0" />
-
-            <line
-              x1="30"
-              [attr.y1]="thresholdY()"
-              x2="570"
-              [attr.y2]="thresholdY()"
-              stroke="#e53e3e"
-              stroke-width="2"
-              stroke-dasharray="5"
-            />
-            <text x="35" [attr.y]="thresholdY() - 6" fill="#e53e3e" font-size="10" font-weight="700">
-              {{ "analytics.critical-threshold" | translate }} ({{ criticalThreshold() }}{{ activeUnit() }})
-            </text>
-
-            <polyline
-              [attr.points]="chartPoints()"
-              fill="none"
-              stroke="#3182ce"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-
-            @for (rep of chartReports(); track rep.id; let i = $index) {
-              <g class="chart-node">
-                <circle
-                  [attr.cx]="30 + (i / (chartReports().length - 1 || 1)) * 540"
-                  [attr.cy]="180 - 30 - ((rep.meanValue - chartValues().minVal) / chartValues().rangeVal) * 120"
-                  [attr.r]="5"
-                  [attr.fill]="isAlert(rep) ? '#e53e3e' : '#2b6cb0'"
-                  stroke="#fff"
-                  stroke-width="2"
-                />
-              </g>
-            }
-          </svg>
-        </div>
+      @if (trendReadings().length > 0) {
+        <app-telemetry-chart
+          [readings]="trendReadings()"
+          [parameter]="selectedStatistics()?.parameter ?? ''"
+          [unit]="activeUnit()"
+          [threshold]="criticalThreshold()"
+          [loading]="loading()"
+          [color]="parameterColor()"
+        />
       } @else {
         <p class="no-data-msg">{{ "analytics.no-chart-reports" | translate }}</p>
       }
     </div>
 
-    <div class="section-container">
-      <h3>{{ "analytics.projections-title" | translate }}</h3>
-      @if (projections().length > 0) {
-        <div class="dual-comparison-grid">
-          @for (proj of projections(); track proj.id) {
-            <div class="comparison-card">
-              <div class="crop-header">
-                <span class="crop-title">{{ proj.cropType }}</span>
-                <span class="period-badge">{{ proj.projectionPeriod }}</span>
-              </div>
-
-              <div class="bars-wrapper">
-                <div class="bar-row">
-                  <span class="bar-label">{{ "analytics.historical-label" | translate }}: <strong>{{ proj.historicalYieldTons }} t</strong></span>
-                  <div class="bar-track">
-                    <div class="bar-fill historical" [style.width.%]="barWidth(proj.historicalYieldTons)"></div>
-                  </div>
-                </div>
-
-                <div class="bar-row">
-                  <span class="bar-label">{{ "analytics.projected-label" | translate }}: <strong>{{ proj.projectedYieldTons }} t</strong></span>
-                  <div class="bar-track">
-                    <div class="bar-fill projected" [style.width.%]="barWidth(proj.projectedYieldTons)"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card-footer">
-                <span class="confidence-tag">{{ "analytics.confidence-label" | translate }}: {{ proj.confidenceScore }}%</span>
-              </div>
-            </div>
-          }
-        </div>
-      } @else {
-        <p class="no-data-msg">{{ "analytics.no-projections" | translate }}</p>
-      }
-    </div>
-
-    <div class="section-container">
-      <h3>{{ "analytics.history-title" | translate }}</h3>
-      @if (reports().length > 0) {
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-            <tr>
-              <th>{{ "analytics.table.date" | translate }}</th>
-              <th>{{ "analytics.table.parameter" | translate }}</th>
-              <th>{{ "analytics.table.mean" | translate }}</th>
-              <th>{{ "analytics.table.variance" | translate }}</th>
-              <th>{{ "analytics.table.std-dev" | translate }}</th>
-              <th>{{ "analytics.table.interpretation" | translate }}</th>
-            </tr>
-            </thead>
-            <tbody>
-              @for (rep of reports(); track rep.id) {
-                <tr>
-                  <td>{{ rep.generatedAt | date:'medium' }}</td>
-                  <td>{{ ("monitoring.parameters." + rep.parameter.toLowerCase()) | translate }}</td>
-                  <td>
-                    <span [class.value-alert]="isAlert(rep)">
-                      {{ rep.meanValue }}{{ rep.unit }}
-                    </span>
-                  </td>
-                  <td>{{ rep.variance }}</td>
-                  <td>{{ rep.standardDeviation }}</td>
-                  <td>{{ rep.technicalInterpretation }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      } @else {
-        <p class="no-data-msg">{{ "analytics.no-history" | translate }}</p>
-      }
-    </div>
   }
 </div>
