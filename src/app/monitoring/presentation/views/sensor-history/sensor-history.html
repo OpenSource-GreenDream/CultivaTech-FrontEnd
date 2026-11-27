@@ -61,7 +61,7 @@
             <div class="history-body">
               <div class="metric-box" [class.metric-alert]="status !== 'OPTIMAL'">
                 <span>{{ "monitoring.history.average-value" | translate }}</span>
-                <strong>{{ reading.value }}{{ reading.unit }}</strong>
+                <strong>{{ reading.value }}{{ reading.unit | displayUnit:reading.parameter }}</strong>
               </div>
               @if (canManage()) {
                 <button type="button" class="btn-danger" (click)="deleteReading(reading)">

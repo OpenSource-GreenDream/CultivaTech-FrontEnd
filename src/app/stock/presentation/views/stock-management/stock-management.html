@@ -86,7 +86,7 @@
     } @else {
       <div class="inventory-grid">
         @for (item of filteredInventories(); track item.id) {
-          @let product = getProduct(item.productId);
+          @let product = getProductByInventory(item.id);
           @let batchName = getFieldName(item.fieldId) || getFieldName(product?.fieldId);
           <div class="inventory-card">
             <div class="card-header">
@@ -99,13 +99,13 @@
                   }
                 </div>
                 <div class="card-badges">
-                  <span class="product-name">{{ product?.name || getProductName(item.productId) }}</span>
+                  <span class="product-name">{{ product?.name || 'Inventory' }}</span>
                   <span class="batch-badge">
                     {{ batchName || ("stock.inventory.no-batch" | translate) }}
                   </span>
                 </div>
               </div>
-              <small>{{ item.updatedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+              <small>{{ item.stockQuantity }}</small>
             </div>
 
             <div class="card-body">

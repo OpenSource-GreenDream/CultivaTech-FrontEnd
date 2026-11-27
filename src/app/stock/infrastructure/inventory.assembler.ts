@@ -1,30 +1,22 @@
 import {InventoryResource} from './inventory-response';
 import {Inventory} from '../domain/model/inventory.entity';
-import {Service} from '@angular/core';
 
-@Service()
 export class InventoryAssembler {
   static toEntityFromResource(resource: InventoryResource): Inventory {
     return {
       id: resource.id,
-      productId: resource.product_id,
-      profileId: resource.profile_id,
-      fieldId: resource.field_id,
-      stockQuantity: resource.stock_quantity,
-      createdAt: resource.created_at,
-      updatedAt: resource.updated_at,
+      profileId: resource.profileId,
+      fieldId: resource.fieldId,
+      stockQuantity: resource.stockQuantity,
     };
   }
 
   static toResourceFromEntity(entity: Inventory): InventoryResource {
     return {
       id: entity.id,
-      product_id: entity.productId,
-      profile_id: entity.profileId,
-      field_id: entity.fieldId,
-      stock_quantity: entity.stockQuantity,
-      created_at: entity.createdAt,
-      updated_at: entity.updatedAt,
+      profileId: entity.profileId,
+      fieldId: entity.fieldId,
+      stockQuantity: entity.stockQuantity,
     };
   }
 }

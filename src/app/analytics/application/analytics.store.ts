@@ -13,12 +13,20 @@ import {Device} from '../../monitoring/domain/model/device.entity';
 import {AnalyticsContext} from './analytics-context.store';
 import {StockStore} from '../../stock/application/stock.store';
 import {Product} from '../../stock/domain/model/product.entity';
-import {HarvestProjectionAssembler} from '../infrastructure/harvest-projection.assembler';
+
+import {AnalyticsReportAssembler} from '../infrastructure/analytics-report.assembler';
 import {AnalyticsApi} from '../infrastructure/analytics-api';
 import {AnalyticsReport} from '../domain/model/entity/analytics-report.entity';
-import {HarvestProjection} from '../domain/model/entity/harvest-projection.entity';
+
+import {SensorStatistics} from '../domain/model/entity/sensor-statistics.entity';
+import {ReportRequest} from '../infrastructure/report.request';
+import {SensorStatisticsAssembler} from '../infrastructure/sensor-statistics.assembler';
+import {SensorReadingsApi} from '../../monitoring/infrastructure/sensor-readings-api';
+import {SensorReading} from '../../monitoring/domain/model/sensor-reading.entity';
+import {SensorReadingAssembler} from '../../monitoring/infrastructure/sensor-reading.assembler';
 import {
   evaluateTelemetryStatus,
+  isTelemetryParameter,
   PARAMETER_I18N_KEYS,
   PARAMETER_RANGES,
   resolveParameterThreshold,
@@ -33,6 +41,7 @@ import {
 export class AnalyticsStore {
   private readonly analyticsContext = inject(AnalyticsContext);
   private readonly analyticsApi = inject(AnalyticsApi);
+  private readonly sensorReadingsApi = inject(SensorReadingsApi);
   private readonly deviceApi = inject(DeviceApi);
   private readonly fieldApi = inject(FieldApi);
   private readonly stockStore = inject(StockStore);
@@ -46,8 +55,13 @@ export class AnalyticsStore {
   private readonly _fields = signal<Field[]>([]);
   private readonly _devices = signal<Device[]>([]);
   private readonly _reports = signal<AnalyticsReport[]>([]);
-  readonly projections = signal<HarvestProjection[]>([]);
+  private readonly _statistics = signal<SensorStatistics[]>([]);
+  private readonly _readings = signal<SensorReading[]>([]);
+  readonly fields = this._fields.asReadonly();
+  readonly statistics = this._statistics.asReadonly();
+  readonly readings = this._readings.asReadonly();
   readonly selectedDeviceId = signal<number | null>(null);
+  readonly selectedStatisticsParameter = signal<string | null>(null);
   readonly loading = signal<boolean>(false);
 
   /**
@@ -100,66 +114,98 @@ export class AnalyticsStore {
   readonly latestReport = computed<AnalyticsReport | null>(() => this.selectedReports()[0] ?? null);
 
   /** Parameter currently visualised (the one of the newest report). */
-  readonly activeParameter = computed<TelemetryParameter>(
-    () => this.latestReport()?.parameter ?? TelemetryParameter.MOISTURE
+  readonly activeParameter = computed<string>(
+    () => this.selectedStatistics()?.parameter ?? 'MOISTURE'
   );
 
-  readonly activeParameterKey = computed(() => PARAMETER_I18N_KEYS[this.activeParameter()]);
+  readonly activeParameterKey = computed(() => {
+    const parameter = this.activeParameter();
+    return isTelemetryParameter(parameter)
+      ? PARAMETER_I18N_KEYS[parameter]
+      : parameter;
+  });
 
   readonly activeUnit = computed(
-    () => this.selectedReports().find(r => r.parameter === this.activeParameter())?.unit
-      ?? PARAMETER_RANGES[this.activeParameter()].unit
+    () => this.selectedStatistics()?.unit
+      ?? (isTelemetryParameter(this.activeParameter())
+        ? PARAMETER_RANGES[this.activeParameter() as TelemetryParameter].unit
+        : '')
   );
 
   /** Threshold that applies to the active parameter only. */
-  readonly activeThreshold = computed(() =>
-    resolveParameterThreshold(this.activeParameter(), this.thresholds())
-  );
+  readonly activeThreshold = computed(() => {
+    const parameter = this.activeParameter();
+    if (!isTelemetryParameter(parameter)) return 0;
+    return resolveParameterThreshold(parameter, this.thresholds());
+  });
 
   /** Reports of the active parameter, newest first (used by the table). */
   readonly reports = computed(() =>
     this.selectedReports().filter(report => report.parameter === this.activeParameter())
   );
 
-  /** Reports of the active parameter in chronological order (used by the chart). */
+  /** Reports of the active parameter in chronological order (used by the table). */
   readonly chartReports = computed(() =>
     [...this.reports()].sort((a, b) => new Date(a.generatedAt).getTime() - new Date(b.generatedAt).getTime())
   );
 
-  readonly indicators = computed<KeyIndicators>(() => {
-    const reportsList = this.reports();
-    const total = reportsList.length;
+  /** Real sensor readings for the selected device/parameter in chronological order. */
+  readonly trendReadings = computed(() => {
+    const parameter = this.selectedStatistics()?.parameter;
+    const unit = this.selectedStatistics()?.unit;
+    const list = this._readings().filter((reading) => {
+      if (parameter && reading.parameter !== parameter) return false;
+      if (unit && reading.unit !== unit) return false;
+      return true;
+    });
+    return [...list].sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime());
+  });
 
-    if (total === 0) {
+  readonly statisticsParameters = computed<string[]>(() => {
+    const params = new Set(this._statistics().map((s) => s.parameter));
+    return Array.from(params);
+  });
+
+  readonly selectedStatistics = computed<SensorStatistics | null>(() => {
+    const stats = this._statistics();
+    if (stats.length === 0) return null;
+    const selected = this.selectedStatisticsParameter();
+    if (selected) {
+      const match = stats.find((s) => s.parameter === selected);
+      if (match) return match;
+    }
+    const moisture = stats.find((s) => s.parameter === 'MOISTURE');
+    return moisture ?? stats[0];
+  });
+
+  readonly indicators = computed<KeyIndicators>(() => {
+    const stat = this.selectedStatistics();
+    const totalReports = this.reports().length;
+
+    if (!stat || stat.sampleCount === 0) {
       return {
         averageMean: 0,
         averageVariance: 0,
         averageDeviation: 0,
-        totalReports: 0,
+        totalReports,
         status: 'NO_DATA',
       };
     }
 
-    const sumMean = reportsList.reduce((acc, r) => acc + r.meanValue, 0);
-    const sumVariance = reportsList.reduce((acc, r) => acc + r.variance, 0);
-    const sumDev = reportsList.reduce((acc, r) => acc + r.standardDeviation, 0);
-
-    const avgVariance = +(sumVariance / total).toFixed(2);
-    const latest = this.latestReport();
-    const telemetryStatus = latest
-      ? evaluateTelemetryStatus(latest.parameter, latest.meanValue, this.thresholds())
+    const telemetryStatus = isTelemetryParameter(stat.parameter)
+      ? evaluateTelemetryStatus(stat.parameter, stat.meanValue, this.thresholds())
       : 'OPTIMAL';
 
     const status: AnalyticsStatus =
-      telemetryStatus !== 'OPTIMAL' || avgVariance > ANALYTICS_VARIANCE_ALERT_THRESHOLD
+      telemetryStatus !== 'OPTIMAL' || stat.variance > ANALYTICS_VARIANCE_ALERT_THRESHOLD
         ? 'ALERT'
         : 'OPTIMAL';
 
     return {
-      averageMean: +(sumMean / total).toFixed(2),
-      averageVariance: avgVariance,
-      averageDeviation: +(sumDev / total).toFixed(2),
-      totalReports: total,
+      averageMean: +stat.meanValue.toFixed(2),
+      averageVariance: +stat.variance.toFixed(2),
+      averageDeviation: +stat.standardDeviation.toFixed(2),
+      totalReports,
       status,
     };
   });
@@ -183,8 +229,10 @@ export class AnalyticsStore {
     this._fields.set([]);
     this._devices.set([]);
     this._reports.set([]);
-    this.projections.set([]);
+    this._statistics.set([]);
+    this._readings.set([]);
     this.selectedDeviceId.set(null);
+    this.selectedStatisticsParameter.set(null);
     this.loading.set(false);
   }
 
@@ -220,7 +268,6 @@ export class AnalyticsStore {
             if (userFields.length === 0) {
               this._devices.set([]);
               this._reports.set([]);
-              this.projections.set([]);
               this.selectedDeviceId.set(null);
               this.loading.set(false);
               return of(void 0);
@@ -230,7 +277,6 @@ export class AnalyticsStore {
             const fieldIds = userFields.map(f => Number(f.id));
 
             return this.deviceApi.getDevicesByFieldIds(fieldIds).pipe(
-              catchError(() => of([])),
               map((deviceResources) =>
                 deviceResources
                   .filter(resource => allowedFieldIds.has(Number(resource.fieldId)))
@@ -242,7 +288,6 @@ export class AnalyticsStore {
               switchMap((userDevices) => {
                 if (userDevices.length === 0) {
                   this._reports.set([]);
-                  this.projections.set([]);
                   this.selectedDeviceId.set(null);
                   this.loading.set(false);
                   return of(void 0);
@@ -272,25 +317,75 @@ export class AnalyticsStore {
     this.deviceSelection$.next(deviceId);
   }
 
+  selectStatisticsParameter(parameter: string | null): void {
+    this.selectedStatisticsParameter.set(parameter);
+  }
+
+  loadStatistics(deviceId: number, from?: string, to?: string): Observable<void> {
+    return this.analyticsApi.getStatistics(deviceId, from, to).pipe(
+      tap((resources) => {
+        this._statistics.set(resources.map(SensorStatisticsAssembler.toEntityFromResource));
+        const stats = this._statistics();
+        const current = this.selectedStatisticsParameter();
+        if (!current || !stats.some((s) => s.parameter === current)) {
+          const moisture = stats.find((s) => s.parameter === 'MOISTURE');
+          this.selectedStatisticsParameter.set(moisture ? moisture.parameter : (stats[0]?.parameter ?? null));
+        }
+      }),
+      map(() => void 0),
+    );
+  }
+
+  loadReadings(deviceId: number): Observable<void> {
+    return this.sensorReadingsApi.getReadingsByDeviceId(deviceId).pipe(
+      tap((resources) => {
+        this._readings.set(resources.map(SensorReadingAssembler.toEntityFromResource));
+      }),
+      map(() => void 0),
+    );
+  }
+
+  generateReport(deviceId: number, from: string, to: string): Observable<void> {
+    this.loading.set(true);
+    return this.analyticsApi.generateReport(deviceId, { from, to }).pipe(
+      tap((generated) => {
+        const list = Array.isArray(generated) ? generated : [generated];
+        const existing = new Set(this._reports().map((r) => r.id));
+        const merged = [...this._reports()];
+        for (const report of list.map((r) => AnalyticsReportAssembler.toEntityFromResource(r))) {
+          if (!existing.has(report.id)) {
+            merged.push(report);
+            existing.add(report.id);
+          }
+        }
+        this._reports.set(merged);
+      }),
+      finalize(() => this.loading.set(false)),
+      map(() => void 0),
+    );
+  }
+
   /**
    * Evaluates a report against the threshold of its own parameter.
    */
   isAlert(report: AnalyticsReport): boolean {
+    if (!isTelemetryParameter(report.parameter)) return false;
     return evaluateTelemetryStatus(report.parameter, report.meanValue, this.thresholds()) !== 'OPTIMAL';
   }
 
   private fetchDeviceTelemetry(deviceId: number): Observable<void> {
     return forkJoin({
-      reports: this.analyticsContext.getReportByDeviceId(deviceId).pipe(catchError(() => of([]))),
-      projectionsRaw: this.analyticsApi.getProjectionsByDeviceId(deviceId).pipe(catchError(() => of([])))
+      reports: this.analyticsContext.getReportByDeviceId(deviceId),
+      statistics: this.analyticsApi.getStatistics(deviceId),
+      readings: this.sensorReadingsApi.getReadingsByDeviceId(deviceId),
     }).pipe(
-      tap(({reports, projectionsRaw}) => {
+      tap(({ reports, statistics, readings }) => {
         this._reports.set(reports.filter(r => Number(r.deviceId) === Number(deviceId)));
-        this.projections.set(
-          projectionsRaw
-            .filter(p => Number(p.device_id) === Number(deviceId))
-            .map(HarvestProjectionAssembler.toEntityFromResource)
-        );
+        this._statistics.set(statistics.map(SensorStatisticsAssembler.toEntityFromResource));
+        this._readings.set(readings.map(SensorReadingAssembler.toEntityFromResource));
+        const stats = this._statistics();
+        const moisture = stats.find((s) => s.parameter === 'MOISTURE');
+        this.selectedStatisticsParameter.set(moisture ? moisture.parameter : (stats[0]?.parameter ?? null));
       }),
       finalize(() => this.loading.set(false)),
       map(() => void 0)

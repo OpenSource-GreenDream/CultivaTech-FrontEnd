@@ -1,8 +1,12 @@
 export enum TelemetryParameter {
   MOISTURE = 'MOISTURE',
-  TEMPERATURE = 'TEMPERATURE',
-  NUTRIENTS = 'NUTRIENTS',
   PH = 'PH',
+  NITROGEN = 'NITROGEN',
+  PHOSPHORUS = 'PHOSPHORUS',
+  POTASSIUM = 'POTASSIUM',
+  CALCIUM = 'CALCIUM',
+  MAGNESIUM = 'MAGNESIUM',
+  SULFUR = 'SULFUR',
 }
 
 export interface ParameterRange {
@@ -17,16 +21,24 @@ export interface ParameterRange {
  */
 export const PARAMETER_RANGES: Record<TelemetryParameter, ParameterRange> = {
   [TelemetryParameter.MOISTURE]: { min: 0, max: 100, unit: '%' },
-  [TelemetryParameter.TEMPERATURE]: { min: -10, max: 60, unit: '°C' },
-  [TelemetryParameter.NUTRIENTS]: { min: 20, max: 80, unit: 'ppm' },
-  [TelemetryParameter.PH]: { min: 5.5, max: 7.5, unit: 'pH' },
+  [TelemetryParameter.PH]: { min: 5.5, max: 7.5, unit: 'unitless' },
+  [TelemetryParameter.NITROGEN]: { min: 0, max: 1000, unit: 'mg/kg' },
+  [TelemetryParameter.PHOSPHORUS]: { min: 0, max: 1000, unit: 'mg/kg' },
+  [TelemetryParameter.POTASSIUM]: { min: 0, max: 1000, unit: 'mg/kg' },
+  [TelemetryParameter.CALCIUM]: { min: 0, max: 1000, unit: 'mg/kg' },
+  [TelemetryParameter.MAGNESIUM]: { min: 0, max: 1000, unit: 'mg/kg' },
+  [TelemetryParameter.SULFUR]: { min: 0, max: 1000, unit: 'mg/kg' },
 };
 
 export const PARAMETER_I18N_KEYS: Record<TelemetryParameter, string> = {
   [TelemetryParameter.MOISTURE]: 'monitoring.parameters.moisture',
-  [TelemetryParameter.TEMPERATURE]: 'monitoring.parameters.temperature',
-  [TelemetryParameter.NUTRIENTS]: 'monitoring.parameters.nutrients',
   [TelemetryParameter.PH]: 'monitoring.parameters.ph',
+  [TelemetryParameter.NITROGEN]: 'monitoring.parameters.nitrogen',
+  [TelemetryParameter.PHOSPHORUS]: 'monitoring.parameters.phosphorus',
+  [TelemetryParameter.POTASSIUM]: 'monitoring.parameters.potassium',
+  [TelemetryParameter.CALCIUM]: 'monitoring.parameters.calcium',
+  [TelemetryParameter.MAGNESIUM]: 'monitoring.parameters.magnesium',
+  [TelemetryParameter.SULFUR]: 'monitoring.parameters.sulfur',
 };
 
 /**
@@ -45,6 +57,10 @@ export interface ParameterThresholds {
 export function isTelemetryParameter(value: string | null | undefined): value is TelemetryParameter {
   if (!value) return false;
   return Object.values(TelemetryParameter).includes(value as TelemetryParameter);
+}
+
+export function normalizeTelemetryParameter(value: string | null | undefined): string {
+  return (value ?? '').trim().toUpperCase();
 }
 
 /**
@@ -66,12 +82,13 @@ export function evaluateTelemetryStatus(
       return thresholds.moisture !== null && value < thresholds.moisture
         ? 'LOW_MOISTURE'
         : 'OPTIMAL';
-    case TelemetryParameter.TEMPERATURE:
-      return thresholds.temperature !== null && value > thresholds.temperature
-        ? 'OUT_OF_RANGE'
-        : 'OPTIMAL';
-    case TelemetryParameter.NUTRIENTS:
-    case TelemetryParameter.PH: {
+    case TelemetryParameter.PH:
+    case TelemetryParameter.NITROGEN:
+    case TelemetryParameter.PHOSPHORUS:
+    case TelemetryParameter.POTASSIUM:
+    case TelemetryParameter.CALCIUM:
+    case TelemetryParameter.MAGNESIUM:
+    case TelemetryParameter.SULFUR: {
       const range = PARAMETER_RANGES[parameter];
       return value < range.min || value > range.max ? 'OUT_OF_RANGE' : 'OPTIMAL';
     }
@@ -91,13 +108,9 @@ export function resolveParameterThreshold(
   switch (parameter) {
     case TelemetryParameter.MOISTURE:
       return thresholds.moisture ?? PARAMETER_RANGES[TelemetryParameter.MOISTURE].min;
-    case TelemetryParameter.TEMPERATURE:
-      return thresholds.temperature ?? PARAMETER_RANGES[TelemetryParameter.TEMPERATURE].max;
-    case TelemetryParameter.NUTRIENTS:
-      return PARAMETER_RANGES[TelemetryParameter.NUTRIENTS].max;
     case TelemetryParameter.PH:
       return PARAMETER_RANGES[TelemetryParameter.PH].min;
     default:
-      return PARAMETER_RANGES[TelemetryParameter.MOISTURE].min;
+      return PARAMETER_RANGES[parameter].min;
   }
 }

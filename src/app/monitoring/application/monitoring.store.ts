@@ -230,7 +230,7 @@ export class MonitoringStore {
    * Evaluates a report strictly against the threshold of its own parameter (US16/US17).
    */
   evaluateReportStatus(report: AnalyticsReport | undefined): TelemetryAlertStatus {
-    if (!report || !report.parameter) {
+    if (!report || !report.parameter || !isTelemetryParameter(report.parameter)) {
       return 'OPTIMAL';
     }
     return evaluateTelemetryStatus(report.parameter, Number(report.meanValue), this.thresholds());
