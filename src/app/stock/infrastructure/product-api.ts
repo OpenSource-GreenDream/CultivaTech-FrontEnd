@@ -1,9 +1,10 @@
 import {inject, Service} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
+import {environment} from '../../../environments/environment';
 import {ProductResource} from './product-response';
 import {CreateProductRequest} from './create-product.request';
+import {map} from 'rxjs';
 
 @Service()
 export class ProductApi {
@@ -14,46 +15,53 @@ export class ProductApi {
     return this.http.get<ProductResource[]>(this.baseUrl);
   }
 
-  /**
-   * Retrieves the products owned by a field in a single scoped query.
-   */
-  getProductsByFieldId(fieldId: number): Observable<ProductResource[]> {
-    const params = new HttpParams().set('field_id', fieldId.toString());
-    return this.http.get<ProductResource[]>(this.baseUrl, { params });
-  }
-
-  /**
-   * Retrieves the products of several fields in a single scoped request.
-   */
-  getProductsByFieldIds(fieldIds: number[]): Observable<ProductResource[]> {
-    if (fieldIds.length === 0) {
-      return of([]);
-    }
-    let params = new HttpParams();
-    for (const fieldId of fieldIds) {
-      params = params.append('field_id', fieldId.toString());
-    }
-    return this.http.get<ProductResource[]>(this.baseUrl, { params });
-  }
-
   getProductById(id: number): Observable<ProductResource> {
     return this.http.get<ProductResource>(`${this.baseUrl}/${id}`);
   }
 
-  /**
-   * Registers a new catalog product linked to the selected field (batch).
-   */
+  getProductsByFieldId(fieldId: number): Observable<ProductResource[]> {
+    return this.getProducts().pipe(
+      map((products) => products.filter((product) => Number(product.fieldId) === Number(fieldId))),
+    );
+  }
+
+  getProductsByFieldIds(fieldIds: number[]): Observable<ProductResource[]> {
+    if (fieldIds.length === 0) {
+      return of([]);
+    }
+    const allowed = new Set(fieldIds.map(Number));
+    return this.getProducts().pipe(
+      map((products) => products.filter((product) => product.fieldId !== null && allowed.has(Number(product.fieldId)))),
+    );
+  }
+
   createProduct(request: CreateProductRequest): Observable<ProductResource> {
-    const now = new Date().toISOString();
     const payload = {
-      field_id: request.fieldId,
+      inventoryId: request.inventoryId,
+      fieldId: request.fieldId ?? null,
       name: request.name,
       description: request.description,
       price: request.price,
-      image_url: request.imageUrl,
-      created_at: now,
-      updated_at: now,
+      type: request.type,
+      imageUrl: request.imageUrl,
     };
     return this.http.post<ProductResource>(this.baseUrl, payload);
+  }
+
+  updateProduct(id: number, request: CreateProductRequest): Observable<ProductResource> {
+    const payload = {
+      inventoryId: request.inventoryId,
+      fieldId: request.fieldId ?? null,
+      name: request.name,
+      description: request.description,
+      price: request.price,
+      type: request.type,
+      imageUrl: request.imageUrl,
+    };
+    return this.http.put<ProductResource>(`${this.baseUrl}/${id}`, payload);
+  }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

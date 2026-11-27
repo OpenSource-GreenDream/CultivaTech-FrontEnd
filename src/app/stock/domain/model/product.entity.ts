@@ -1,11 +1,10 @@
 export interface Product {
   id: number;
+  inventoryId: number;
+  fieldId: number | null;
   name: string;
   description: string;
   price: number;
-  /** Field (batch) that owns the product, when it belongs to a specific farm. */
-  fieldId: number | null;
+  type: string;
   imageUrl?: string;
-  createdAt: string;
-  updatedAt: string;
 }
