@@ -22,8 +22,7 @@ import {
 @Component({
   imports: [
     TranslatePipe,
-    FormsModule,
-    DatePipe
+    FormsModule
   ],
   selector: 'app-community-management',
   styleUrl: './community-management.css',
