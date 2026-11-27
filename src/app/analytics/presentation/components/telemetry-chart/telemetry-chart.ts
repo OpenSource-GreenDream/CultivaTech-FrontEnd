@@ -82,27 +82,27 @@ type Reading = {
     </div>
   `,
   styles: [`
-    .chart-shell { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; }
+    .chart-shell { background:#F8F7F3; border:1px solid #C9C6B5; border-radius:12px; padding:16px; }
     .chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
-    .chart-header h4 { margin:0; font-size:1rem; font-weight:600; color:#2d3748; }
-    .unit { font-size:0.8rem; color:#718096; margin-left:6px; }
-    .legend { display:flex; gap:12px; font-size:0.8rem; color:#4a5568; }
+    .chart-header h4 { margin:0; font-size:1rem; font-weight:600; color:#303A28; }
+    .unit { font-size:0.8rem; color:#68725E; margin-left:6px; }
+    .legend { display:flex; gap:12px; font-size:0.8rem; color:#59634E; }
     .legend-item { display:flex; align-items:center; gap:6px; }
     .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
-    .dot.threshold { background:#e53e3e; }
-    .chart-empty { padding:40px; text-align:center; color:#a0aec0; font-style:italic; }
+    .dot.threshold { background:#AB4949; }
+    .chart-empty { padding:40px; text-align:center; color:#68725E; font-style:italic; }
     .chart-svg { width:100%; height:auto; overflow:visible; }
-    .grid-line { stroke:#edf2f7; stroke-width:1; }
-    .axis-label { font-size:10px; fill:#718096; text-anchor:end; }
+    .grid-line { stroke:#E8E1D3; stroke-width:1; }
+    .axis-label { font-size:10px; fill:#68725E; text-anchor:end; }
     .line-path { fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
     .area-path { opacity:1; }
     .marker { transition: r 0.15s ease; cursor:pointer; }
-    .crosshair { stroke:#a0aec0; stroke-width:1; stroke-dasharray:4; }
-    .threshold-line { stroke:#e53e3e; stroke-width:1.5; stroke-dasharray:5; }
-    .tooltip-box { fill:#fff; stroke:#e2e8f0; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
-    .tooltip-text { font-size:10px; fill:#2d3748; }
+    .crosshair { stroke:#A8AC98; stroke-width:1; stroke-dasharray:4; }
+    .threshold-line { stroke:#AB4949; stroke-width:1.5; stroke-dasharray:5; }
+    .tooltip-box { fill:#F8F7F3; stroke:#C9C6B5; filter:drop-shadow(0 4px 6px rgba(48,58,40,0.08)); }
+    .tooltip-text { font-size:10px; fill:#303A28; }
     .timeline { position:relative; height:24px; margin-top:8px; }
-    .time-label { position:absolute; transform:translateX(-50%); font-size:10px; color:#718096; white-space:nowrap; }
+    .time-label { position:absolute; transform:translateX(-50%); font-size:10px; color:#68725E; white-space:nowrap; }
   `]
 })
 export class TelemetryChartComponent {

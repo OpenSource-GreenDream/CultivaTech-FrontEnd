@@ -1,93 +1,73 @@
 <div class="analytics-container">
-  <div class="header">
-    <h2>{{ "analytics.title" | translate }}</h2>
-
-    @if (devices().length > 0) {
-      <div class="device-selector">
-        <label for="deviceSelect">{{ "analytics.device-label" | translate }}</label>
-        <select
-          id="deviceSelect"
-          [value]="selectedDeviceId()"
-          (change)="onDeviceChange($event)">
-          @for (device of devices(); track device.id) {
-            <option [value]="device.id">
-              {{ "analytics.device-option" | translate:{ id: device.id, mac: device.macAddress } }}
-            </option>
-          }
-        </select>
-      </div>
-    }
+  <div class="analytics-header">
+    <div>
+      <h2>{{ "analytics.title" | translate }}</h2>
+      <p class="analytics-subtitle">{{ "analytics.subtitle" | translate }}</p>
+    </div>
   </div>
 
-  @if (loading()) {
-    <div class="loading">
-      {{ "analytics.loading" | translate }}
+  @if (devices().length > 0) {
+    <div class="device-selector">
+      <label for="deviceSelect">{{ "analytics.device-label" | translate }}</label>
+      <select id="deviceSelect" [value]="selectedDeviceId()" (change)="onDeviceChange($event)">
+        @for (device of devices(); track device.id) {
+          <option [value]="device.id">{{ "analytics.device-option" | translate:{ id: device.id, mac: device.macAddress } }}</option>
+        }
+      </select>
     </div>
+  }
+
+  @if (loading()) {
+    <div class="loading">{{ "analytics.loading" | translate }}</div>
   } @else {
-    @if (indicators()) {
-      <div class="cards-grid">
-        <div class="card">
-          <span class="card-title">{{ "analytics.cards.average-mean" | translate }}</span>
-          <span class="card-value">{{ indicators().averageMean }}{{ activeUnit() | displayUnit:selectedStatistics()?.parameter }}</span>
-        </div>
-
-        <div class="card">
-          <span class="card-title">{{ "analytics.cards.average-variance" | translate }}</span>
-          <span class="card-value">{{ indicators().averageVariance }}</span>
-        </div>
-
-        <div class="card">
-          <span class="card-title">{{ "analytics.cards.average-deviation" | translate }}</span>
-          <span class="card-value">{{ indicators().averageDeviation }}</span>
-        </div>
-
-        <div class="card">
-          <span class="card-title">{{ "analytics.cards.total-reports" | translate }}</span>
-          <span class="card-value">{{ indicators().totalReports }}</span>
-        </div>
-
-        <div class="card status-card">
-          <span class="card-title">{{ "analytics.cards.status" | translate }}</span>
-          <span
-            class="card-value status-badge"
-            [class.optimo]="indicators().status === 'OPTIMAL'"
-            [class.alerta]="indicators().status === 'ALERT'"
-            [class.sin-datos]="indicators().status === 'NO_DATA'">
-            {{ statusKey() | translate }}
-          </span>
-        </div>
+    <div class="cards-grid">
+      <div class="card">
+        <span class="card-title">{{ "analytics.cards.mean" | translate }}</span>
+        <span class="card-value">{{ indicators().mean }}{{ activeUnit() | displayUnit:selectedStatistics()?.parameter }}</span>
       </div>
-    }
+      <div class="card">
+        <span class="card-title">{{ "analytics.cards.variance" | translate }}</span>
+        <span class="card-value">{{ indicators().variance }}</span>
+      </div>
+      <div class="card">
+        <span class="card-title">{{ "analytics.cards.std-deviation" | translate }}</span>
+        <span class="card-value">{{ indicators().standardDeviation }}</span>
+      </div>
+      <div class="card">
+        <span class="card-title">{{ "analytics.cards.measurements" | translate }}</span>
+        <span class="card-value">{{ indicators().measurements }}</span>
+      </div>
+      <div class="card">
+        <span class="card-title">{{ "analytics.cards.threshold-status" | translate }}</span>
+        <span class="card-value status-badge" [class.below]="indicators().thresholdStatus === 'BELOW_MINIMUM'" [class.above]="indicators().thresholdStatus === 'ABOVE_MINIMUM'">
+          {{ statusKey() | translate }}
+        </span>
+      </div>
+    </div>
 
-    <div class="section-container">
+    <section class="section-container">
       <div class="section-header">
         <h3>{{ (parameterKey() | translate) + ' — ' + ("analytics.trend-title" | translate) }}</h3>
         @if (statisticsParameters().length > 1) {
           <select [value]="selectedStatisticsParameter() ?? ''" (change)="onParameterChange($event)">
             @for (parameter of statisticsParameters(); track parameter) {
-              <option [value]="parameter">{{ parameter }}</option>
+              <option [value]="parameter">{{ ("monitoring.parameters." + parameter.toLowerCase()) | translate }}</option>
             }
           </select>
         }
-        <div class="chart-legend">
-          <span class="legend-item"><span class="legend-color line-color"></span> {{ "analytics.real-reading" | translate }}</span>
-          <span class="legend-item"><span class="legend-color threshold-color"></span> {{ "analytics.min-threshold" | translate }} ({{ criticalThreshold() }}{{ activeUnit() }})</span>
-        </div>
       </div>
 
       @if (trendReadings().length > 0) {
         <app-telemetry-chart
           [readings]="trendReadings()"
-          [parameter]="selectedStatistics()?.parameter ?? ''"
+          [parameter]="(parameterKey() | translate)"
           [unit]="activeUnit()"
           [threshold]="criticalThreshold()"
           [loading]="loading()"
-          [color]="parameterColor()"
-        />
+          [color]="parameterColor()" />
       } @else {
         <p class="no-data-msg">{{ "analytics.no-chart-reports" | translate }}</p>
       }
-    </div>
-
+    </section>
   }
 </div>
