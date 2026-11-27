@@ -9,6 +9,8 @@ import {AuthService} from '../../iam/application/auth.service';
 import {ProfileContextService} from '../../profile/application/profile-context.service';
 import {ProductApi} from '../infrastructure/product-api';
 import {Product} from '../domain/model/product.entity';
+import {ProducerInfo} from '../domain/model/producer-info';
+import {CommunityApi} from '../../community/infrastructure/community-api';
 import {CreateInventoryRequest} from '../infrastructure/create-inventory.request';
 import {ProductAssembler} from '../infrastructure/product.assembler';
 import {FieldApi} from '../../profile/infrastructure/field-api';
@@ -32,6 +34,7 @@ export class StockStore {
   private inventoryApi = inject(InventoryApi);
   private productApi = inject(ProductApi);
   private fieldApi = inject(FieldApi);
+  private communityApi = inject(CommunityApi);
   private authService = inject(AuthService);
   private profileContext = inject(ProfileContextService);
   private notificationEvents = inject(NotificationEventService);
@@ -40,6 +43,8 @@ export class StockStore {
   private readonly _allInventories = signal<Inventory[]>([]);
   private readonly _products = signal<Product[]>([]);
   private readonly _fields = signal<Field[]>([]);
+  readonly selectedProducer = signal<ProducerInfo | null>(null);
+  readonly producerLoading = signal<boolean>(false);
   private readonly _farmFieldIds = signal<number[]>([]);
   readonly loading = signal<boolean>(false);
 
@@ -151,6 +156,47 @@ export class StockStore {
 
   constructor() {
     this.authService.registerCleanup(() => this.clearState());
+  }
+
+  loadProducer(productId: number): Observable<void> {
+    this.producerLoading.set(true);
+    this.selectedProducer.set(null);
+    return this.productApi.getProducer(productId).pipe(
+      switchMap((producer) => {
+        const info: ProducerInfo = {
+          profileId: producer.profileId,
+          fundoName: producer.fundoName,
+          contactPhone: producer.contactPhone,
+        };
+        return this.communityApi.getAllCommunityProfiles(producer.profileId).pipe(
+          map((profiles) => {
+            const cp = profiles && profiles.length > 0 ? profiles[0] : null;
+            if (cp) {
+              info.nickname = cp.nickname;
+              info.publicBio = cp.public_bio;
+              info.reputationScore = cp.reputation_score;
+              info.visibilityStatus = cp.visibility_status;
+            }
+            return info;
+          }),
+          catchError(() => of(info)),
+        );
+      }),
+      tap((info) => {
+        this.selectedProducer.set(info);
+        this.producerLoading.set(false);
+      }),
+      map(() => void 0),
+      catchError((error) => {
+        this.producerLoading.set(false);
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  clearProducer(): void {
+    this.selectedProducer.set(null);
+    this.producerLoading.set(false);
   }
 
   clearState(): void {

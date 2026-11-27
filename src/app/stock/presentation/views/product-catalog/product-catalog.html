@@ -72,6 +72,30 @@
           <div class="status-box" [class.in-stock]="available">
             {{ (available ? 'stock.catalog.detail-available' : 'stock.catalog.detail-unavailable') | translate }}
           </div>
+
+          <h3>{{ 'stock.catalog.origin-title' | translate }}</h3>
+          <p>{{ 'stock.catalog.field-label' | translate }}: <strong>{{ fieldName || ("stock.catalog.global-batch" | translate) }}</strong></p>
+          <p>{{ 'stock.catalog.fundo-label' | translate }}: <strong>{{ selectedProducer()?.fundoName || '-' }}</strong></p>
+          <p>{{ 'stock.catalog.soil-label' | translate }}: <strong>{{ getSoilType(product.fieldId) || '-' }}</strong></p>
+
+          <h3>{{ 'stock.catalog.producer-title' | translate }}</h3>
+          @if (producerLoading()) {
+            <p>{{ 'stock.catalog.loading-producer' | translate }}</p>
+          } @else if (selectedProducer(); as producer) {
+            @if (producer.nickname) {
+              <p>{{ 'stock.catalog.nickname-label' | translate }}: <strong>{{ producer.nickname }}</strong></p>
+            }
+            <p>{{ 'stock.catalog.fundo-label' | translate }}: <strong>{{ producer.fundoName }}</strong></p>
+            <p>{{ 'stock.catalog.phone-label' | translate }}: <strong>{{ producer.contactPhone }}</strong></p>
+            @if (producer.reputationScore !== undefined) {
+              <p>{{ 'stock.catalog.reputation-label' | translate }}: <strong>{{ producer.reputationScore }}</strong></p>
+            }
+            @if (producer.publicBio) {
+              <p>{{ producer.publicBio }}</p>
+            }
+          } @else {
+            <p>{{ 'stock.catalog.no-producer' | translate }}</p>
+          }
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-secondary" (click)="closeDetail()">{{ "stock.catalog.close-btn" | translate }}</button>
