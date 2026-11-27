@@ -4,85 +4,68 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NotificationCreateRequest } from '../domain/model/notification-create.request';
 import { Notification } from '../domain/model/notification.entity';
-import { NotificationType } from '../domain/model/notification-type.enum';
 import { NotificationAssembler } from './notification.assembler';
 import { NotificationResource } from './notification-resource';
 
 const NOTIFICATIONS_ENDPOINT = environment.notificationsEndpoint;
-const PROFILES_ENDPOINT = environment.profilesEndpoint;
-const SORT_FIELD = 'created_at';
-const SORT_DIRECTION = 'desc';
-const UNREAD_DEFAULT = false;
-
-interface ProfileResource {
-  id: number;
-  user_id: number;
-}
-
-interface CollectionResource<T> {
-  value: T[];
-}
-
-function unwrapCollection<T>(response: T[] | CollectionResource<T>): T[] {
-  return Array.isArray(response) ? response : response.value;
-}
 
 @Service()
 export class NotificationApiService {
   private readonly http = inject(HttpClient);
   private readonly resourceUrl = `${environment.cultivatechBaseApi}${NOTIFICATIONS_ENDPOINT}`;
-  private readonly profilesUrl = `${environment.cultivatechBaseApi}${PROFILES_ENDPOINT}`;
 
-  getProfileIdByUser(userId: number): Observable<number | null> {
-    const params = new HttpParams().set('user_id', userId);
-
-    return this.http.get<ProfileResource[] | CollectionResource<ProfileResource>>(this.profilesUrl, { params }).pipe(
-      map((response) => {
-        const existingProfile = unwrapCollection(response).find(p => Number(p.user_id) === Number(userId)) ?? unwrapCollection(response)[0];
-        return existingProfile ? existingProfile.id : null;
-      }),
+  getAll(profileId?: number): Observable<Notification[]> {
+    let params = new HttpParams();
+    if (profileId !== undefined && profileId !== null) {
+      params = params.set('profileId', profileId);
+    }
+    return this.http.get<NotificationResource[]>(this.resourceUrl, { params }).pipe(
+      map((response) => (response ?? []).map(NotificationAssembler.toEntityFromResource)),
     );
   }
 
   getByProfile(profileId: number): Observable<Notification[]> {
-    const params = new HttpParams()
-      .set('profile_id', profileId)
-      .set('_sort', SORT_FIELD)
-      .set('_order', SORT_DIRECTION);
+    return this.getAll(profileId);
+  }
 
-    return this.http.get<NotificationResource[] | CollectionResource<NotificationResource>>(this.resourceUrl, { params }).pipe(
-      map((response) => unwrapCollection(response).map(NotificationAssembler.toEntityFromResource)),
+  getById(id: number): Observable<Notification> {
+    return this.http.get<NotificationResource>(`${this.resourceUrl}/${id}`).pipe(
+      map(NotificationAssembler.toEntityFromResource),
     );
   }
 
   create(request: NotificationCreateRequest): Observable<Notification> {
-    const now = new Date().toISOString();
     const payload = {
-      profile_id: request.profileId,
+      profileId: request.profileId,
       title: request.title,
       message: request.message,
-      is_read: UNREAD_DEFAULT,
-      is_alert: request.type === NotificationType.SENSOR_ALERT,
-      type: request.type as string,
-      field_id: request.fieldId,
-      created_at: request.createdAt ?? now,
-      updated_at: now,
+      isAlert: request.isAlert,
     };
-
     return this.http.post<NotificationResource>(this.resourceUrl, payload).pipe(
       map(NotificationAssembler.toEntityFromResource),
     );
   }
 
-  markAsRead(notification: Notification): Observable<Notification> {
-    const resourceUrl = `${this.resourceUrl}/${notification.id}`;
-    const payload = {
-      is_read: true,
-      updated_at: new Date().toISOString(),
-    };
-
-    return this.http.patch<NotificationResource>(resourceUrl, payload).pipe(
+  update(id: number, title: string, message: string, isAlert: boolean): Observable<Notification> {
+    const payload = { title, message, isAlert };
+    return this.http.put<NotificationResource>(`${this.resourceUrl}/${id}`, payload).pipe(
       map(NotificationAssembler.toEntityFromResource),
     );
+  }
+
+  markAsRead(notification: Notification): Observable<Notification> {
+    return this.http.patch<NotificationResource>(`${this.resourceUrl}/${notification.id}/read`, {}).pipe(
+      map(NotificationAssembler.toEntityFromResource),
+    );
+  }
+
+  markAsReadById(id: number): Observable<Notification> {
+    return this.http.patch<NotificationResource>(`${this.resourceUrl}/${id}/read`, {}).pipe(
+      map(NotificationAssembler.toEntityFromResource),
+    );
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.resourceUrl}/${id}`);
   }
 }

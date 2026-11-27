@@ -39,6 +39,13 @@
     <header class="top-header">
       <h1 class="header-title">{{ pageTitle }}</h1>
 
+      <a routerLink="/notifications" class="notification-bell" [attr.aria-label]="'layout.nav.notifications' | translate">
+        <span class="bell-icon">🔔</span>
+        @if (unreadNotifications() > 0) {
+          <span class="bell-badge">{{ unreadNotifications() }}</span>
+        }
+      </a>
+
       <app-language-switcher />
     </header>
 

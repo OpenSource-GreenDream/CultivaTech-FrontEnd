@@ -149,8 +149,19 @@
         "reading": "Lectura / Parámetro",
         "status": "Estado",
         "date": "Fecha y Hora",
-        "actions": "Acciones"
-      }
+        "actions": "Acciones",
+        "title": "Título",
+        "message": "Mensaje"
+      },
+      "refresh": "Actualizar",
+      "delete": "Eliminar",
+      "unread": "No leída",
+      "status-alert": "Alerta",
+      "status-info": "Informativa",
+      "unread-notifications": "Notificaciones no leídas",
+      "agricultural-alerts": "Alertas agrícolas",
+      "delete-notification": "Eliminar notificación",
+      "notification-error": "Error de notificación"
     },
     "modal": {
       "close": "Cerrar",
