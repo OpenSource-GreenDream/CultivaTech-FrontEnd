@@ -259,6 +259,13 @@
     "min-threshold": "Umbral Mínimo",
     "critical-threshold": "Umbral Crítico",
     "no-chart-reports": "No hay reportes registrados para graficar.",
+    "nutrients-avg": "Nutrientes — AVG",
+    "nutrients-avg-title": "Nutrientes — Promedio",
+    "nutrients-avg-concentration": "Concentración promedio de nutrientes",
+    "average-reading": "Lectura promedio",
+    "reading": "Lectura",
+    "readings": "Lecturas",
+    "no-nutrient-readings": "No hay lecturas de nutrientes disponibles",
     "threshold-status": {
       "BELOW_MINIMUM": "Por debajo del mínimo",
       "ABOVE_MINIMUM": "Por encima del mínimo",

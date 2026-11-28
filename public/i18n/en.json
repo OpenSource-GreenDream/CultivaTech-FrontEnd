@@ -259,6 +259,13 @@
     "min-threshold": "Minimum Threshold",
     "critical-threshold": "Critical Threshold",
     "no-chart-reports": "No reports registered to plot.",
+    "nutrients-avg": "Nutrients — AVG",
+    "nutrients-avg-title": "Nutrients — Average",
+    "nutrients-avg-concentration": "Average nutrient concentration",
+    "average-reading": "Average reading",
+    "reading": "Reading",
+    "readings": "Readings",
+    "no-nutrient-readings": "No nutrient readings available",
     "threshold-status": {
       "BELOW_MINIMUM": "Below minimum",
       "ABOVE_MINIMUM": "Above minimum",
