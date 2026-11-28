@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+.angular
+
+# VCS
+.git
+.github
+
+# IDE
+.idea
+.vscode
+
+# Tests / coverage
+coverage
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temp
+tmp
+temp
+
+# Environment files
+.env
+.env.*
+
+# Documentation
+docs
+README.md
+*.md
