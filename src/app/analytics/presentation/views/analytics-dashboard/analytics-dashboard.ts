@@ -3,12 +3,14 @@ import {TranslatePipe} from '@ngx-translate/core';
 
 import {AnalyticsStore} from '../../../application/analytics.store';
 import {TelemetryChartComponent} from '../../components/telemetry-chart/telemetry-chart';
+import {NutrientBarChartComponent} from '../../components/nutrient-bar-chart/nutrient-bar-chart';
 import {DisplayUnitPipe} from '../../../../monitoring/presentation/pipes/display-unit.pipe';
 
 @Component({
   imports: [
     TranslatePipe,
     TelemetryChartComponent,
+    NutrientBarChartComponent,
     DisplayUnitPipe
   ],
   selector: 'app-analytics-dashboard',
@@ -31,6 +33,8 @@ export class AnalyticsDashboardComponent implements OnInit {
   readonly hoveredReading = signal<any | null>(null);
   readonly parameterKey = this.analyticsStore.activeParameterKey;
   readonly activeUnit = this.analyticsStore.activeUnit;
+  readonly isNutrientsMode = this.analyticsStore.isNutrientsMode;
+  readonly nutrientAverages = this.analyticsStore.nutrientAverages;
   readonly criticalThreshold = this.analyticsStore.activeThreshold;
 
   readonly reportFrom = signal<string>('');

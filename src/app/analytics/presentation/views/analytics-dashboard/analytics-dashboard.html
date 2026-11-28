@@ -47,17 +47,35 @@
 
     <section class="section-container">
       <div class="section-header">
-        <h3>{{ (parameterKey() | translate) + ' — ' + ("analytics.trend-title" | translate) }}</h3>
-        @if (statisticsParameters().length > 1) {
+        <h3>
+          @if (isNutrientsMode()) {
+            {{ "analytics.nutrients-avg-title" | translate }}
+          } @else {
+            {{ (parameterKey() | translate) + ' — ' + ("analytics.trend-title" | translate) }}
+          }
+        </h3>
+        @if (statisticsParameters().length > 0) {
           <select [value]="selectedStatisticsParameter() ?? ''" (change)="onParameterChange($event)">
             @for (parameter of statisticsParameters(); track parameter) {
-              <option [value]="parameter">{{ ("monitoring.parameters." + parameter.toLowerCase()) | translate }}</option>
+              <option [value]="parameter">
+                @if (parameter === 'NUTRIENTS_AVG') {
+                  {{ "analytics.nutrients-avg" | translate }}
+                } @else {
+                  {{ ("monitoring.parameters." + parameter.toLowerCase()) | translate }}
+                }
+              </option>
             }
           </select>
         }
       </div>
 
-      @if (trendReadings().length > 0) {
+      @if (isNutrientsMode()) {
+        <app-nutrient-bar-chart
+          [data]="nutrientAverages()"
+          [title]="('analytics.nutrients-avg-concentration' | translate)"
+          [unit]="'mg/kg'"
+          [legend]="('analytics.average-reading' | translate)" />
+      } @else if (trendReadings().length > 0) {
         <app-telemetry-chart
           [readings]="trendReadings()"
           [parameter]="(parameterKey() | translate)"
