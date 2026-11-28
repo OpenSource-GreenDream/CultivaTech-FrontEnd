@@ -12,30 +12,24 @@ import {Field} from '../../profile/domain/model/field.entity';
 import {Device} from '../../monitoring/domain/model/device.entity';
 import {AnalyticsContext} from './analytics-context.store';
 import {StockStore} from '../../stock/application/stock.store';
-import {Product} from '../../stock/domain/model/product.entity';
 
 import {AnalyticsReportAssembler} from '../infrastructure/analytics-report.assembler';
 import {AnalyticsApi} from '../infrastructure/analytics-api';
 import {AnalyticsReport} from '../domain/model/entity/analytics-report.entity';
 
 import {SensorStatistics} from '../domain/model/entity/sensor-statistics.entity';
-import {ReportRequest} from '../infrastructure/report.request';
 import {SensorStatisticsAssembler} from '../infrastructure/sensor-statistics.assembler';
 import {SensorReadingsApi} from '../../monitoring/infrastructure/sensor-readings-api';
 import {SensorReading} from '../../monitoring/domain/model/sensor-reading.entity';
 import {SensorReadingAssembler} from '../../monitoring/infrastructure/sensor-reading.assembler';
 import {
-  evaluateTelemetryStatus,
   isTelemetryParameter,
   PARAMETER_I18N_KEYS,
   PARAMETER_RANGES,
   resolveParameterThreshold,
   TelemetryParameter,
 } from '../../monitoring/domain/model/telemetry-parameter';
-import {
-  ANALYTICS_VARIANCE_ALERT_THRESHOLD,
-  AnalyticsStatus,
-} from '../domain/model/analytics.constants';
+import {ThresholdStatus} from '../domain/model/analytics.constants';
 
 @Service()
 export class AnalyticsStore {
@@ -49,7 +43,6 @@ export class AnalyticsStore {
   private readonly profileContext = inject(ProfileContextService);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Emits device selections so pending telemetry requests can be cancelled. */
   private readonly deviceSelection$ = new Subject<number>();
 
   private readonly _fields = signal<Field[]>([]);
@@ -63,21 +56,6 @@ export class AnalyticsStore {
   readonly selectedDeviceId = signal<number | null>(null);
   readonly selectedStatisticsParameter = signal<string | null>(null);
   readonly loading = signal<boolean>(false);
-
-  /**
-   * Products of the active farm, including their `fieldId`, exposed to
-   * analytics projections and metrics.
-   */
-  readonly products = this.stockStore.products;
-  readonly productFieldIds = this.stockStore.productFieldIds;
-
-  /** Products that belong to the fields (batches) used by the current metrics. */
-  readonly activeFieldProducts = computed<Product[]>(() => {
-    const fieldIds = new Set(this._fields().map(field => Number(field.id)));
-    return this.products().filter(
-      product => product.fieldId === null || product.fieldId === undefined || fieldIds.has(Number(product.fieldId))
-    );
-  });
 
   readonly moistureThreshold = computed<number | null>(
     () => this.profileContext.currentProfile()?.moistureThreshold ?? null
@@ -99,7 +77,6 @@ export class AnalyticsStore {
     return this._devices().filter(device => allowedFieldIds.has(Number(device.fieldId)));
   });
 
-  /** Reports of the selected device, newest first. */
   readonly selectedReports = computed(() => {
     const selectedDeviceId = this.selectedDeviceId();
     const allowedDeviceIds = new Set(this.userDevices().map(d => Number(d.id)));
@@ -110,47 +87,68 @@ export class AnalyticsStore {
       .sort((a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime());
   });
 
-  /** Newest report, which defines the active parameter of the dashboard. */
   readonly latestReport = computed<AnalyticsReport | null>(() => this.selectedReports()[0] ?? null);
 
-  /** Parameter currently visualised (the one of the newest report). */
-  readonly activeParameter = computed<string>(
-    () => this.selectedStatistics()?.parameter ?? 'MOISTURE'
-  );
+  readonly activeParameter = computed<string>(() => {
+    const selected = this.selectedStatisticsParameter();
+    if (selected === 'NUTRIENTS_AVG') return 'NUTRIENTS_AVG';
+    return this.selectedStatistics()?.parameter ?? 'MOISTURE';
+  });
 
   readonly activeParameterKey = computed(() => {
     const parameter = this.activeParameter();
+    if (parameter === 'NUTRIENTS_AVG') return 'analytics.nutrients-avg';
     return isTelemetryParameter(parameter)
       ? PARAMETER_I18N_KEYS[parameter]
       : parameter;
   });
 
-  readonly activeUnit = computed(
-    () => this.selectedStatistics()?.unit
+  readonly activeUnit = computed(() => {
+    if (this.activeParameter() === 'NUTRIENTS_AVG') return 'mg/kg';
+    return this.selectedStatistics()?.unit
       ?? (isTelemetryParameter(this.activeParameter())
         ? PARAMETER_RANGES[this.activeParameter() as TelemetryParameter].unit
-        : '')
-  );
+        : '');
+  });
 
-  /** Threshold that applies to the active parameter only. */
   readonly activeThreshold = computed(() => {
     const parameter = this.activeParameter();
-    if (!isTelemetryParameter(parameter)) return 0;
+    if (!isTelemetryParameter(parameter)) return null;
     return resolveParameterThreshold(parameter, this.thresholds());
   });
 
-  /** Reports of the active parameter, newest first (used by the table). */
+  readonly isNutrientsMode = computed(() => this.selectedStatisticsParameter() === 'NUTRIENTS_AVG');
+
+  readonly nutrientAverages = computed(() => {
+    const nutrients = [
+      { parameter: 'NITROGEN', symbol: 'N' },
+      { parameter: 'PHOSPHORUS', symbol: 'P' },
+      { parameter: 'POTASSIUM', symbol: 'K' },
+      { parameter: 'CALCIUM', symbol: 'Ca' },
+      { parameter: 'MAGNESIUM', symbol: 'Mg' },
+      { parameter: 'SULFUR', symbol: 'S' },
+    ];
+    const readings = this._readings();
+    return nutrients.map(({ parameter, symbol }) => {
+      const values = readings
+        .filter((r) => r.parameter === parameter && Number.isFinite(r.value))
+        .map((r) => r.value);
+      const count = values.length;
+      const avg = count > 0 ? values.reduce((sum, value) => sum + value, 0) / count : null;
+      return { parameter, symbol, unit: 'mg/kg', avg, count };
+    });
+  });
+
   readonly reports = computed(() =>
     this.selectedReports().filter(report => report.parameter === this.activeParameter())
   );
 
-  /** Reports of the active parameter in chronological order (used by the table). */
   readonly chartReports = computed(() =>
     [...this.reports()].sort((a, b) => new Date(a.generatedAt).getTime() - new Date(b.generatedAt).getTime())
   );
 
-  /** Real sensor readings for the selected device/parameter in chronological order. */
   readonly trendReadings = computed(() => {
+    if (this.selectedStatisticsParameter() === 'NUTRIENTS_AVG') return [];
     const parameter = this.selectedStatistics()?.parameter;
     const unit = this.selectedStatistics()?.unit;
     const list = this._readings().filter((reading) => {
@@ -163,7 +161,10 @@ export class AnalyticsStore {
 
   readonly statisticsParameters = computed<string[]>(() => {
     const params = new Set(this._statistics().map((s) => s.parameter));
-    return Array.from(params);
+    const allowed = new Set(['MOISTURE', 'PH']);
+    const list = Array.from(params).filter((parameter) => allowed.has(parameter));
+    if (!list.includes('NUTRIENTS_AVG')) list.push('NUTRIENTS_AVG');
+    return list;
   });
 
   readonly selectedStatistics = computed<SensorStatistics | null>(() => {
@@ -180,33 +181,36 @@ export class AnalyticsStore {
 
   readonly indicators = computed<KeyIndicators>(() => {
     const stat = this.selectedStatistics();
-    const totalReports = this.reports().length;
 
-    if (!stat || stat.sampleCount === 0) {
+    if (!stat || !Number.isFinite(stat.sampleCount) || stat.sampleCount <= 0) {
       return {
-        averageMean: 0,
-        averageVariance: 0,
-        averageDeviation: 0,
-        totalReports,
-        status: 'NO_DATA',
+        mean: 0,
+        variance: 0,
+        standardDeviation: 0,
+        measurements: 0,
+        thresholdStatus: 'NO_DATA',
       };
     }
 
-    const telemetryStatus = isTelemetryParameter(stat.parameter)
-      ? evaluateTelemetryStatus(stat.parameter, stat.meanValue, this.thresholds())
-      : 'OPTIMAL';
+    if (!Number.isFinite(stat.meanValue) || !Number.isFinite(stat.variance) || !Number.isFinite(stat.standardDeviation)) {
+      return {
+        mean: 0,
+        variance: 0,
+        standardDeviation: 0,
+        measurements: stat.sampleCount,
+        thresholdStatus: 'NO_DATA',
+      };
+    }
 
-    const status: AnalyticsStatus =
-      telemetryStatus !== 'OPTIMAL' || stat.variance > ANALYTICS_VARIANCE_ALERT_THRESHOLD
-        ? 'ALERT'
-        : 'OPTIMAL';
+    const thresholdStatus: ThresholdStatus =
+      this.computeThresholdStatus(stat.parameter, stat.meanValue);
 
     return {
-      averageMean: +stat.meanValue.toFixed(2),
-      averageVariance: +stat.variance.toFixed(2),
-      averageDeviation: +stat.standardDeviation.toFixed(2),
-      totalReports,
-      status,
+      mean: Number(stat.meanValue.toFixed(2)),
+      variance: Number(stat.variance.toFixed(2)),
+      standardDeviation: Number(stat.standardDeviation.toFixed(2)),
+      measurements: stat.sampleCount,
+      thresholdStatus,
     };
   });
 
@@ -223,6 +227,17 @@ export class AnalyticsStore {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+  }
+
+  private computeThresholdStatus(parameter: string, meanValue: number): ThresholdStatus {
+    if (!isTelemetryParameter(parameter) || parameter !== 'MOISTURE') {
+      return 'NOT_CONFIGURED';
+    }
+    const threshold = this.moistureThreshold();
+    if (threshold === null || threshold <= 0) {
+      return 'NOT_CONFIGURED';
+    }
+    return meanValue < threshold ? 'BELOW_MINIMUM' : 'ABOVE_MINIMUM';
   }
 
   clearState(): void {
@@ -329,7 +344,8 @@ export class AnalyticsStore {
         const current = this.selectedStatisticsParameter();
         if (!current || !stats.some((s) => s.parameter === current)) {
           const moisture = stats.find((s) => s.parameter === 'MOISTURE');
-          this.selectedStatisticsParameter.set(moisture ? moisture.parameter : (stats[0]?.parameter ?? null));
+          const ph = stats.find((s) => s.parameter === 'PH');
+          this.selectedStatisticsParameter.set(moisture ? moisture.parameter : (ph ? ph.parameter : 'NUTRIENTS_AVG'));
         }
       }),
       map(() => void 0),
@@ -365,14 +381,6 @@ export class AnalyticsStore {
     );
   }
 
-  /**
-   * Evaluates a report against the threshold of its own parameter.
-   */
-  isAlert(report: AnalyticsReport): boolean {
-    if (!isTelemetryParameter(report.parameter)) return false;
-    return evaluateTelemetryStatus(report.parameter, report.meanValue, this.thresholds()) !== 'OPTIMAL';
-  }
-
   private fetchDeviceTelemetry(deviceId: number): Observable<void> {
     return forkJoin({
       reports: this.analyticsContext.getReportByDeviceId(deviceId),
@@ -385,7 +393,8 @@ export class AnalyticsStore {
         this._readings.set(readings.map(SensorReadingAssembler.toEntityFromResource));
         const stats = this._statistics();
         const moisture = stats.find((s) => s.parameter === 'MOISTURE');
-        this.selectedStatisticsParameter.set(moisture ? moisture.parameter : (stats[0]?.parameter ?? null));
+        const ph = stats.find((s) => s.parameter === 'PH');
+        this.selectedStatisticsParameter.set(moisture ? moisture.parameter : (ph ? ph.parameter : 'NUTRIENTS_AVG'));
       }),
       finalize(() => this.loading.set(false)),
       map(() => void 0)

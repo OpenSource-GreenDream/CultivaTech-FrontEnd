@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   // Production backend URL is not defined yet. Configure before deployment.
   // Do not use the legacy Fake API URL.
-  cultivatechBaseApi: '',
+  cultivatechBaseApi: 'https://cultivatech-backend.salmonsand-1033f96b.mexicocentral.azurecontainerapps.io/api/v1',
 
   sessionStorageKey: 'cultivatech_active_session',
 

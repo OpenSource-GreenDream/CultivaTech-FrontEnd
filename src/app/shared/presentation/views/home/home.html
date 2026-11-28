@@ -1,7 +1,99 @@
 @if (!canAccessAgricultural()) {
-  <div class="home-container">
-    <h2>{{ 'home.title' | translate }}</h2>
-    <p>{{ 'home.description' | translate }}</p>
+  <div class="home-container commercial-home">
+    <section class="welcome-card">
+      <div>
+        <h1>{{ 'home.welcome' | translate }} {{ profileName() }}</h1>
+        <p class="subtitle">{{ 'home.commercial.subtitle' | translate }}</p>
+        <p class="date">{{ today | date:'fullDate' }}</p>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.commercial.published-products' | translate }}</span>
+        <span class="kpi-value">{{ publishedProductsCount() }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.commercial.producers' | translate }}</span>
+        <span class="kpi-value">{{ producersCount() }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.commercial.my-reviews' | translate }}</span>
+        <span class="kpi-value">{{ myReviewsCount() }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">{{ 'home.commercial.unread-notifications' | translate }}</span>
+        <span class="kpi-value">{{ unreadNotificationsCount() }}</span>
+      </div>
+    </section>
+
+    <section class="section-container">
+      <div class="section-header">
+        <h3>{{ 'home.commercial.recent-products' | translate }}</h3>
+        <button type="button" class="link-btn" (click)="navigate('/stock')">{{ 'home.commercial.explore-catalog' | translate }}</button>
+      </div>
+      @if (commercialLoading()) {
+        <p class="empty-state">{{ 'home.loading' | translate }}</p>
+      } @else if (recentProducts().length === 0) {
+        <p class="empty-state">{{ 'home.commercial.no-products' | translate }}</p>
+      } @else {
+        <div class="product-grid">
+          @for (product of recentProducts(); track product.id) {
+            <div class="product-card">
+              <img [src]="product.imageUrl || '/assets/logo.svg'" [alt]="product.name" class="product-image" />
+              <div class="product-info">
+                <span class="product-name">{{ product.name }}</span>
+                @if (producerName(product)) {
+                  <span class="product-producer">{{ producerName(product) }}</span>
+                }
+                <span class="product-price">{{ formatPrice(product.price) }}</span>
+                <button type="button" class="link-btn" (click)="viewProduct(product)">{{ 'home.commercial.view-product' | translate }}</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="two-column">
+      <div class="section-container">
+        <h3>{{ 'home.commercial.my-recent-reviews' | translate }}</h3>
+        @if (recentReviews().length === 0) {
+          <p class="empty-state">{{ 'home.commercial.no-reviews' | translate }}</p>
+        } @else {
+          @for (review of recentReviews(); track review.id) {
+            <div class="review-item">
+              <div class="review-header">
+                <span class="review-target">{{ review.targetType === 'PRODUCT' ? review.productId : review.fieldId }}</span>
+                <span class="review-rating">★ {{ review.rating }}</span>
+              </div>
+              <p class="review-content">{{ review.content }}</p>
+              <span class="review-date">{{ review.createdAt | date:'short' }}</span>
+            </div>
+          }
+        }
+        <button type="button" class="link-btn" (click)="navigate('/profile')">{{ 'home.commercial.view-my-reviews' | translate }}</button>
+      </div>
+
+      <div class="section-container">
+        <h3>{{ 'home.commercial.recent-notifications' | translate }}</h3>
+        @if (recentNotifications().length === 0) {
+          <p class="empty-state">{{ 'home.commercial.no-notifications' | translate }}</p>
+        } @else {
+          @for (notification of recentNotifications(); track notification.id) {
+            <div class="notification-item">
+              <div class="notification-header">
+                <span class="notification-title">{{ notification.title }}</span>
+                <span class="notification-status" [class.unread]="!notification.isRead">{{ notification.isRead ? ('home.commercial.read' | translate) : ('home.commercial.unread' | translate) }}</span>
+              </div>
+              <p class="notification-message">{{ notification.message }}</p>
+              <span class="notification-date">{{ notification.createdAt | date:'short' }}</span>
+            </div>
+          }
+        }
+        <button type="button" class="link-btn" (click)="navigate('/notifications')">{{ 'home.commercial.view-all-notifications' | translate }}</button>
+      </div>
+    </section>
   </div>
 } @else {
   <div class="dashboard">

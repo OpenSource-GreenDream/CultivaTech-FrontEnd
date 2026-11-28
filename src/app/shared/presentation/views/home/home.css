@@ -134,3 +134,124 @@
     grid-template-columns: 1fr;
   }
 }
+
+.commercial-home .welcome-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.commercial-home .subtitle {
+  color: var(--color-text-secondary);
+  margin: var(--space-2) 0;
+}
+
+.commercial-home .date {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.product-card {
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.product-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.product-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.product-producer {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.product-price {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.review-item,
+.notification-item {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.review-header,
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.review-rating {
+  color: #B49A54;
+  font-weight: 600;
+}
+
+.review-content,
+.notification-message {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  margin: var(--space-1) 0;
+}
+
+.review-date,
+.notification-date {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}
+
+.notification-status.unread {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.section-container {
+  margin-top: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+}

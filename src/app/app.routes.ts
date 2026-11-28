@@ -49,7 +49,7 @@ export const routes: Routes = [
       {
         path: 'notifications',
         canActivate: [authenticationGuard, profileCompleteGuard],
-        data: { roles: ['ADMIN', 'FARMER'] },
+        data: { roles: ['ADMIN', 'FARMER', 'CUSTOMER', 'SUPPLIER'] },
         loadChildren: () => import('./notification/notification.routes')
           .then((routes) => routes.NOTIFICATION_ROUTES),
       },
