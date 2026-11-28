@@ -117,6 +117,25 @@
       "monitoring": "Monitoreo",
       "inventory": "Inventario",
       "analytics": "Analítica"
+    },
+    "commercial": {
+      "subtitle": "Descubre productos agrícolas, conecta con productores y explora la comunidad.",
+      "published-products": "Productos publicados",
+      "producers": "Productores",
+      "my-reviews": "Mis valoraciones",
+      "unread-notifications": "Notificaciones no leídas",
+      "recent-products": "Productos publicados recientemente",
+      "explore-catalog": "Explorar catálogo",
+      "view-product": "Ver producto",
+      "no-products": "No hay productos disponibles.",
+      "my-recent-reviews": "Mis valoraciones recientes",
+      "no-reviews": "Aún no has publicado valoraciones.",
+      "view-my-reviews": "Ver mis valoraciones",
+      "recent-notifications": "Notificaciones recientes",
+      "no-notifications": "No hay notificaciones.",
+      "view-all-notifications": "Ver todas las notificaciones",
+      "read": "Leída",
+      "unread": "No leída"
     }
   },
   "notification": {
@@ -230,48 +249,36 @@
     }
   },
   "analytics": {
-    "title": "Dashboard de Analítica e Indicadores Clave",
+    "title": "Analítica",
+    "subtitle": "Analiza las mediciones de los sensores y supervisa las condiciones agrícolas.",
     "device-label": "Dispositivo IoT:",
     "device-option": "Dispositivo #{{id}} ({{mac}})",
     "loading": "Cargando indicadores clave...",
-    "moisture-trend-title": "Evolución de Tendencia de Humedad (US36)",
-    "trend-title": "Evolución de Tendencia (US36)",
+    "trend-title": "Evolución de Tendencia",
     "real-reading": "Lectura Real",
     "min-threshold": "Umbral Mínimo",
     "critical-threshold": "Umbral Crítico",
     "no-chart-reports": "No hay reportes registrados para graficar.",
-    "projections-title": "Proyección de Cosechas vs. Rendimiento Histórico (US37)",
-    "historical-label": "Histórico",
-    "projected-label": "Proyectado",
-    "confidence-label": "Confianza del modelo",
-    "no-projections": "No hay proyecciones registradas para este dispositivo.",
-    "history-title": "Historial Detallado de Reportes",
-    "no-history": "No hay reportes históricos disponibles.",
-    "table": {
-      "date": "Fecha Generación",
-      "parameter": "Parámetro",
-      "mean": "Valor Medio",
-      "variance": "Varianza",
-      "std-dev": "Desviación Estándar",
-      "interpretation": "Interpretación Técnica"
-    },
-    "status": {
-      "OPTIMAL": "Óptimo",
-      "ALERT": "Alerta",
-      "NO_DATA": "Sin Datos"
+    "nutrients-avg": "Nutrientes — AVG",
+    "nutrients-avg-title": "Nutrientes — Promedio",
+    "nutrients-avg-concentration": "Concentración promedio de nutrientes",
+    "average-reading": "Lectura promedio",
+    "reading": "Lectura",
+    "readings": "Lecturas",
+    "no-nutrient-readings": "No hay lecturas de nutrientes disponibles",
+    "threshold-status": {
+      "BELOW_MINIMUM": "Por debajo del mínimo",
+      "ABOVE_MINIMUM": "Por encima del mínimo",
+      "NOT_CONFIGURED": "No configurado",
+      "NO_DATA": "Sin datos"
     },
     "cards": {
-      "average-mean": "Promedio de Media",
-      "average-variance": "Promedio de Varianza",
-      "average-deviation": "Promedio Desviación Estándar",
-      "total-reports": "Total de Reportes",
-      "status": "Estado del Sistema"
-    },
-    "harvest-simulation-title": "Simulación de cosechas (US37)",
-    "reference-production": "Producción de referencia",
-    "projected-production": "Producción proyectada",
-    "stock-quantity": "Cantidad en stock",
-    "no-simulation": "Simulación no disponible"
+      "mean": "Media",
+      "variance": "Varianza",
+      "std-deviation": "Desviación Estándar",
+      "measurements": "Mediciones",
+      "threshold-status": "Estado del Umbral"
+    }
   },
   "fields": {
     "title": "Mis Lotes de Cultivo",

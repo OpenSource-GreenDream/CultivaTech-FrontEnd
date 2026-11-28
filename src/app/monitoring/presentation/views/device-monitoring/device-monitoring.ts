@@ -11,7 +11,6 @@ import {PARAMETER_I18N_KEYS, TelemetryParameter, isTelemetryParameter} from '../
 @Component({
   imports: [
     TranslatePipe,
-    DatePipe,
     DisplayUnitPipe
   ],
   selector: 'app-device-monitoring',

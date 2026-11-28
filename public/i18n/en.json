@@ -117,6 +117,25 @@
       "monitoring": "Monitoring",
       "inventory": "Inventory",
       "analytics": "Analytics"
+    },
+    "commercial": {
+      "subtitle": "Discover agricultural products, connect with producers and explore the community.",
+      "published-products": "Published products",
+      "producers": "Producers",
+      "my-reviews": "My reviews",
+      "unread-notifications": "Unread notifications",
+      "recent-products": "Recently published products",
+      "explore-catalog": "Explore catalog",
+      "view-product": "View product",
+      "no-products": "No products available.",
+      "my-recent-reviews": "My recent reviews",
+      "no-reviews": "No reviews yet.",
+      "view-my-reviews": "View my reviews",
+      "recent-notifications": "Recent notifications",
+      "no-notifications": "No notifications.",
+      "view-all-notifications": "View all notifications",
+      "read": "Read",
+      "unread": "Unread"
     }
   },
   "notification": {
@@ -230,48 +249,36 @@
     }
   },
   "analytics": {
-    "title": "Analytics Dashboard & Key Metrics",
+    "title": "Analytics",
+    "subtitle": "Analyze sensor readings and monitor agricultural conditions.",
     "device-label": "IoT Device:",
     "device-option": "Device #{{id}} ({{mac}})",
     "loading": "Loading key metrics...",
-    "moisture-trend-title": "Moisture Trend Evolution (US36)",
-    "trend-title": "Trend Evolution (US36)",
+    "trend-title": "Trend Evolution",
     "real-reading": "Real Reading",
     "min-threshold": "Minimum Threshold",
     "critical-threshold": "Critical Threshold",
     "no-chart-reports": "No reports registered to plot.",
-    "projections-title": "Harvest Projections vs. Historical Yield (US37)",
-    "historical-label": "Historical",
-    "projected-label": "Projected",
-    "confidence-label": "Model confidence",
-    "no-projections": "No harvest projections registered for this device.",
-    "history-title": "Detailed Report History",
-    "no-history": "No historical reports available.",
-    "table": {
-      "date": "Generation Date",
-      "parameter": "Parameter",
-      "mean": "Mean Value",
-      "variance": "Variance",
-      "std-dev": "Standard Deviation",
-      "interpretation": "Technical Interpretation"
-    },
-    "status": {
-      "OPTIMAL": "Optimal",
-      "ALERT": "Alert",
-      "NO_DATA": "No Data"
+    "nutrients-avg": "Nutrients — AVG",
+    "nutrients-avg-title": "Nutrients — Average",
+    "nutrients-avg-concentration": "Average nutrient concentration",
+    "average-reading": "Average reading",
+    "reading": "Reading",
+    "readings": "Readings",
+    "no-nutrient-readings": "No nutrient readings available",
+    "threshold-status": {
+      "BELOW_MINIMUM": "Below minimum",
+      "ABOVE_MINIMUM": "Above minimum",
+      "NOT_CONFIGURED": "Not configured",
+      "NO_DATA": "No data"
     },
     "cards": {
-      "average-mean": "Average Mean",
-      "average-variance": "Average Variance",
-      "average-deviation": "Average Std Deviation",
-      "total-reports": "Total Reports",
-      "status": "System Status"
-    },
-    "harvest-simulation-title": "Harvest Simulation (US37)",
-    "reference-production": "Reference production",
-    "projected-production": "Projected production",
-    "stock-quantity": "Stock quantity",
-    "no-simulation": "No simulation available"
+      "mean": "Mean",
+      "variance": "Variance",
+      "std-deviation": "Standard Deviation",
+      "measurements": "Measurements",
+      "threshold-status": "Threshold Status"
+    }
   },
   "fields": {
     "title": "My Crop Lots",

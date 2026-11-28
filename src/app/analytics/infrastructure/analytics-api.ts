@@ -9,7 +9,6 @@ import {SensorStatisticsResource} from './sensor-statistics.response';
 @Service()
 export class AnalyticsApi {
   private readonly http = inject(HttpClient);
-  private readonly reportsUrl = `${environment.cultivatechBaseApi}${environment.reportsEndpoint}`;
   private readonly devicesUrl = `${environment.cultivatechBaseApi}${environment.devicesEndpoint}`;
 
   getReportsByDeviceId(deviceId: number): Observable<AnalyticsReportResource[]> {
@@ -26,7 +25,10 @@ export class AnalyticsApi {
   }
 
   generateReport(deviceId: number, request: { from: string; to: string }): Observable<AnalyticsReportResource[]> {
-    return this.http.post<AnalyticsReportResource[]>(`${this.devicesUrl}/${deviceId}/reports`, request);
+    return this.http.post<AnalyticsReportResource[]>(`${this.devicesUrl}/${deviceId}/reports`, {
+      from: request.from,
+      to: request.to,
+    });
   }
 
   getStatistics(deviceId: number, from?: string, to?: string): Observable<SensorStatisticsResource[]> {
